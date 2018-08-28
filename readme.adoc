@@ -3,7 +3,7 @@ Ellie Harper <epharper@upenn.edu>
 v1.0, 2018-08-27
 :toc:
 
-Documentation of setup and usage of Karate API tests.
+Documentation of setup and usage of Karate API tests for WDK service endpoints.
 
 For documentation and downloads for the Karate project itself see
 https://github.com/intuit/karate.
@@ -23,7 +23,7 @@ Installing Karate
 Downloading version "v0.8.0"
 ######################################################################### 100.0%
 Packaging
-[sudo] password for ellie: 
+[sudo] password for <username>: 
 Performing cleanup
 ----
 
