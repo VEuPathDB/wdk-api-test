@@ -1,3 +1,8 @@
+# login(): (result, cookies)
+#
+#   Returns:
+#     result: http response body
+#     cookies: http response cookies
 @ignore
 Feature: Perform login
 

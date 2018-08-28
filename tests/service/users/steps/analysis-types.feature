@@ -1,10 +1,10 @@
-Feature: Analysis List Endpoint
+Feature: Analysis Type List Endpoint
 
 Background: User must be logged in
 
   * def login = call read('../../login.feature')
 
-Scenario:
+Scenario: Retrieve available analysis types
 
   Given url baseUrl
     And path 'service/users/current/steps/110719150/analysis-types'
