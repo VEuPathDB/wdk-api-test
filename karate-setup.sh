@@ -14,6 +14,7 @@ curl --output "$jarFile" --progress-bar --location "$download"
 
 if [ $? -eq 0 ]; then
   echo "Installing"
+  cp "$proRoot/misc/karate-config.tpl.js" "$proRoot/karate-config.js"
   cat "$proRoot/misc/exec-prefix.tpl.sh" "$jarFile" > "karate" \
     && chmod +x "karate" \
     && sudo mv -t "/usr/local/bin" "karate"
