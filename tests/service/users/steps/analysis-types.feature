@@ -4,6 +4,10 @@ Background: User must be logged in
 
   * def login = call read('../../login.feature')
 
+  # TODO: refactor these
+  * def step = 110719150
+  * def endpoint = 'service/users/current/steps/'
+
 Scenario: Retrieve available analysis types
 
   Given url baseUrl

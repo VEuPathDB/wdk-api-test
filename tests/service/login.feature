@@ -14,3 +14,4 @@ Scenario:
   Then status 200
     And def result = response
     And def cookies = responseCookies
+    And def userId = 'current'
