@@ -12,9 +12,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 @DisplayName("Analysis Types API")
 public class AnalysisTypeTest extends StepsTest {
 
-  public static final String
-      ANALYSIS_TYPES_PATH = STEP_BY_ID_PATH + "/analysis-types",
-      ANALYSIS_TYPE_BY_NAME_PATH = ANALYSIS_TYPES_PATH + "/{analysisTypeName}";
+  public static final String ANALYSIS_TYPES_PATH = STEP_BY_ID_PATH + "/analysis-types";
+  public static final String ANALYSIS_TYPE_BY_NAME_PATH = ANALYSIS_TYPES_PATH + "/{analysisTypeName}";
 
   protected static long stepId;
 
@@ -36,6 +35,11 @@ public class AnalysisTypeTest extends StepsTest {
         .get(ANALYSIS_TYPE_BY_NAME_PATH, DEFAULT_USER, stepId, summary.getName());
   }
 
+  /**
+   * Retrieve the parsed payload from the step analysis type list endpoint.
+   *
+   * @return a parsed array of step analysis instance type summaries.
+   */
   public static AnalysisTypeSummary[] getAnalysisTypeList() {
     return prepAuthRequest()
       .expect()

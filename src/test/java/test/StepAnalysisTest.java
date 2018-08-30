@@ -11,7 +11,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 @DisplayName("Step Analysis API")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StepAnalysisTest extends StepsTest {
   public static final String ANALYSES_PATH = STEP_BY_ID_PATH + "/analyses";
   public static final String ANALYSIS_BY_ID_PATH = ANALYSES_PATH + "/{analysisId}";
@@ -36,6 +35,11 @@ public class StepAnalysisTest extends StepsTest {
         .get(ANALYSIS_BY_ID_PATH, DEFAULT_USER, stepId, analysis.getAnalysisId());
   }
 
+  /**
+   * Retrieve the parsed payload from the step analysis instance list endpoint.
+   *
+   * @return a parsed array of step analysis instance summaries.
+   */
   protected static AnalysisSummary[] getAnalysisList() {
     return prepAuthRequest()
       .expect()
@@ -47,7 +51,7 @@ public class StepAnalysisTest extends StepsTest {
   }
 
   @BeforeAll
-  void pickStep() {
+  static void pickStep() {
     // FIXME: Retrieve this from step API
     stepId = 110719150L;
   }
