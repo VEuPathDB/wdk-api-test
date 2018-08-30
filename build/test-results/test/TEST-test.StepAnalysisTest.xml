@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test.StepAnalysisTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2018-08-29T13:48:47" hostname="L10600" time="5.261">
+  <properties/>
+  <testcase name="testAnalysesList()" classname="test.StepAnalysisTest" time="1.728"/>
+  <testcase name="getAnalysisDetails(AnalysisSummary)[1]" classname="test.StepAnalysisTest" time="0.902"/>
+  <testcase name="getAnalysisDetails(AnalysisSummary)[2]" classname="test.StepAnalysisTest" time="0.827"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

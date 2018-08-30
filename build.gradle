@@ -4,6 +4,32 @@ repositories {
   mavenCentral()
 }
 
+def JUNIT_VERSION = '5.2.0'
+def JACKSON_VERSION = '2.9.6'
+
 dependencies {
-  
+  implementation(
+    [ group: 'com.fasterxml.jackson.core',
+      name: 'jackson-databind',
+      version: JACKSON_VERSION ],
+    [ group: 'com.fasterxml.jackson.core',
+      name: 'jackson-annotations',
+      version: JACKSON_VERSION ],
+  )
+
+  testImplementation(
+    [ group: 'org.junit.jupiter',
+      name: 'junit-jupiter-engine',
+      version: JUNIT_VERSION ],
+    [ group: 'org.junit.jupiter',
+      name: 'junit-jupiter-params',
+      version: JUNIT_VERSION ],
+    [ group: 'io.rest-assured',
+      name: 'rest-assured',
+      version: '3.1.1' ],
+  )
+}
+
+test {
+  useJUnitPlatform()
 }
