@@ -7,7 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@DisplayName("User ID Query API")
+@DisplayName("User ID Query")
 public class UserIdQueryTest extends TestBase {
   public static final String USER_ID_QUERY_PATH = SERVICE_PATH + "/user-id-query";
 

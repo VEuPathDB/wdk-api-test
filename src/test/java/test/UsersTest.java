@@ -5,7 +5,7 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 
-@DisplayName("Users API")
+@DisplayName("Users")
 public class UsersTest extends TestBase {
 
   public static final String USERS_PATH = SERVICE_PATH + "/users";

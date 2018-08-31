@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@DisplayName("Analysis Types API")
+@DisplayName("Analysis Type")
 public class AnalysisTypeTest extends StepsTest {
 
   public static final String ANALYSIS_TYPES_PATH = STEP_BY_ID_PATH + "/analysis-types";

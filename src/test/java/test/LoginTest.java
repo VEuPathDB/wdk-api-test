@@ -7,7 +7,7 @@ import org.gusdb.wdk.model.api.LoginRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Login API")
+@DisplayName("Login")
 public class LoginTest extends TestBase {
 
   public static final String LOGIN_PATH = SERVICE_PATH + "/login";

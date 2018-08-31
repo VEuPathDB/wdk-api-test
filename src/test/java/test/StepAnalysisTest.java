@@ -10,7 +10,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@DisplayName("Step Analysis API")
+@DisplayName("Step Analysis")
 public class StepAnalysisTest extends StepsTest {
   public static final String ANALYSES_PATH = STEP_BY_ID_PATH + "/analyses";
   public static final String ANALYSIS_BY_ID_PATH = ANALYSES_PATH + "/{analysisId}";
@@ -18,9 +18,26 @@ public class StepAnalysisTest extends StepsTest {
   protected static long stepId;
 
   @Test
-  @DisplayName("List Analyses")
-  void testAnalysesList() {
+  @DisplayName("Get Analysis List")
+  void getAnalysesList() {
     getAnalysisList();
+  }
+
+  @ParameterizedTest
+  @DisplayName("Get Analysis Result Status")
+  @MethodSource("getAnalysisList")
+  void getAnalysisResultStatus(AnalysisSummary analysis) {
+    prepAuthRequest()
+      .expect()
+        .statusCode(HttpStatus.SC_OK)
+        .contentType(ContentType.JSON)
+      .when()
+        .get(
+          ANALYSIS_BY_ID_PATH + "/result/status",
+          DEFAULT_USER,
+          stepId,
+          analysis.getAnalysisId()
+        );
   }
 
   @ParameterizedTest
