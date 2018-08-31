@@ -67,6 +67,6 @@ public class AnalysisTypeSummary {
 
   @Override
   public String toString() {
-    return "AnalysisTypeSummary{" + "name='" + name + '\'' + '}';
+    return "{" + "name='" + name + '\'' + '}';
   }
 }

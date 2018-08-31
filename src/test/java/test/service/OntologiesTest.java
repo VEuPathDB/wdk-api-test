@@ -1,4 +1,4 @@
-package test;
+package test.service;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -9,10 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static test.support.Conf.SERVICE_PATH;
+
 @DisplayName("Ontologies")
 public class OntologiesTest extends TestBase {
-  public static final String ONTOLOGIES_PATH = SERVICE_PATH + "/ontologies";
-  public static final String ONTOLOGY_BY_NAME_PATH = ONTOLOGIES_PATH + "/{ontologyName}";
+  public static final String BASE_PATH = SERVICE_PATH + "/ontologies";
+  public static final String BY_NAME_PATH = BASE_PATH + "/{ontologyName}";
 
   @Test
   @DisplayName("Get Ontology List")
@@ -28,7 +30,7 @@ public class OntologiesTest extends TestBase {
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
       .when()
-        .get(ONTOLOGY_BY_NAME_PATH, name);
+        .get(BY_NAME_PATH, name);
   }
 
   @ParameterizedTest
@@ -44,7 +46,7 @@ public class OntologiesTest extends TestBase {
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
       .when()
-        .get(ONTOLOGIES_PATH)
+        .get(BASE_PATH)
         .body()
         .as(String[].class);
   }

@@ -1,4 +1,4 @@
-package test;
+package test.service;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -8,12 +8,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
+import static test.support.Conf.SERVICE_PATH;
 
 @DisplayName("Questions")
 public class QuestionsTest extends TestBase {
-  public static final String QUESTIONS_PATH = SERVICE_PATH + "/questions";
-  public static final String QUESTION_BY_NAME_PATH = QUESTIONS_PATH + "/{question}";
+  public static final String BASE_PATH = SERVICE_PATH + "/questions";
+  public static final String BY_NAME_PATH = BASE_PATH + "/{question}";
 
   @Test
   @DisplayName("Get Question List")
@@ -21,7 +21,7 @@ public class QuestionsTest extends TestBase {
     getQuestionList();
   }
 
-  @ParameterizedTest
+  @ParameterizedTest(name = "Get details for {arguments}")
   @DisplayName("Get Question Details")
   @MethodSource("getQuestionList")
   void getQuestionDetails(String name) {
@@ -29,19 +29,15 @@ public class QuestionsTest extends TestBase {
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
       .when()
-        .get(QUESTION_BY_NAME_PATH, name);
+        .get(BY_NAME_PATH, name);
   }
 
-
   public static String[] getQuestionList() {
-    return Arrays.copyOf(
-      RestAssured.expect()
-          .statusCode(HttpStatus.SC_OK)
-          .contentType(ContentType.JSON)
-          .when()
-          .get(QUESTIONS_PATH).body()
-          .as(String[].class),
-      10
-    );
+    return RestAssured.expect()
+        .statusCode(HttpStatus.SC_OK)
+        .contentType(ContentType.JSON)
+      .when()
+        .get(BASE_PATH)
+        .as(String[].class);
   }
 }

@@ -1,7 +1,11 @@
 package org.gusdb.wdk.model.api;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class AnalysisSummary {
-  private long analysisId;
+  @JsonProperty("analysisId")
+  private long id;
+
   private String displayName;
 
   public String getDisplayName() {
@@ -12,16 +16,16 @@ public class AnalysisSummary {
     this.displayName = displayName;
   }
 
-  public long getAnalysisId() {
-    return analysisId;
+  public long getId() {
+    return id;
   }
 
-  public void setAnalysisId(long analysisId) {
-    this.analysisId = analysisId;
+  public void setId(long id) {
+    this.id = id;
   }
 
   @Override
   public String toString() {
-    return "AnalysisSummary{" + "analysisId=" + analysisId + '}';
+    return "AnalysisSummary{" + "id=" + id + '}';
   }
 }

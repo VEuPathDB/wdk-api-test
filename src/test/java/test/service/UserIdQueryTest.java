@@ -1,4 +1,4 @@
-package test;
+package test.service;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -7,9 +7,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import static test.support.Conf.SERVICE_PATH;
+
 @DisplayName("User ID Query")
 public class UserIdQueryTest extends TestBase {
-  public static final String USER_ID_QUERY_PATH = SERVICE_PATH + "/user-id-query";
+  public static final String BASE_PATH = SERVICE_PATH + "/user-id-query";
 
   @ParameterizedTest
   @DisplayName("Get User IDs for email list")
@@ -21,7 +23,7 @@ public class UserIdQueryTest extends TestBase {
       .expect()
         .contentType(ContentType.JSON)
       .when()
-        .post(USER_ID_QUERY_PATH);
+        .post(BASE_PATH);
   }
 
   private static UserIdQueryRequest[] buildUserIdSummaryRequests() {

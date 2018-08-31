@@ -1,4 +1,4 @@
-package test;
+package test.service;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -6,9 +6,11 @@ import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static test.support.Conf.SERVICE_PATH;
+
 @DisplayName("OAuth")
 public class OAuthTest extends TestBase {
-  public static final String OAUTH_PATH = SERVICE_PATH + "/oauth";
+  public static final String BASE_PATH = SERVICE_PATH + "/oauth";
 
   @Test
   @DisplayName("State Token")
@@ -17,6 +19,6 @@ public class OAuthTest extends TestBase {
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
       .when()
-        .get(OAUTH_PATH + "/state-token");
+        .get(BASE_PATH + "/state-token");
   }
 }
