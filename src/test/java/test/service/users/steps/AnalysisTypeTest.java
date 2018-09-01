@@ -36,13 +36,14 @@ public class AnalysisTypeTest extends StepsTest {
   }
 
   @Test
-  @DisplayName("List Available Types")
+  @DisplayName("GET " + BASE_PATH)
   void listTypes() {
     getAnalysisTypeList();
   }
 
-  @MethodSource("getAnalysisTypeList")
   @ParameterizedTest(name = "View details for {arguments}")
+  @DisplayName("GET " + BY_NAME_PATH)
+  @MethodSource("getAnalysisTypeList")
   void viewAnalysisType(AnalysisTypeSummary summary) {
     auth.prepRequest()
         .expect()

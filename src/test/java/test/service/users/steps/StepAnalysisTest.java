@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import test.service.users.StepsTest;
 import test.support.util.Auth;
+import test.support.util.StepAnalysis;
 import test.support.util.Steps;
 
 @DisplayName("Step Analysis")
@@ -19,11 +20,14 @@ class StepAnalysisTest extends StepsTest {
 
   private final Steps steps;
 
+  private final StepAnalysis stepAnalysis;
+
   private long stepId;
 
-  StepAnalysisTest(Steps steps, Auth auth) {
+  StepAnalysisTest(StepAnalysis stepAnalysis, Steps steps, Auth auth) {
     super(auth);
     this.steps = steps;
+    this.stepAnalysis = stepAnalysis;
   }
 
   @BeforeEach
@@ -37,56 +41,98 @@ class StepAnalysisTest extends StepsTest {
   }
 
   @Test
-  @DisplayName("Get Analysis List")
+  @DisplayName("GET " + BASE_PATH)
   void getAnalysesList() {
     getAnalysisList();
   }
 
+  @Test
+  @Disabled
+  @DisplayName("POST " + BASE_PATH)
+  void createAnalysisInstance() {
+    auth.prepRequest()
+        .contentType(ContentType.JSON)
+        .body(stepAnalysis.newCreateGoEnrichmentRequestBody())
+        .expect()
+        .statusCode(HttpStatus.SC_OK)
+        .contentType(ContentType.JSON)
+        .when()
+        .post(BASE_PATH, DEFAULT_USER, stepId);
+  }
+
   @ParameterizedTest
-  @DisplayName("Get Analysis Result")
+  @DisplayName("GET " + RESULT_PATH)
   @MethodSource("getAnalysisList")
   void getAnalysisResult(final AnalysisSummary analysis) {
     auth.prepRequest()
-      .expect()
+        .expect()
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
-      .when()
+        .when()
         .get(RESULT_PATH, DEFAULT_USER, stepId, analysis.getId());
   }
 
   @ParameterizedTest
-  @DisplayName("Get Analysis Result Status")
+  @DisplayName("POST " + RESULT_PATH)
   @MethodSource("getAnalysisList")
-  void getAnalysisResultStatus(AnalysisSummary analysis) {
+  void runAnalysisInstance(final AnalysisSummary analysis) {
     auth.prepRequest()
-      .expect()
+        .expect()
+        .contentType(ContentType.JSON)
+        .statusCode(HttpStatus.SC_OK)
+        .when()
+        .post(RESULT_PATH, DEFAULT_USER, stepId, analysis.getId());
+  }
+
+  @ParameterizedTest
+  @DisplayName("GET " + STATUS_PATH)
+  @MethodSource("getAnalysisList")
+  void getAnalysisResultStatus(final AnalysisSummary analysis) {
+    auth.prepRequest()
+        .expect()
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
-      .when()
+        .when()
         .get(STATUS_PATH, DEFAULT_USER, stepId, analysis.getId());
   }
 
   @ParameterizedTest
-  @DisplayName("Get Analysis Details")
+  @DisplayName("GET " + BY_ID_PATH)
   @MethodSource("getAnalysisList")
-  void getAnalysisDetails(AnalysisSummary analysis) {
+  void getAnalysisDetails(final AnalysisSummary analysis) {
     auth.prepRequest()
-      .expect()
+        .expect()
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
-      .when()
+        .when()
         .get(BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId());
   }
 
   @Test
   @Disabled
-  @DisplayName("Update Analysis Instance")
-  void updateAnalysisInstance() {}
+  @DisplayName("PATCH " + BY_ID_PATH)
+  void updateAnalysisInstance(final AnalysisSummary analysis) {
+    auth.prepRequest()
+        .contentType(ContentType.JSON)
+        .body(stepAnalysis.newGoEnrichmentParamsBody())
+        .expect()
+        .statusCode(HttpStatus.SC_OK)
+        .contentType(ContentType.JSON)
+        .when()
+        .get(BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId());
+  }
 
   @Test
   @Disabled
-  @DisplayName("Create Analysis Instance")
-  void createAnalysisInstance() {}
+  @DisplayName("DELETE " + BY_ID_PATH)
+  void deleteAnalysisInstance(final AnalysisSummary analysis) {
+    auth.prepRequest()
+        .expect()
+        .contentType(ContentType.JSON)
+        .statusCode(HttpStatus.SC_NO_CONTENT)
+        .when()
+        .delete(BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId());
+  }
 
   /**
    * Retrieve the parsed payload from the step analysis instance list endpoint.
@@ -95,10 +141,10 @@ class StepAnalysisTest extends StepsTest {
    */
   protected AnalysisSummary[] getAnalysisList() {
     return auth.prepRequest()
-      .expect()
+        .expect()
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
-      .when()
+        .when()
         .get(BASE_PATH, DEFAULT_USER, stepId)
         .getBody().as(AnalysisSummary[].class);
   }

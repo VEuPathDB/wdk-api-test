@@ -2,6 +2,9 @@ package test.support.util;
 
 public class Steps {
 
+  public static final String BASE_PATH = Users.BY_ID_PATH + "/steps";
+  public static final String BY_ID_PATH = BASE_PATH + "/{stepId}";
+
   private static final Steps INSTANCE = new Steps();
 
   private Steps() {}

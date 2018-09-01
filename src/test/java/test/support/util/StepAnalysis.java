@@ -3,12 +3,16 @@ package test.support.util;
 import org.gusdb.wdk.model.api.GoEnrichmentRequest;
 
 public class StepAnalysis {
-  public static final StepAnalysis INSTANCE = new StepAnalysis();
+
+  public static final String BASE_PATH = Steps.BY_ID_PATH + "/analyses";
+  public static final String BY_ID_PATH = BASE_PATH + "/{analysisId}";
+
+  private static final StepAnalysis INSTANCE = new StepAnalysis();
 
   private StepAnalysis() {
   }
 
-  public GoEnrichmentRequest createGoEnrichmentParamsRequest() {
+  public GoEnrichmentRequest newGoEnrichmentParamsBody() {
     final GoEnrichmentRequest tmp = new GoEnrichmentRequest();
     final GoEnrichmentRequest.FormParams params = new GoEnrichmentRequest.FormParams();
 
@@ -22,9 +26,19 @@ public class StepAnalysis {
     return tmp;
   }
 
-  public GoEnrichmentRequest createGoEnrichmentNameRequest() {
+  public GoEnrichmentRequest newGoEnrichmentNameBody() {
     final GoEnrichmentRequest tmp = new GoEnrichmentRequest();
+
     tmp.setDisplayName("Test Value");
+
+    return tmp;
+  }
+
+  public GoEnrichmentRequest newCreateGoEnrichmentRequestBody() {
+    final GoEnrichmentRequest tmp = newGoEnrichmentParamsBody();
+
+    tmp.setDisplayName("Test Analysis Display Name");
+
     return tmp;
   }
 
