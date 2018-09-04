@@ -34,7 +34,7 @@ public class LoginTest extends TestBase {
   private void testLegacy() {
     RestAssured.given()
         .contentType(ContentType.JSON)
-        .body(new LoginRequest(Conf.USERNAME, Conf.PASSWORD, Conf.SITE_PATH))
+        .body(new LoginRequest(Conf.EMAIL, Conf.PASSWORD, Conf.SITE_PATH))
       .expect()
         .cookie(AUTH_COOKIE)
         .statusCode(HttpStatus.SC_OK)

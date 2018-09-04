@@ -28,7 +28,7 @@ public class Auth {
   public void newSession() {
     switch (Conf.AUTH_TYPE) {
       case LEGACY:
-        sessionToken = legacyLogin(Conf.USERNAME, Conf.PASSWORD, Conf.SITE_PATH)
+        sessionToken = legacyLogin(Conf.EMAIL, Conf.PASSWORD, Conf.SITE_PATH)
             .getCookie(Conf.AUTH_COOKIE);
         break;
 

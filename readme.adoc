@@ -1,2 +1,123 @@
 = WDK API Tests
+:gradleVersion: v4.10
+:source-highlighter: pygments
+:icons: font
+:toc:
 
+Test suite for use with the WDK API.
+
+== How to run
+
+=== Included shell script
+
+Currently only available with bash or bash compatible shells.
+
+.runner help text
+[source, bash session]
+----
+$ ./run -h
+Usage:
+
+  run [-l][ -e <email address>][ -p <password>][ -u <site url>][ -- gradle args...]
+
+Arguments:
+
+  [-e <email address>]    Default site login email address.  If this value is
+                          not provided it will be requested interactively.
+
+  [-p <password>]         Default site login password.  If this value is not
+                          provided it will be requested interactively.
+
+  [-u <site url>]         URL of the site which will have it's API tested.  If
+                          this value is not provided it will be requested
+                          interactively.
+
+  -h                      Show this help text
+
+  -l                      Use legacy login scheme for authentication instead of
+                          OAuth.
+
+Additional Params:
+
+  [gradle args...]        Additional arguments/parameters that will be passed
+                          to gradle.
+
+Examples
+
+  Run in interactive mode (or with env vars) and tell gradle to print stacktraces:
+    run -- --stacktrace
+
+  Run with all run args:
+    run -l -e some@email.addr -p abc123 -u http://site.com/thing
+----
+
+=== With gradle(w)
+
+https://gradle.org[Gradle {gradleVersion}] is included and can be run using the
+standard https://docs.gradle.org/current/userguide/gradle_wrapper.html[`gradlew`
+or `gradlew.bat`] files.
+
+When running with Gradle directly the options that would have been set using the
+run script can be set as environment variables.  The full list of env vars and
+options are defined below in the <<environment>> section.
+
+.gradle run
+[source, bash session]
+----
+$ EMAIL="..." PASSWORD="..." SITE_PATH="..." ./gradlew test
+----
+
+== Configuration
+
+[[environment]]
+=== Environment
+
+==== `SITE_PATH`
+
+*REQUIRED*
+
+The URL for the site which will have it's API tested, including the protocol.
+
+.Example
+[source, bash]
+----
+SITE_PATH="http://plasmodb.org/plasmo"
+----
+
+==== `EMAIL`
+
+*REQUIRED*
+
+Login email address to use for authenticating with the specified site.
+
+.Example
+[source, bash]
+----
+EMAIL="somebody@site.com"
+----
+
+==== `PASSWORD`
+
+*REQUIRED*
+
+Login password to use for authenticating with the specified site.
+
+.Example
+[source, bash]
+----
+PASSWORD="abc123"
+----
+
+WARNING: Consider using an environment file or `.envrc` to avoid putting this in
+your shell history.
+
+==== `AUTH_TYPE`
+
+OPTIONAL
+
+Authentication scheme to use when authenticating with the specified site.
+
+Possible values:
+
+* `OAUTH` (default value)
+* `LEGACY`

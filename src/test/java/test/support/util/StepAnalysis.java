@@ -1,6 +1,9 @@
 package test.support.util;
 
-import org.gusdb.wdk.model.api.GoEnrichmentRequest;
+import io.restassured.http.ContentType;
+import org.apache.http.HttpStatus;
+import org.gusdb.wdk.model.api.users.steps.analyses.plugins.GoEnrichmentRequest;
+import org.gusdb.wdk.model.api.users.steps.analyses.plugins.GoEnrichmentResponse;
 
 public class StepAnalysis {
 
@@ -9,19 +12,15 @@ public class StepAnalysis {
 
   private static final StepAnalysis INSTANCE = new StepAnalysis();
 
-  private StepAnalysis() {
-  }
-
   public GoEnrichmentRequest newGoEnrichmentParamsBody() {
     final GoEnrichmentRequest tmp = new GoEnrichmentRequest();
-    final GoEnrichmentRequest.FormParams params = new GoEnrichmentRequest.FormParams();
 
-    params.goAssociationsOntologies = new String[] { "Biological Process" };
-    params.goSubset = new String[] { "No" };
-    params.organism = new String[] { "Plasmodium adleri G01" };
-    params.pValueCutoff = new String[] { "0.06" };
-    params.goEvidenceCodes = new String[] { "Computed", "Curated" };
-    tmp.setFormParams(params);
+    tmp.getFormParams()
+        .setGoAssociationsOntologies(new String[] { "Biological Process" })
+        .setGoSubset(new String[] { "No" })
+        .setOrganism(new String[] { "Plasmodium adleri G01" })
+        .setpValueCutoff(new String[] { "0.06" })
+        .setGoEvidenceCodes(new String[] { "Computed", "Curated" });
 
     return tmp;
   }
@@ -34,15 +33,19 @@ public class StepAnalysis {
     return tmp;
   }
 
-  public GoEnrichmentRequest newCreateGoEnrichmentRequestBody() {
-    final GoEnrichmentRequest tmp = newGoEnrichmentParamsBody();
-
-    tmp.setDisplayName("Test Analysis Display Name");
-
-    return tmp;
-  }
-
   public static StepAnalysis getInstance() {
     return INSTANCE;
+  }
+
+  public GoEnrichmentResponse newGoEnrichment(Auth auth, String defaultUser, long stepId) {
+    return auth.prepRequest()
+        .contentType(ContentType.JSON)
+        .body(new GoEnrichmentRequest())
+        .expect()
+        .statusCode(HttpStatus.SC_OK)
+        .contentType(ContentType.JSON)
+        .when()
+        .post(BASE_PATH, defaultUser, stepId)
+        .as(GoEnrichmentResponse.class);
   }
 }

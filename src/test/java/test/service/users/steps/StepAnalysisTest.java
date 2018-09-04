@@ -3,6 +3,9 @@ package test.service.users.steps;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.AnalysisSummary;
+import org.gusdb.wdk.model.api.users.steps.analyses.plugins.GoEnrichmentFormParams;
+import org.gusdb.wdk.model.api.users.steps.analyses.plugins.GoEnrichmentResponse;
+import org.gusdb.wdk.model.api.users.steps.analyses.plugins.StepAnalysisPlugin;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -14,8 +17,7 @@ import test.support.util.Steps;
 @DisplayName("Step Analysis")
 class StepAnalysisTest extends StepsTest {
   public static final String BASE_PATH = StepsTest.BY_ID_PATH + "/analyses";
-  public static final String BY_ID_PATH = BASE_PATH + "/{analysisId}";
-  public static final String RESULT_PATH = BY_ID_PATH + "/result";
+  public static final String RESULT_PATH = StepAnalysis.BY_ID_PATH + "/result";
   public static final String STATUS_PATH = RESULT_PATH + "/status";
 
   private final Steps steps;
@@ -41,14 +43,14 @@ class StepAnalysisTest extends StepsTest {
   }
 
   @Test
-  @DisplayName("GET " + BASE_PATH)
+  @DisplayName("GET " + StepAnalysis.BASE_PATH)
   void getAnalysesList() {
     getAnalysisList();
   }
 
   @Test
   @Disabled
-  @DisplayName("POST " + BASE_PATH)
+  @DisplayName("POST " + StepAnalysis.BASE_PATH)
   void createAnalysisInstance() {
     auth.prepRequest()
         .contentType(ContentType.JSON)
@@ -97,7 +99,7 @@ class StepAnalysisTest extends StepsTest {
   }
 
   @ParameterizedTest
-  @DisplayName("GET " + BY_ID_PATH)
+  @DisplayName("GET " + StepAnalysis.BY_ID_PATH)
   @MethodSource("getAnalysisList")
   void getAnalysisDetails(final AnalysisSummary analysis) {
     auth.prepRequest()
@@ -105,33 +107,50 @@ class StepAnalysisTest extends StepsTest {
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
         .when()
-        .get(BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId());
+        .get(StepAnalysis.BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId());
   }
 
-  @Test
-  @Disabled
-  @DisplayName("PATCH " + BY_ID_PATH)
+  @ParameterizedTest(name = "Patch {arguments}")
+  @DisplayName("PATCH " + StepAnalysis.BY_ID_PATH)
+  @MethodSource("getAnalysisList")
   void updateAnalysisInstance(final AnalysisSummary analysis) {
+    final StepAnalysisPlugin<GoEnrichmentFormParams> in;
+    final GoEnrichmentResponse out;
+
+    in = stepAnalysis.newGoEnrichmentParamsBody();
+
+    in.getFormParams().setpValueCutoff(new String[]{"0.07"});
+
     auth.prepRequest()
         .contentType(ContentType.JSON)
         .body(stepAnalysis.newGoEnrichmentParamsBody())
         .expect()
-        .statusCode(HttpStatus.SC_OK)
-        .contentType(ContentType.JSON)
+        .statusCode(HttpStatus.SC_NO_CONTENT)
         .when()
-        .get(BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId());
+        .get(StepAnalysis.BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId());
+
+
+    out = auth.prepRequest()
+        .expect()
+        .contentType(ContentType.JSON)
+        .statusCode(HttpStatus.SC_OK)
+        .when()
+        .get(StepAnalysis.BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId())
+        .as(GoEnrichmentResponse.class);
+
+    Assertions.assertEquals(in, out);
   }
 
   @Test
   @Disabled
-  @DisplayName("DELETE " + BY_ID_PATH)
+  @DisplayName("DELETE " + StepAnalysis.BY_ID_PATH)
   void deleteAnalysisInstance(final AnalysisSummary analysis) {
     auth.prepRequest()
         .expect()
         .contentType(ContentType.JSON)
         .statusCode(HttpStatus.SC_NO_CONTENT)
         .when()
-        .delete(BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId());
+        .delete(StepAnalysis.BY_ID_PATH, DEFAULT_USER, stepId, analysis.getId());
   }
 
   /**
@@ -147,5 +166,11 @@ class StepAnalysisTest extends StepsTest {
         .when()
         .get(BASE_PATH, DEFAULT_USER, stepId)
         .getBody().as(AnalysisSummary[].class);
+  }
+
+  protected AnalysisSummary[] getNewAnalyses() {
+    return new AnalysisSummary[]{
+        stepAnalysis.newGoEnrichment(DEFAULT_USER, stepId)
+    };
   }
 }

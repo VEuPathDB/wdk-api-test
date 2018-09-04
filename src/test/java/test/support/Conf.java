@@ -10,7 +10,7 @@ public class Conf {
 
   public static final Auth.Type AUTH_TYPE;
 
-  public static final String USERNAME;
+  public static final String EMAIL;
   public static final String PASSWORD;
   public static final String SITE_PATH;
 
@@ -22,7 +22,7 @@ public class Conf {
     final Map<String, String> env = System.getenv();
 
     SITE_PATH = Objects.requireNonNull(env.get("SITE_PATH"));
-    USERNAME = Objects.requireNonNull(env.get("USERNAME"));
+    EMAIL = Objects.requireNonNull(env.get("EMAIL"));
     PASSWORD = Objects.requireNonNull(env.get("PASSWORD"));
     AUTH_TYPE = Auth.Type.valueOf(env.getOrDefault("AUTH_TYPE", Auth.Type.OAUTH.name()));
   }

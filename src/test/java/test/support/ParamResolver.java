@@ -13,8 +13,8 @@ public class ParamResolver implements ParameterResolver {
   private static final Class<?>[] INJECTABLES = {
       Auth.class,
       Questions.class,
-      Steps.class,
       StepAnalysis.class,
+      Steps.class,
       Users.class
   };
 
@@ -28,7 +28,19 @@ public class ParamResolver implements ParameterResolver {
   @Override
   public Object resolveParameter(ParameterContext paramCtx,
       ExtensionContext extCtx) throws ParameterResolutionException {
+    final Class cls = paramCtx.getParameter().getType();
+
+    if (cls.equals(Auth.class))
+      return Auth.getInstance();
+
+    if (cls.equals(Questions.class))
+      return Questions.getInstance();
+
+    if (cls.equals(StepAnalysis.class))
+      return StepAnalysis.getInstance();
+
     try {
+
       return paramCtx.getParameter()
           .getType()
           .getDeclaredMethod("getInstance")
