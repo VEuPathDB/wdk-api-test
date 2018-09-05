@@ -10,9 +10,13 @@ import java.util.Arrays;
 
 public class ParamResolver implements ParameterResolver {
 
+  private static final String ERR_NOT_REGISTERED =
+      "Class %s not registered in param resolver";
+
   private static final Class<?>[] INJECTABLES = {
       Auth.class,
       Questions.class,
+      Requests.class,
       StepAnalysis.class,
       Steps.class,
       Users.class
@@ -36,17 +40,19 @@ public class ParamResolver implements ParameterResolver {
     if (cls.equals(Questions.class))
       return Questions.getInstance();
 
+    if (cls.equals(Requests.class))
+      return Requests.getInstance(Auth.getInstance());
+
     if (cls.equals(StepAnalysis.class))
-      return StepAnalysis.getInstance();
+      return StepAnalysis.getInstance(Requests.getInstance(Auth.getInstance()));
 
-    try {
+    if (cls.equals(Steps.class))
+      return Steps.getInstance();
 
-      return paramCtx.getParameter()
-          .getType()
-          .getDeclaredMethod("getInstance")
-          .invoke(null);
-    } catch (Exception e) {
-      throw new ParameterResolutionException(e.getMessage());
-    }
+    if (cls.equals(Users.class))
+      return Users.getInstance();
+
+    throw new ParameterResolutionException(String.format(ERR_NOT_REGISTERED,
+        cls.getSimpleName()));
   }
 }

@@ -18,24 +18,42 @@ Currently only available with bash or bash compatible shells.
 $ ./run -h
 Usage:
 
-  run [-l][ -e <email address>][ -p <password>][ -u <site url>][ -- gradle args...]
+  run [args...] [-- gradle args...]
 
 Arguments:
 
-  [-e <email address>]    Default site login email address.  If this value is
-                          not provided it will be requested interactively.
+  -e <email address>    Default site login email address.  If this value is not
+                        provided it will be requested interactively.
 
-  [-p <password>]         Default site login password.  If this value is not
-                          provided it will be requested interactively.
+                        This value can also be set using the EMAIL environment
+                        variable.
 
-  [-u <site url>]         URL of the site which will have it's API tested.  If
-                          this value is not provided it will be requested
-                          interactively.
+  -p <password>         Default site login password.  If this value is not
+                        provided it will be requested interactively.
 
-  -h                      Show this help text
+                        This value can also be set using the PASSWORD
+                        environment variable.
 
-  -l                      Use legacy login scheme for authentication instead of
-                          OAuth.
+  -u <site url>         URL of the site which will have it's API tested.  If
+                        this value is not provided it will be requested
+                        interactively.
+
+                        This value can also be set using the SITE_PATH
+                        environment variable.
+
+  -s <test>             Test class or method to run.  Allows wildcard matching
+                        with '*'.  Can be specified multiple times to run
+                        multiple tests.
+
+  -c                    Clean run.  This runs gradle clean to clear out any
+                        remnants of previous builds or test runs.
+
+  -l                    Use legacy login scheme for authentication instead of
+                        OAuth.
+
+  -D <value>            Arbitrary JVM params.
+
+  -h                    Show this help text
 
 Additional Params:
 
@@ -44,11 +62,44 @@ Additional Params:
 
 Examples
 
-  Run in interactive mode (or with env vars) and tell gradle to print stacktraces:
+  Run in interactive mode (or with env vars) and tell gradle to print
+  stacktraces:
+
     run -- --stacktrace
 
   Run with all run args:
+
     run -l -e some@email.addr -p abc123 -u http://site.com/thing
+
+  Run specific tests:
+
+    run -s 'LoginTest' -s '*StepAnalysisTest\$GetAnalysisDetails.invalidUserId'
+----
+
+==== Running Specific Tests
+
+The shell script included accepts the arg `-s` which can be used to provide
+one or more specific tests to run.  The argument value provided is a string that
+allows wildcard matching to select which classes or methods to run.
+
+To specify more than one test, use the `-s` flag multiple times.
+
+.Running a specific test class
+[source, bash session]
+----
+$ ./run -s 'LoginTest'
+----
+
+.Running a single test method
+[source, bash session]
+----
+$ ./run -s 'QuestionsTest.getQuestions'
+----
+
+.Running a nested test class
+[source, bash session]
+----
+$ ./run -s '*StepAnalysisTest$GetAnalysisDetails'
 ----
 
 === With gradle(w)
@@ -67,7 +118,9 @@ options are defined below in the <<environment>> section.
 $ EMAIL="..." PASSWORD="..." SITE_PATH="..." ./gradlew test
 ----
 
+
 == Configuration
+
 
 [[environment]]
 === Environment

@@ -10,7 +10,7 @@ import test.support.Conf;
 import static test.support.Conf.SERVICE_PATH;
 
 public class Auth {
-  public static final Auth INSTANCE = new Auth();
+  private static Auth instance;
   private Auth() {}
 
   public static final String LOGIN_PATH = SERVICE_PATH + "/login";
@@ -66,6 +66,10 @@ public class Auth {
   }
 
   public static Auth getInstance() {
-    return INSTANCE;
+    if(instance == null) {
+      instance = new Auth();
+    }
+
+    return instance;
   }
 }

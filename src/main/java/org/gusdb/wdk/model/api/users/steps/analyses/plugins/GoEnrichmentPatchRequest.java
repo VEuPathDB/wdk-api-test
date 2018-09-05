@@ -3,11 +3,10 @@ package org.gusdb.wdk.model.api.users.steps.analyses.plugins;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class GoEnrichmentRequest extends
+public class GoEnrichmentPatchRequest extends
     StepAnalysisPlugin<GoEnrichmentFormParams> {
 
-  public GoEnrichmentRequest() {
+  public GoEnrichmentPatchRequest() {
     this.setFormParams(new GoEnrichmentFormParams());
   }
-
 }

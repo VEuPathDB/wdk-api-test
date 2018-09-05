@@ -3,6 +3,7 @@ package test.service.users;
 import org.junit.jupiter.api.DisplayName;
 import test.service.UsersTest;
 import test.support.util.Auth;
+import test.support.util.Requests;
 
 @DisplayName("Steps")
 public class StepsTest extends UsersTest {
@@ -11,7 +12,8 @@ public class StepsTest extends UsersTest {
 
   protected final Auth auth;
 
-  public StepsTest(Auth auth) {
+  public StepsTest(Auth auth, Requests req) {
+    super(req);
     this.auth = auth;
   }
 }

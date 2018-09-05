@@ -1,0 +1,144 @@
+#! /bin/bash
+
+email="$EMAIL"
+password="$PASSWORD"
+sitePath="$SITE_PATH"
+authType="OAUTH"
+
+# Test mode flags
+gradleFlags=""
+
+# Gradle / JVM Parameters
+gradleParams=""
+
+# Gradle tasks to run before test
+preSteps=""
+
+function printHelp {
+  echo "Usage:
+
+  run [args...] [-- gradle args...]
+
+Arguments:
+
+  -e <email address>    Default site login email address.  If this value is not
+                        provided it will be requested interactively.
+
+                        This value can also be set using the EMAIL environment
+                        variable.
+
+  -p <password>         Default site login password.  If this value is not
+                        provided it will be requested interactively.
+
+                        This value can also be set using the PASSWORD
+                        environment variable.
+
+  -u <site url>         URL of the site which will have it's API tested.  If
+                        this value is not provided it will be requested
+                        interactively.
+
+                        This value can also be set using the SITE_PATH
+                        environment variable.
+
+  -s <test>             Test class or method to run.  Allows wildcard matching
+                        with '*'.  Can be specified multiple times to run
+                        multiple tests.
+
+  -c                    Clean run.  This runs gradle clean to clear out any
+                        remnants of previous builds or test runs.
+
+  -l                    Use legacy login scheme for authentication instead of
+                        OAuth.
+
+  -D <value>            Arbitrary JVM params.
+
+  -h                    Show this help text
+
+Additional Params:
+
+  [gradle args...]        Additional arguments/parameters that will be passed
+                          to gradle.
+
+Examples
+
+  Run in interactive mode (or with env vars) and tell gradle to print
+  stacktraces:
+
+    run -- --stacktrace
+
+  Run with all run args:
+
+    run -l -e some@email.addr -p abc123 -u http://site.com/thing
+
+  Run specific tests:
+
+    run -s 'LoginTest' -s '*StepAnalysisTest\$GetAnalysisDetails.invalidUserId'
+"
+}
+
+invalid=0
+
+while getopts "cd:e:hlp:s:u:" opt; do
+  case $opt in
+    c)
+      preSteps="$preSteps clean"
+      ;;
+    h)
+      printHelp
+      exit 0
+      ;;
+    e)
+      email="$OPTARG"
+      ;;
+    p)
+      password="$OPTARG"
+      ;;
+    u)
+      sitePath="$OPTARG"
+      ;;
+    l)
+      authType="LEGACY"
+      ;;
+    s)
+      gradleFlags="${gradleFlags} --tests $OPTARG"
+      ;;
+    D)
+      gradleParams="${gradleParams} -D$OPTARG"
+      ;;
+    \?)
+      invalid=1
+      ;;
+  esac
+done
+
+shift "$(expr $OPTIND - 1)"
+
+if [ $invalid -eq 1 ]; then
+  echo
+  printHelp
+  exit 1
+fi
+
+if [[ -z "$email" ]]; then
+  echo -n "Username/Email: "
+  read email
+  echo
+fi
+
+if [[ -z "$password" ]]; then
+  echo -n "Password: "
+  read -s password
+  echo
+fi
+
+if [[ -z "$sitePath" ]]; then
+  echo -n "Base site (eg http://plasmodb.org/plasmo): "
+  read sitePath
+  echo
+fi
+
+EMAIL="${email:?}" \
+  PASSWORD="${password:?}" \
+  SITE_PATH="${sitePath:?}" \
+  AUTH_TYPE="${authType:?}" \
+  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} $@

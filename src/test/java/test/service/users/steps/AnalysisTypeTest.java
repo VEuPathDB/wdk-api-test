@@ -1,6 +1,5 @@
 package test.service.users.steps;
 
-import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.AnalysisTypeSummary;
 import org.junit.jupiter.api.*;
@@ -8,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import test.service.users.StepsTest;
 import test.support.util.Auth;
+import test.support.util.Requests;
 import test.support.util.Steps;
 
 @DisplayName("Analysis Type")
@@ -20,8 +20,8 @@ public class AnalysisTypeTest extends StepsTest {
 
   private long stepId;
 
-  AnalysisTypeTest(Steps steps, Auth auth) {
-    super(auth);
+  AnalysisTypeTest(Steps steps, Auth auth, Requests req) {
+    super(auth, req);
     this.steps = steps;
   }
 
@@ -45,10 +45,7 @@ public class AnalysisTypeTest extends StepsTest {
   @DisplayName("GET " + BY_NAME_PATH)
   @MethodSource("getAnalysisTypeList")
   void viewAnalysisType(AnalysisTypeSummary summary) {
-    auth.prepRequest()
-        .expect()
-        .statusCode(HttpStatus.SC_OK)
-        .contentType(ContentType.JSON)
+    req.authJsonRequest(HttpStatus.SC_OK)
         .when()
         .get(BY_NAME_PATH, DEFAULT_USER, stepId, summary.getName());
   }
@@ -59,13 +56,9 @@ public class AnalysisTypeTest extends StepsTest {
    * @return a parsed array of step analysis instance type summaries.
    */
   public AnalysisTypeSummary[] getAnalysisTypeList() {
-    return auth.prepRequest()
-      .expect()
-        .statusCode(HttpStatus.SC_OK)
-        .contentType(ContentType.JSON)
-      .when()
+    return req.authJsonRequest(HttpStatus.SC_OK)
+        .when()
         .get(BASE_PATH, DEFAULT_USER, stepId)
-      .getBody()
         .as(AnalysisTypeSummary[].class);
   }
 }

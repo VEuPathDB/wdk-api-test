@@ -1,7 +1,7 @@
 package test.support.util;
 
 public class Questions {
-  private static final Questions INSTANCE = new Questions();
+  private static Questions instance;
   private Questions() {}
 
   // TODO: This is intended to be boilerplate to create some question
@@ -10,6 +10,10 @@ public class Questions {
   }
 
   public static Questions getInstance() {
-    return INSTANCE;
+    if (instance == null) {
+      instance = new Questions();
+    }
+
+    return instance;
   }
 }

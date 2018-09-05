@@ -2,12 +2,10 @@ package test.service;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import test.support.Conf;
 import test.support.ParamResolver;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ExtendWith(ParamResolver.class)
 public class TestBase {
   @BeforeAll

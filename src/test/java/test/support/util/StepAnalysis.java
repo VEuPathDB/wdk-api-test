@@ -1,19 +1,29 @@
 package test.support.util;
 
-import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
-import org.gusdb.wdk.model.api.users.steps.analyses.plugins.GoEnrichmentRequest;
+import org.gusdb.wdk.model.api.users.steps.analyses.plugins.GoEnrichmentCreateRequest;
+import org.gusdb.wdk.model.api.users.steps.analyses.plugins.GoEnrichmentPatchRequest;
 import org.gusdb.wdk.model.api.users.steps.analyses.plugins.GoEnrichmentResponse;
+import org.gusdb.wdk.model.api.users.steps.analyses.plugins.NewAnalysisRequest;
 
 public class StepAnalysis {
+  private static StepAnalysis instance;
+  private final Requests req;
 
-  public static final String BASE_PATH = Steps.BY_ID_PATH + "/analyses";
-  public static final String BY_ID_PATH = BASE_PATH + "/{analysisId}";
+  private StepAnalysis(Requests req) {
+    this.req = req;
+  }
 
-  private static final StepAnalysis INSTANCE = new StepAnalysis();
+  public interface Paths {
+    String BASE = Steps.BY_ID_PATH + "/analyses";
+    String BY_ID = BASE + "/{analysisId}";
+    String RESULT = BY_ID + "/result";
+    String STATUS = RESULT + "/status";
+  }
 
-  public GoEnrichmentRequest newGoEnrichmentParamsBody() {
-    final GoEnrichmentRequest tmp = new GoEnrichmentRequest();
+
+  public GoEnrichmentPatchRequest newGoEnrichmentParamsBody() {
+    final GoEnrichmentPatchRequest tmp = new GoEnrichmentPatchRequest();
 
     tmp.getFormParams()
         .setGoAssociationsOntologies(new String[] { "Biological Process" })
@@ -25,27 +35,65 @@ public class StepAnalysis {
     return tmp;
   }
 
-  public GoEnrichmentRequest newGoEnrichmentNameBody() {
-    final GoEnrichmentRequest tmp = new GoEnrichmentRequest();
+  public GoEnrichmentPatchRequest newGoEnrichmentNameBody() {
+    final GoEnrichmentPatchRequest tmp = new GoEnrichmentPatchRequest();
 
     tmp.setDisplayName("Test Value");
 
     return tmp;
   }
 
-  public static StepAnalysis getInstance() {
-    return INSTANCE;
+  /**
+   * Deletes a step analysis instance.
+   *
+   * @param user       url param user id
+   * @param stepId     url param step id
+   * @param analysisId analysis instance id for deletion
+   */
+  public void deleteStepAnalysis(String user, long stepId, long analysisId) {
+    req.authRequest(HttpStatus.SC_NO_CONTENT)
+        .when()
+        .delete(Paths.BY_ID, user, stepId, analysisId);
   }
 
-  public GoEnrichmentResponse newGoEnrichment(Auth auth, String defaultUser, long stepId) {
-    return auth.prepRequest()
-        .contentType(ContentType.JSON)
-        .body(new GoEnrichmentRequest())
-        .expect()
-        .statusCode(HttpStatus.SC_OK)
-        .contentType(ContentType.JSON)
+  public NewAnalysisRequest[] analysisCreateRequestFac() {
+    return new NewAnalysisRequest[] {
+        new GoEnrichmentCreateRequest(),
+    };
+  }
+
+  /**
+   * Creates a new Go Enrichment step analysis instance
+   *
+   * @param user   url param user id
+   * @param stepId url param step id
+   *
+   * @return step analysis creation API response
+   */
+  public GoEnrichmentResponse newGoEnrichment(String user, long stepId) {
+    return req.authJsonPayloadRequest(new GoEnrichmentCreateRequest(), HttpStatus.SC_OK)
         .when()
-        .post(BASE_PATH, defaultUser, stepId)
+        .post(Paths.BASE, user, stepId)
         .as(GoEnrichmentResponse.class);
+  }
+
+  public void populateGoEnrichment(String user, long stepId, long analysisId) {
+    req.authJsonPayloadRequest(newGoEnrichmentParamsBody(), HttpStatus.SC_NO_CONTENT)
+        .contentType("")
+        .when()
+        .patch(Paths.BY_ID, user, stepId, analysisId);
+  }
+
+  public void runAnalysis(String user, long stepId, long analysisId) {
+    req.authJsonRequest(HttpStatus.SC_ACCEPTED)
+        .when()
+        .post(Paths.RESULT, user, stepId, analysisId);
+  }
+
+  public static StepAnalysis getInstance(Requests req) {
+    if (instance == null) {
+      instance = new StepAnalysis(req);
+    }
+    return instance;
   }
 }
