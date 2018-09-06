@@ -410,7 +410,7 @@ class StepAnalysisTest extends StepsTest {
       in = stepAnalysis.newGoEnrichmentParamsBody();
       in.getFormParams().setpValueCutoff(new String[]{"0.07"});
 
-      req.authJsonPayloadRequest(in, SC_NO_CONTENT, ContentType.TEXT)
+      req.authJsonPayloadRequest(in, SC_OK, ContentType.JSON)
           .when()
           .get(Paths.BY_ID, DEFAULT_USER, stepId, analysisId);
 
