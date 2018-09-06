@@ -17,7 +17,6 @@ public class ParamResolver implements ParameterResolver {
       Auth.class,
       Questions.class,
       Requests.class,
-      StepAnalysis.class,
       Steps.class,
       Users.class
   };
@@ -42,9 +41,6 @@ public class ParamResolver implements ParameterResolver {
 
     if (cls.equals(Requests.class))
       return Requests.getInstance(Auth.getInstance());
-
-    if (cls.equals(StepAnalysis.class))
-      return StepAnalysis.getInstance(Requests.getInstance(Auth.getInstance()));
 
     if (cls.equals(Steps.class))
       return Steps.getInstance();
