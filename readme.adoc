@@ -53,6 +53,12 @@ Arguments:
 
   -D <value>            Arbitrary JVM params.
 
+  -t <tags>             Only run tests annotated with a tag in this comma
+                        separated list of tags.
+
+  -T <tags>             Exclude tests annotated with a tag in this comma
+                        separated list of tags.
+
   -h                    Show this help text
 
 Additional Params:
@@ -74,6 +80,14 @@ Examples
   Run specific tests:
 
     run -s 'LoginTest' -s '*StepAnalysisTest\$GetAnalysisDetails.invalidUserId'
+
+  Exclude specific tags:
+
+    run -T some,tags,to,exclude
+
+  Run specific tags:
+
+    run -t some,tags,to,run
 ----
 
 ==== Running Specific Tests
