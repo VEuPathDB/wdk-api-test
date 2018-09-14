@@ -20,10 +20,20 @@ exTags=""
 
 # Sites
 readonly SITES=(
+  "amoeba"
   "clinepi"
+  "crypto"
+  "eupath"
   "fungi"
+  "giardia"
+  "microbiome"
+  "microsporidia"
+  "orthomcl"
+  "piroplasma"
   "plasmo"
   "toxo"
+  "trich"
+  "tritryp"
 )
 
 function printHelp {
