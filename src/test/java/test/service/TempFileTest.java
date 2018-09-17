@@ -19,9 +19,7 @@ public class TempFileTest extends TestBase {
       
       Response response =
 	  RestAssured
-	  .given()
-	  .contentType("multipart/form-data")
-	  .body("hi")
+	  .given().multiPart("file", "this is the contents")
 	  .expect()
 	  .statusCode(HttpStatus.SC_NO_CONTENT)
 	  .when()
