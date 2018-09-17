@@ -53,6 +53,12 @@ Arguments:
 
   -D <value>            Arbitrary JVM params.
 
+  -t <tags>             Only run tests annotated with a tag in this comma
+                        separated list of tags.
+
+  -T <tags>             Exclude tests annotated with a tag in this comma
+                        separated list of tags.
+
   -h                    Show this help text
 
 Additional Params:
@@ -74,6 +80,14 @@ Examples
   Run specific tests:
 
     run -s 'LoginTest' -s '*StepAnalysisTest\$GetAnalysisDetails.invalidUserId'
+
+  Exclude specific tags:
+
+    run -T some,tags,to,exclude
+
+  Run specific tags:
+
+    run -t some,tags,to,run
 ----
 
 ==== Running Specific Tests
@@ -116,6 +130,47 @@ options are defined below in the <<environment>> section.
 [source, bash session]
 ----
 $ EMAIL="..." PASSWORD="..." SITE_PATH="..." ./gradlew test
+----
+
+=== Site specific tests
+
+The test runner will automatically determine which site you are testing against
+and disable tests that are specifically marked with <<tagging,tags>> as tests
+for other sites.  For example if tests are run for the site
+`http://plasmodb.org/plasmo`, tests annotated with `clinepi`, `fungi`, `toxo`,
+etc. will be excluded from the test run.
+
+Tests that are not tagged with one of the specific tags below will not be
+affected by the site specific testing and will be included in the test run
+(unless otherwise enabled/disabled using the `-t/-T` flags).
+
+The sites/tags known to the test runner are:
+
+* `amoeba`
+* `clinepi`
+* `crypto`
+* `eupath`
+* `fungi`
+* `giardia`
+* `microbiome`
+* `microsporidia`
+* `orthomcl`
+* `piroplasma`
+* `plasmo`
+* `toxo`
+* `trich`
+* `tritryp`
+
+To mark a test as being data-specific to one particular site, mark the test with
+the `@Tag` annotation including the name of the site from the list above.
+
+.Example
+[source, java]
+----
+@Tag("orthomcl")
+void someTestMethod() {
+  ...
+}
 ----
 
 
@@ -174,3 +229,18 @@ Possible values:
 
 * `OAUTH` (default value)
 * `LEGACY`
+
+
+[[tagging]]
+=== Test Tagging
+
+JUnit5 allows the use of an `@Tag` annotation to mark tests, this can then be
+used to whitelist or blacklist tests to run.
+
+Using the `-t` or `-T` flags it is possible to control which tags are run or
+excluded using the test runner.
+
+Both the `-t` and `-T` flags expect a comma separated list of tag strings such
+as `-t foo,bar -T fizz,buzz`.
+
+See the https://junit.org/junit5/docs/current/user-guide/#writing-tests-tagging-and-filtering[JUnit documentation for test tagging]

@@ -14,6 +14,28 @@ gradleParams=""
 # Gradle tasks to run before test
 preSteps=""
 
+# Tags
+incTags=""
+exTags=""
+
+# Sites
+readonly SITES=(
+  "amoeba"
+  "clinepi"
+  "crypto"
+  "eupath"
+  "fungi"
+  "giardia"
+  "microbiome"
+  "microsporidia"
+  "orthomcl"
+  "piroplasma"
+  "plasmo"
+  "toxo"
+  "trich"
+  "tritryp"
+)
+
 function printHelp {
   echo "Usage:
 
@@ -52,6 +74,12 @@ Arguments:
 
   -D <value>            Arbitrary JVM params.
 
+  -t <tags>             Only run tests annotated with a tag in this comma
+                        separated list of tags.
+
+  -T <tags>             Exclude tests annotated with a tag in this comma
+                        separated list of tags.
+
   -h                    Show this help text
 
 Additional Params:
@@ -73,12 +101,45 @@ Examples
   Run specific tests:
 
     run -s 'LoginTest' -s '*StepAnalysisTest\$GetAnalysisDetails.invalidUserId'
+
+  Exclude specific tags:
+
+    run -T some,tags,to,exclude
+
+  Run specific tags:
+
+    run -t some,tags,to,run
 "
+}
+
+function join {
+  separator=$1
+  shift
+  joined=$(printf "$separator%s" "$@")
+  echo "${joined:1}"
+}
+
+function parseSite {
+  echo $1 | grep -oP "$(join '|' ${SITES[@]})" | head -1
+}
+
+function buildTagExclusions {
+  readonly current="${1:?}"
+  readonly tags="${2}"
+  readonly sites=`echo "${SITES[@]}" | sed "s/ $current\|$current //"`
+
+  exclusions=`join "," ${sites}`
+
+  if [[ ! -z "${tags}" ]]; then
+    exclusions="${exclusions},${tags}"
+  fi
+
+  echo "${exclusions}"
 }
 
 invalid=0
 
-while getopts "cd:e:hlp:s:u:" opt; do
+while getopts "cd:e:hlp:s:t:T:u:" opt; do
   case $opt in
     c)
       preSteps="$preSteps clean"
@@ -101,6 +162,12 @@ while getopts "cd:e:hlp:s:u:" opt; do
       ;;
     s)
       gradleFlags="${gradleFlags} --tests $OPTARG"
+      ;;
+    t)
+      incTags="$OPTARG"
+      ;;
+    T)
+      exTags="$OPTARG"
       ;;
     D)
       gradleParams="${gradleParams} -D$OPTARG"
@@ -137,8 +204,15 @@ if [[ -z "$sitePath" ]]; then
   echo
 fi
 
+# Parse site
+SITE_NAME=$(parseSite ${sitePath:?})
+
+if [[ ! -z "$incTags" ]]; then
+  incTags="-PincludeTags=$incTags"
+fi
+
 EMAIL="${email:?}" \
   PASSWORD="${password:?}" \
   SITE_PATH="${sitePath:?}" \
   AUTH_TYPE="${authType:?}" \
-  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} $@
+  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} -PexcludeTags="`buildTagExclusions "$SITE_NAME" "$exTags"`" $@

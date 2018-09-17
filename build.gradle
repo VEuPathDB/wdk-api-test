@@ -33,3 +33,13 @@ dependencies {
 test {
   useJUnitPlatform()
 }
+
+tasks.withType(Test) { Test task ->
+  task.useJUnitPlatform { org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions options ->
+    if (project.hasProperty("includeTags"))
+      options.includeTags project.getProperty("includeTags").split(',')
+
+    if (project.hasProperty("excludeTags"))
+      options.excludeTags project.getProperty("excludeTags").split(',')
+  }
+}
