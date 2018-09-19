@@ -96,7 +96,7 @@ Examples
 
   Run with all run args:
 
-    run -l -e some@email.addr -p abc123 -u http://site.com/thing
+    run -l -e some@email.addr -p abc123 -u http://username.plasmodb.org/plasmo.username
 
   Run specific tests:
 
@@ -187,19 +187,19 @@ if [ $invalid -eq 1 ]; then
 fi
 
 if [[ -z "$email" ]]; then
-  echo -n "Username/Email: "
+  echo -n "Site Login Email: "
   read email
   echo
 fi
 
 if [[ -z "$password" ]]; then
-  echo -n "Password: "
+  echo -n "Site Login Password: "
   read -s password
   echo
 fi
 
 if [[ -z "$sitePath" ]]; then
-  echo -n "Base site (eg http://plasmodb.org/plasmo): "
+  echo -n "Site URL (with protocol): "
   read sitePath
   echo
 fi

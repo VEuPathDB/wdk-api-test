@@ -12,6 +12,15 @@ public class ApiTest extends TestBase {
   public static final String KEYS_PATH = BASE_PATH + "/keys";
 
   @Test
+  void getApi() {
+    RestAssured.expect()
+        .contentType(ContentType.TEXT)
+        .statusCode(HttpStatus.SC_OK)
+        .when()
+        .get(BASE_PATH);
+  }
+
+  @Test
   void getKeys() {
     RestAssured.expect()
         .contentType(ContentType.JSON)
