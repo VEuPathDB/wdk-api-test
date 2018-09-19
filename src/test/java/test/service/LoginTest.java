@@ -35,11 +35,11 @@ public class LoginTest extends TestBase {
     RestAssured.given()
         .contentType(ContentType.JSON)
         .body(new LoginRequest(Conf.EMAIL, Conf.PASSWORD, Conf.SITE_PATH))
-      .expect()
+        .expect()
         .cookie(AUTH_COOKIE)
+        .contentType(ContentType.JSON)
         .statusCode(HttpStatus.SC_OK)
-    //        .contentType(ContentType.JSON) // FIXME: API does not return content type JSON
-      .when()
+        .when()
         .post(LOGIN_PATH);
   }
 }
