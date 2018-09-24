@@ -11,6 +11,7 @@ import static test.support.Conf.SERVICE_PATH;
 @DisplayName("OAuth")
 public class OAuthTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/oauth";
+  public static final String TOKEN_PATH = BASE_PATH + "/state-token";
 
   @Test
   @DisplayName("State Token")
@@ -19,6 +20,6 @@ public class OAuthTest extends TestBase {
         .statusCode(HttpStatus.SC_OK)
         .contentType(ContentType.JSON)
       .when()
-        .get(BASE_PATH + "/state-token");
+        .get(TOKEN_PATH);
   }
 }
