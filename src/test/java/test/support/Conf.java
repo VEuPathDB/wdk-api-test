@@ -1,7 +1,9 @@
 package test.support;
 
-import test.support.util.Auth;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import test.support.util.AuthUtil;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -11,21 +13,12 @@ public class Conf {
   /**
    * Site login authentication type
    */
-  public static final Auth.Type AUTH_TYPE;
+  public static final AuthUtil.Type AUTH_TYPE;
 
   /**
-   * Site login email address.
-   *
-   * Set via the environment variable <code>EMAIL</code>.
+   * Site login credential sets
    */
-  public static final String EMAIL;
-
-  /**
-   * Site login password
-   *
-   * Set via the environment variable <code>PASSWORD</code>.
-   */
-  public static final String PASSWORD;
+  public static final Credentials[] CREDENTIALS;
 
   /**
    * URL of site under test
@@ -75,14 +68,21 @@ public class Conf {
 
   static {
     final Map<String, String> env = System.getenv();
+    final ObjectMapper json = new ObjectMapper();
 
     SITE_PATH = Objects.requireNonNull(env.get("SITE_PATH"));
-    EMAIL = Objects.requireNonNull(env.get("EMAIL"));
-    PASSWORD = Objects.requireNonNull(env.get("PASSWORD"));
-    AUTH_TYPE = Auth.Type.valueOf(env.getOrDefault("AUTH_TYPE", Auth.Type.OAUTH.name()));
+    AUTH_TYPE = AuthUtil.Type.valueOf(env.getOrDefault("AUTH_TYPE", AuthUtil.Type.OAUTH.name()));
 
     // External service used for OAuth authentication
     OAUTH_SERVICE = env.getOrDefault("OAUTH_SERVICE",
         "https://eupathdb.org/oauth");
+
+    // Parse credentials from the command line
+    try {
+      CREDENTIALS = json.readerFor(Credentials[].class)
+          .readValue(env.getOrDefault("CREDENTIALS","[]"));
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

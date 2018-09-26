@@ -14,11 +14,11 @@ public class ParamResolver implements ParameterResolver {
       "Class %s not registered in param resolver";
 
   private static final Class<?>[] INJECTABLES = {
-      Auth.class,
-      Questions.class,
-      Requests.class,
-      Steps.class,
-      Users.class
+      AuthUtil.class,
+      QuestionUtil.class,
+      AuthenticatedRequestFactory.class,
+      StepUtil.class,
+      UserUtil.class
   };
 
   @Override
@@ -33,20 +33,20 @@ public class ParamResolver implements ParameterResolver {
       ExtensionContext extCtx) throws ParameterResolutionException {
     final Class cls = paramCtx.getParameter().getType();
 
-    if (cls.equals(Auth.class))
-      return Auth.getInstance();
+    if (cls.equals(AuthUtil.class))
+      return AuthUtil.getInstance();
 
-    if (cls.equals(Questions.class))
-      return Questions.getInstance();
+    if (cls.equals(QuestionUtil.class))
+      return QuestionUtil.getInstance();
 
-    if (cls.equals(Requests.class))
-      return Requests.getInstance(Auth.getInstance());
+    if (cls.equals(AuthenticatedRequestFactory.class))
+      return AuthenticatedRequestFactory.getInstance(AuthUtil.getInstance());
 
-    if (cls.equals(Steps.class))
-      return Steps.getInstance();
+    if (cls.equals(StepUtil.class))
+      return StepUtil.getInstance();
 
-    if (cls.equals(Users.class))
-      return Users.getInstance();
+    if (cls.equals(UserUtil.class))
+      return UserUtil.getInstance();
 
     throw new ParameterResolutionException(String.format(ERR_NOT_REGISTERED,
         cls.getSimpleName()));

@@ -22,17 +22,20 @@ Usage:
 
 Arguments:
 
-  -e <email address>    Default site login email address.  If this value is not
-                        provided it will be requested interactively.
+  -a <credentials>      Site login email address and password formatted as:
 
-                        This value can also be set using the EMAIL environment
-                        variable.
+                            -c {email}$USER_SPLIT_CHAR{password}
 
-  -p <password>         Default site login password.  If this value is not
-                        provided it will be requested interactively.
+                        This can be specified more than once to provide multiple
+                        users.  Leaving this out will disable tests that require
+                        a user session.  Only specifying one set of credentials
+                        will disable tests requiring more than one user.
 
-                        This value can also be set using the PASSWORD
-                        environment variable.
+                        This value can also be specified by setting the
+                        CREDENTIALS environment variable to a JSON array of
+                        objects containing the login email and password set as
+                        the properties \"email\" and \"pass\" respectively.
+
 
   -u <site url>         URL of the site which will have it's API tested.  If
                         this value is not provided it will be requested
@@ -73,9 +76,9 @@ Examples
 
     run -- --stacktrace
 
-  Run with all run args:
+  Run with single login and site:
 
-    run -l -e some@email.addr -p abc123 -u http://site.com/thing
+    run -l -a some@email.addr:abc123 -u http://username.plasmodb.org/plasmo.username
 
   Run specific tests:
 
@@ -129,8 +132,10 @@ options are defined below in the <<environment>> section.
 .gradle run
 [source, bash session]
 ----
-$ EMAIL="..." PASSWORD="..." SITE_PATH="..." ./gradlew test
+$ SITE_PATH="..." ./gradlew test
 ----
+
+== Specialized Tags
 
 === Site specific tests
 
@@ -173,6 +178,24 @@ void someTestMethod() {
 }
 ----
 
+=== Auth / Multi-Auth tests
+
+If a test requires an authenticated session it should be annotated with
+`@Tag("auth")` or `@Tag("multi-auth")` these specific tags will allow the test
+runner to enable or disable these tests based on whether or not the run command
+included user credentials.
+
+The explanation of each of those tags and their differences:
+
+`@Tag("auth")`::
+  The `auth` tag is used for marking tags that only require a single
+  authenticated user to run.  This should cover most cases.
+`@Tag("multi-auth")`::
+  The `multi-auth` tag is used to mark tests which require more than one user
+  session at a time
+
+WARNING: If a test requires a user session and is not annotated with an auth
+         tag, it _will_ fail on run.
 
 == Configuration
 
@@ -192,32 +215,15 @@ The URL for the site which will have it's API tested, including the protocol.
 SITE_PATH="http://plasmodb.org/plasmo"
 ----
 
-==== `EMAIL`
+==== `CREDENTIALS`
 
-*REQUIRED*
-
-Login email address to use for authenticating with the specified site.
+JSON array containing user login credentials.
 
 .Example
 [source, bash]
 ----
-EMAIL="somebody@site.com"
+CREDENTIALS='{"email":"somebody@site.com","pass":"password1"}'
 ----
-
-==== `PASSWORD`
-
-*REQUIRED*
-
-Login password to use for authenticating with the specified site.
-
-.Example
-[source, bash]
-----
-PASSWORD="abc123"
-----
-
-WARNING: Consider using an environment file or `.envrc` to avoid putting this in
-your shell history.
 
 ==== `AUTH_TYPE`
 

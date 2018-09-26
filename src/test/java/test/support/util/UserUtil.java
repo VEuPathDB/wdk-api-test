@@ -2,18 +2,18 @@ package test.support.util;
 
 import test.support.Conf;
 
-public class Users {
-  private static Users instance;
-  private Users() {}
+public class UserUtil {
+  private static UserUtil instance;
+  private UserUtil() {}
 
   public static final String BASE_PATH = Conf.SERVICE_PATH + "/users";
   public static final String BY_ID_PATH = BASE_PATH + "/{userId}";
 
-  public static final Users INSTANCE = new Users();
+  public static final UserUtil INSTANCE = new UserUtil();
 
-  public static Users getInstance() {
+  public static UserUtil getInstance() {
     if (instance == null) {
-      instance = new Users();
+      instance = new UserUtil();
     }
     return instance;
   }

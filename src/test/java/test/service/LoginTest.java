@@ -10,9 +10,12 @@ import org.gusdb.wdk.model.api.OAuthStateTokenResponse;
 import org.hamcrest.core.StringContains;
 import org.hamcrest.text.IsEmptyString;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.JUnitException;
+import test.support.Category;
 import test.support.Conf;
+import test.support.Credentials;
 import test.support.Header;
 
 import java.io.UnsupportedEncodingException;
@@ -23,7 +26,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsNot.not;
 import static test.support.Conf.*;
-import static test.support.util.Auth.LOGIN_PATH;
+import static test.support.util.AuthUtil.LOGIN_PATH;
 
 @DisplayName("Login")
 public class LoginTest extends TestBase {
@@ -32,6 +35,7 @@ public class LoginTest extends TestBase {
 
 
   @Test
+  @Tag(Category.AUTH_TEST)
   @DisplayName("User Login")
   void testLogin() throws UnsupportedEncodingException {
     switch (Conf.AUTH_TYPE) {
@@ -52,9 +56,10 @@ public class LoginTest extends TestBase {
    * Test Login using legacy authentication
    */
   private void testLegacy() {
+    final Credentials creds = Conf.CREDENTIALS[0];
     given()
         .contentType(ContentType.JSON)
-        .body(new LoginRequest(Conf.EMAIL, Conf.PASSWORD, Conf.SITE_PATH))
+        .body(new LoginRequest(creds.getEmail(), creds.getPassword(), Conf.SITE_PATH))
         .expect()
         .cookie(WDK_AUTH_COOKIE)
         .contentType(ContentType.JSON)
@@ -66,6 +71,7 @@ public class LoginTest extends TestBase {
   private void testOAuth2() throws UnsupportedEncodingException {
     final String oauthState, redirectPath;
     final Response oauthCheckRes, loginRes, oauthStateRes;
+    final Credentials creds = Conf.CREDENTIALS[0];
 
     // Get State Token
     oauthStateRes = expect()
@@ -102,7 +108,7 @@ public class LoginTest extends TestBase {
     loginRes = given()
         .redirects()
         .follow(true)
-        .formParams("username", Conf.EMAIL, "password", Conf.PASSWORD)
+        .formParams("username", creds.getEmail(), "password", creds.getPassword())
         .cookie(EUPATH_AUTH_COOKIE, oauthCheckRes.cookie(EUPATH_AUTH_COOKIE))
         .header(Header.REFERER, oauthCheckRes.header(Header.LOCATION))
         .expect()

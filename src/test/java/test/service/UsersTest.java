@@ -1,7 +1,7 @@
 package test.service;
 
 import org.junit.jupiter.api.DisplayName;
-import test.support.util.Requests;
+import test.support.util.AuthenticatedRequestFactory;
 
 import static test.support.Conf.SERVICE_PATH;
 
@@ -14,9 +14,9 @@ public class UsersTest extends TestBase {
   protected static final String DEFAULT_USER = "current";
   protected static final String INVALID_USER = "-1";
 
-  protected final Requests req;
+  protected final AuthenticatedRequestFactory req;
 
-  public UsersTest(Requests req) {
+  public UsersTest(AuthenticatedRequestFactory req) {
     this.req = req;
   }
 }

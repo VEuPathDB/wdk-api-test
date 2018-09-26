@@ -1,10 +1,10 @@
 package test.support.util;
 
-public class Steps {
-  private static Steps instance;
-  private Steps() {}
+public class StepUtil {
+  private static StepUtil instance;
+  private StepUtil() {}
 
-  public static final String BASE_PATH = Users.BY_ID_PATH + "/steps";
+  public static final String BASE_PATH = UserUtil.BY_ID_PATH + "/steps";
   public static final String BY_ID_PATH = BASE_PATH + "/{stepId}";
 
   /**
@@ -17,9 +17,9 @@ public class Steps {
     return 110719150L;
   }
 
-  public static Steps getInstance() {
+  public static StepUtil getInstance() {
     if (instance == null) {
-      instance = new Steps();
+      instance = new StepUtil();
     }
     return instance;
   }

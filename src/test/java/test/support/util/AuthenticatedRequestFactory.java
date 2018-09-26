@@ -3,10 +3,13 @@ package test.support.util;
 import io.restassured.http.ContentType;
 import io.restassured.specification.ResponseSpecification;
 
-public class Requests {
-  private static Requests instance;
-  private final Auth auth;
-  private Requests(Auth auth) {
+/**
+ * Helper / Factory for building common authenticated requests.
+ */
+public class AuthenticatedRequestFactory {
+  private static AuthenticatedRequestFactory instance;
+  private final AuthUtil auth;
+  private AuthenticatedRequestFactory(AuthUtil auth) {
     this.auth = auth;
   }
 
@@ -82,9 +85,9 @@ public class Requests {
         .contentType(retType);
   }
 
-  public static Requests getInstance(Auth auth) {
+  public static AuthenticatedRequestFactory getInstance(AuthUtil auth) {
     if (instance == null) {
-      instance = new Requests(auth);
+      instance = new AuthenticatedRequestFactory(auth);
     }
     return instance;
   }
