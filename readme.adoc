@@ -24,7 +24,7 @@ Arguments:
 
   -a <credentials>      Site login email address and password formatted as:
 
-                            -a {email}$USER_SPLIT_CHAR{password}
+                            -a {email}:{password}
 
                         This can be specified more than once to provide multiple
                         users.  Leaving this out will disable tests that require
