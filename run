@@ -223,12 +223,6 @@ while getopts "a:cd:hls:t:T:u:" opt; do
       printHelp
       exit 0
       ;;
-    e)
-      email="$OPTARG"
-      ;;
-    p)
-      password="$OPTARG"
-      ;;
     u)
       sitePath="$OPTARG"
       ;;
