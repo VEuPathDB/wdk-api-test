@@ -1,11 +1,10 @@
 package test.service;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import org.gusdb.wdk.model.api.UserIdQueryRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import test.support.util.RequestFactory;
 
 import static test.support.Conf.SERVICE_PATH;
 
@@ -13,17 +12,17 @@ import static test.support.Conf.SERVICE_PATH;
 public class UserIdQueryTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/user-id-query";
 
+  private final RequestFactory req;
+
+  UserIdQueryTest(RequestFactory req) {
+    this.req = req;
+  }
+
   @ParameterizedTest
   @DisplayName("Get User IDs for email list")
   @MethodSource("buildUserIdSummaryRequests")
-  void getUserIds(UserIdQueryRequest req) {
-    RestAssured.given()
-        .contentType(ContentType.JSON)
-        .body(req)
-      .expect()
-        .contentType(ContentType.JSON)
-      .when()
-        .post(BASE_PATH);
+  void getUserIds(UserIdQueryRequest body) {
+    req.jsonIoSuccessRequest(body).when().post(BASE_PATH);
   }
 
   private static UserIdQueryRequest[] buildUserIdSummaryRequests() {

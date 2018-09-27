@@ -257,7 +257,7 @@ if [ $invalid -eq 1 ]; then
 fi
 
 # Parse input credentials if present
-if [ ${#credTmp} -gt 0 ]; then
+if [ ${#credTmp[@]} -gt 0 ]; then
   credentials=$(pairsToJson $credTmp)
 fi
 

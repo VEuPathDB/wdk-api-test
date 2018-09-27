@@ -17,6 +17,7 @@ import test.support.Category;
 import test.support.Conf;
 import test.support.Credentials;
 import test.support.Header;
+import test.support.util.RequestFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -33,6 +34,11 @@ public class LoginTest extends TestBase {
   public static final String OAUTH_AUTHORIZE = OAUTH_SERVICE + "/authorize";
   public static final String OAUTH_LOGIN     = OAUTH_SERVICE + "/login";
 
+  private final RequestFactory req;
+
+  LoginTest(RequestFactory req) {
+    this.req = req;
+  }
 
   @Test
   @Tag(Category.AUTH_TEST)
@@ -57,13 +63,9 @@ public class LoginTest extends TestBase {
    */
   private void testLegacy() {
     final Credentials creds = Conf.CREDENTIALS[0];
-    given()
-        .contentType(ContentType.JSON)
-        .body(new LoginRequest(creds.getEmail(), creds.getPassword(), Conf.SITE_PATH))
-        .expect()
+    req.jsonIoSuccessRequest(
+        new LoginRequest(creds.getEmail(), creds.getPassword(), Conf.SITE_PATH))
         .cookie(WDK_AUTH_COOKIE)
-        .contentType(ContentType.JSON)
-        .statusCode(HttpStatus.SC_OK)
         .when()
         .post(LOGIN_PATH);
   }
@@ -74,9 +76,7 @@ public class LoginTest extends TestBase {
     final Credentials creds = Conf.CREDENTIALS[0];
 
     // Get State Token
-    oauthStateRes = expect()
-        .statusCode(HttpStatus.SC_OK)
-        .contentType(ContentType.JSON)
+    oauthStateRes = req.jsonSuccessRequest()
         .cookie(JSESS_AUTH_COOKIE)
         .when()
         .get(OAuthTest.TOKEN_PATH);
@@ -119,8 +119,6 @@ public class LoginTest extends TestBase {
 
     // Return to site to confirm oauth code and get WDK auth token
     given()
-        .filter(new RequestLoggingFilter())
-        .filter(new ResponseLoggingFilter())
         .redirects()
         .follow(false)
         .cookie(JSESS_AUTH_COOKIE, oauthStateRes.cookie(JSESS_AUTH_COOKIE))

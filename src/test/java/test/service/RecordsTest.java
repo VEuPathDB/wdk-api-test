@@ -4,27 +4,26 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
+import test.support.util.RequestFactory;
 
 import static test.support.Conf.SERVICE_PATH;
 
 public class RecordsTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/records";
 
+  private final RequestFactory req;
+
+  RecordsTest(RequestFactory req) {
+    this.req = req;
+  }
+
   @Test
   void getRecordNames() {
-    RestAssured.expect()
-        .statusCode(HttpStatus.SC_OK)
-        .contentType(ContentType.JSON)
-        .when()
-        .get(BASE_PATH);
+    req.jsonSuccessRequest().when().get(BASE_PATH);
   }
 
   @Test
   void getRecordDetails() {
-    RestAssured.expect()
-        .statusCode(HttpStatus.SC_OK)
-        .contentType(ContentType.JSON)
-        .when()
-        .get(BASE_PATH + "?format=expanded");
+    req.jsonSuccessRequest().when().get(BASE_PATH + "?format=expanded");
   }
 }
