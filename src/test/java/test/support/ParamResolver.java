@@ -19,7 +19,7 @@ public class ParamResolver implements ParameterResolver {
     put(AuthenticatedRequestFactory.class, null);
     put(AuthUtil.class, null);
     put(QuestionUtil.class, null);
-    put(RequestFactory.class, null);
+    put(GuestRequestFactory.class, null);
     put(StepUtil.class, null);
     put(UserUtil.class, null);
   }};

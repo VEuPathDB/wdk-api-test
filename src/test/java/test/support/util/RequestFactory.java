@@ -1,14 +1,45 @@
 package test.support.util;
 
-import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import org.apache.http.HttpStatus;
 
-public class RequestFactory {
-  private static RequestFactory instance;
-  private RequestFactory() {}
+public interface RequestFactory {
 
+  /**
+   * Builds a basic RestAssured request spec with no expectations.
+   *
+   * @return prepared RestAssured object
+   */
+  RequestSpecification emptyRequest();
+
+  /**
+   * Builds a request with nothing on it but the expectation of a 200 response
+   * code.
+   *
+   * Suitable for simple get requests.
+   *
+   * @return prepared RestAssured object
+   */
+  default ResponseSpecification successRequest() {
+    return request(HttpStatus.SC_OK);
+  }
+
+
+  /**
+   * Builds a request with nothing on it but the expected response content-type
+   * with a 200 status code.
+   *
+   * Suitable for simple get requests.
+   *
+   * @param contentType expected response content type
+   *
+   * @return prepared RestAssured object
+   */
+  default ResponseSpecification successRequest(ContentType contentType) {
+    return request(HttpStatus.SC_OK, contentType);
+  }
 
   /**
    * Builds a request with nothing on it but an expected response code.
@@ -19,8 +50,8 @@ public class RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  public ResponseSpecification request(final int statusCode) {
-    return RestAssured.expect().statusCode(statusCode);
+  default ResponseSpecification request(int statusCode) {
+    return emptyRequest().expect().statusCode(statusCode);
   }
 
   /**
@@ -34,11 +65,8 @@ public class RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  public ResponseSpecification request(
-      final int statusCode,
-      final ContentType contentType
-  ) {
-    return RestAssured.expect().statusCode(statusCode).contentType(contentType);
+  default ResponseSpecification request(int statusCode, ContentType contentType) {
+    return request(statusCode).contentType(contentType);
   }
 
   /**
@@ -51,11 +79,19 @@ public class RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  public ResponseSpecification jsonRequest(final int statusCode) {
+  default ResponseSpecification jsonRequest(int statusCode) {
     return request(statusCode, ContentType.JSON);
   }
 
-  public ResponseSpecification jsonSuccessRequest() {
+  /**
+   * Builds a request with nothing on it but the expectation of a 200 response
+   * code and JSON response content-type.
+   *
+   * Suitable for simple get requests expecting a response in JSON.
+   *
+   * @return prepared RestAssured object
+   */
+  default ResponseSpecification jsonSuccessRequest()  {
     return jsonRequest(HttpStatus.SC_OK);
   }
 
@@ -69,12 +105,32 @@ public class RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  public ResponseSpecification jsonPayloadRequest(
-      final Object body,
-      final int statusCode
+  default ResponseSpecification jsonPayloadRequest(Object body, int statusCode) {
+    return emptyRequest()
+        .contentType(ContentType.JSON)
+        .body(body)
+        .expect()
+        .statusCode(statusCode);
+  }
+
+  /**
+   * Builds a request prepared to send a given JSON payload with the expectation
+   * that the endpoint will respond with the given status code as well as the
+   * given content-type.
+   *
+   * @param body        outgoing json payload
+   * @param statusCode  expected response code
+   * @param contentType expected response content-type
+   *
+   * @return prepared RestAssured object.
+   */
+  default ResponseSpecification jsonPayloadRequest(
+      Object body,
+      int statusCode,
+      ContentType contentType
   ) {
-    return RestAssured.given().contentType(ContentType.JSON).body(body)
-        .expect().statusCode(statusCode);
+    return jsonPayloadRequest(body, statusCode)
+        .contentType(contentType);
   }
 
   /**
@@ -87,10 +143,7 @@ public class RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  public ResponseSpecification jsonIoRequest(
-      final Object body,
-      final int statusCode
-  ) {
+  default ResponseSpecification jsonIoRequest(Object body, int statusCode) {
     return jsonPayloadRequest(body, statusCode).contentType(ContentType.JSON);
   }
 
@@ -104,13 +157,7 @@ public class RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  public ResponseSpecification jsonIoSuccessRequest(final Object body) {
+  default ResponseSpecification jsonIoSuccessRequest(Object body) {
     return jsonIoRequest(body, HttpStatus.SC_OK);
-  }
-
-  public static RequestFactory getInstance() {
-    if (instance == null)
-      instance = new RequestFactory();
-    return instance;
   }
 }

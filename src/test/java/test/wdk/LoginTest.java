@@ -14,12 +14,11 @@ import test.support.Category;
 import test.support.Conf;
 import test.support.Credentials;
 import test.support.Header;
-import test.support.util.RequestFactory;
+import test.support.util.GuestRequestFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import static io.restassured.RestAssured.given;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsNot.not;
 import static test.support.Conf.*;
@@ -30,9 +29,9 @@ public class LoginTest extends TestBase {
   public static final String OAUTH_AUTHORIZE = OAUTH_SERVICE + "/authorize";
   public static final String OAUTH_LOGIN     = OAUTH_SERVICE + "/login";
 
-  private final RequestFactory req;
+  private final GuestRequestFactory req;
 
-  LoginTest(RequestFactory req) {
+  LoginTest(GuestRequestFactory req) {
     this.req = req;
   }
 
@@ -83,7 +82,7 @@ public class LoginTest extends TestBase {
     redirectPath = URLEncoder.encode(Conf.SITE_PATH, "utf-8");
 
     // Get EuPathDB login cookie
-    oauthCheckRes = given()
+    oauthCheckRes = req.emptyRequest()
         .queryParams(
           "response_type", "code",
           "scope", "openid email",
@@ -101,7 +100,7 @@ public class LoginTest extends TestBase {
         .get(OAUTH_AUTHORIZE);
 
     // Submit login
-    loginRes = given()
+    loginRes = req.emptyRequest()
         .redirects()
         .follow(true)
         .formParams("username", creds.getEmail(), "password", creds.getPassword())
@@ -114,7 +113,7 @@ public class LoginTest extends TestBase {
         .post(OAUTH_LOGIN);
 
     // Return to site to confirm oauth code and get WDK auth token
-    given()
+    req.emptyRequest()
         .redirects()
         .follow(false)
         .cookie(JSESS_AUTH_COOKIE, oauthStateRes.cookie(JSESS_AUTH_COOKIE))

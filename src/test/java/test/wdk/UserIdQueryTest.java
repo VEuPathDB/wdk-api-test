@@ -4,7 +4,7 @@ import org.gusdb.wdk.model.api.UserIdQueryRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.support.util.RequestFactory;
+import test.support.util.GuestRequestFactory;
 
 import static test.support.Conf.SERVICE_PATH;
 
@@ -12,14 +12,14 @@ import static test.support.Conf.SERVICE_PATH;
 public class UserIdQueryTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/user-id-query";
 
-  private final RequestFactory req;
+  private final GuestRequestFactory req;
 
-  UserIdQueryTest(RequestFactory req) {
+  UserIdQueryTest(GuestRequestFactory req) {
     this.req = req;
   }
 
-  @ParameterizedTest
-  @DisplayName("Get User IDs for email list")
+  @ParameterizedTest(name = "POST " + BASE_PATH)
+  @DisplayName("POST " + BASE_PATH)
   @MethodSource("buildUserIdSummaryRequests")
   void getUserIds(UserIdQueryRequest body) {
     req.jsonIoSuccessRequest(body).when().post(BASE_PATH);

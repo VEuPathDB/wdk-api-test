@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.support.util.RequestFactory;
+import test.support.util.GuestRequestFactory;
+
+import javax.naming.Name;
 
 import static test.support.Conf.SERVICE_PATH;
 
@@ -16,27 +18,27 @@ public class OntologiesTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/ontologies";
   public static final String BY_NAME_PATH = BASE_PATH + "/{ontologyName}";
 
-  public final RequestFactory req;
+  public final GuestRequestFactory req;
 
-  public OntologiesTest(RequestFactory req) {
+  public OntologiesTest(GuestRequestFactory req) {
     this.req = req;
   }
 
   @Test
-  @DisplayName("Get Ontology List")
+  @DisplayName("GET " + BASE_PATH)
   void getOntologies() {
     getOntologyList();
   }
 
-  @ParameterizedTest
-  @DisplayName("Get Ontology")
+  @ParameterizedTest(name = "GET " + BASE_PATH + "/{arguments}")
+  @DisplayName("GET " + BY_NAME_PATH)
   @MethodSource("getOntologyList")
   void getOntology(String name) {
     req.jsonSuccessRequest().when().get(BY_NAME_PATH, name);
   }
 
   @ParameterizedTest
-  @DisplayName("Post Ontology Path")
+  @DisplayName("POST " + BY_NAME_PATH)
   @MethodSource("getOntologyList")
   @Disabled("What is this endpoint?")
   void postOntologyPath(String name) {

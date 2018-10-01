@@ -1,17 +1,25 @@
 package test.wdk;
 
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import test.support.util.GuestRequestFactory;
+import test.support.util.RequestFactory;
+
 import static test.support.Conf.SERVICE_PATH;
 
 @DisplayName("Temporary File")
 public class TempFileTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/temporary-file";
   public static final String DELETE_PATH = BASE_PATH + "/{ID}";
+
+  private final RequestFactory req;
+
+  TempFileTest(GuestRequestFactory req) {
+    this.req = req;
+  }
 
   @Test
   @DisplayName("Create and delete temp file")
@@ -33,31 +41,27 @@ public class TempFileTest extends TestBase {
   }
 
   private Response testTempFileCreate() {
-    return
-    RestAssured
-    .given().multiPart("file", "this is the contents")
-    .expect()
-    .statusCode(HttpStatus.SC_NO_CONTENT)
-    .when()
-    .post(BASE_PATH);
+    return req.emptyRequest()
+        .multiPart("file", "this is the contents")
+        .expect()
+        .statusCode(HttpStatus.SC_NO_CONTENT)
+        .when()
+        .post(BASE_PATH);
   }
 
   private void testTempFileDelete(String fileId, String cookieId, int expectedStatus) {
-    RestAssured
-    .given()
-    .cookie("JSESSIONID", cookieId)
-    .expect()
-    .statusCode(expectedStatus)
-    .when().delete(DELETE_PATH, fileId);
+    req.emptyRequest()
+        .cookie("JSESSIONID", cookieId)
+        .expect()
+        .statusCode(expectedStatus)
+        .when()
+        .delete(DELETE_PATH, fileId);
   }
 
   private String getIrrelevantCookieId() {
-    return RestAssured
-        .expect()
-        .statusCode(HttpStatus.SC_OK)
+    return req.successRequest()
         .when()
         .get(SERVICE_PATH)
         .getCookie("JSESSIONID");
   }
-
 }
