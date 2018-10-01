@@ -1,8 +1,5 @@
-package test.service;
+package test.wdk;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.Test;
 import test.support.util.RequestFactory;
 

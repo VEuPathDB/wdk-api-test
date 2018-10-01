@@ -1,8 +1,5 @@
-package test.service;
+package test.wdk;
 
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
-import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.LoginRequest;
@@ -22,7 +19,6 @@ import test.support.util.RequestFactory;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsNot.not;

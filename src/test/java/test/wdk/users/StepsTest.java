@@ -1,7 +1,7 @@
-package test.service.users;
+package test.wdk.users;
 
 import org.junit.jupiter.api.DisplayName;
-import test.service.UsersTest;
+import test.wdk.UsersTest;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
 

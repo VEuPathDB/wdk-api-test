@@ -1,4 +1,4 @@
-package test.service;
+package test.wdk;
 
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;

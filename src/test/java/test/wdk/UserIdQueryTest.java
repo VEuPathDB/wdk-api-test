@@ -1,4 +1,4 @@
-package test.service;
+package test.wdk;
 
 import org.gusdb.wdk.model.api.UserIdQueryRequest;
 import org.junit.jupiter.api.DisplayName;

@@ -1,4 +1,4 @@
-package test.service;
+package test.wdk;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeAll;

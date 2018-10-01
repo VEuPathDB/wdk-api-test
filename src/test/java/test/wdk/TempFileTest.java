@@ -1,4 +1,4 @@
-package test.service;
+package test.wdk;
 
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -31,7 +31,7 @@ public class TempFileTest extends TestBase {
     // test real DELETE
     testTempFileDelete(tempFileId, cookieId, HttpStatus.SC_NO_CONTENT);
   }
-  
+
   private Response testTempFileCreate() {
     return
     RestAssured
@@ -41,16 +41,16 @@ public class TempFileTest extends TestBase {
     .when()
     .post(BASE_PATH);
   }
-  
+
   private void testTempFileDelete(String fileId, String cookieId, int expectedStatus) {
     RestAssured
     .given()
     .cookie("JSESSIONID", cookieId)
     .expect()
     .statusCode(expectedStatus)
-    .when().delete(DELETE_PATH, fileId);    
+    .when().delete(DELETE_PATH, fileId);
   }
-  
+
   private String getIrrelevantCookieId() {
     return RestAssured
         .expect()

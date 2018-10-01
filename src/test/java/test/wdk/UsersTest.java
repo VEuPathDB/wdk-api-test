@@ -1,4 +1,4 @@
-package test.service;
+package test.wdk;
 
 import org.junit.jupiter.api.DisplayName;
 import test.support.util.AuthenticatedRequestFactory;
