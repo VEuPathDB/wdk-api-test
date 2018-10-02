@@ -19,7 +19,7 @@ public class TestBase {
 
   @BeforeAll
   public static void baseSetup() {
-    RestAssured.config().objectMapperConfig(new ObjectMapperConfig()
+    RestAssured.config = RestAssured.config().objectMapperConfig(new ObjectMapperConfig()
         .jackson2ObjectMapperFactory((cls, charset) -> MAPPER));
     RestAssured.baseURI = Conf.SITE_PATH;
   }

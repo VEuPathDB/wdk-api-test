@@ -188,7 +188,8 @@ function buildTagExclusions {
   readonly tags="${2}"
   readonly sites=`echo "${SITES[@]}" | sed "s/ $current\|$current //"`
 
-  readonly credCount=${#credTmp[@]};
+  readonly credCount=$(echo ${credentials} grep -oP '\{\s*"email"' | wc -l);
+
   if [ $credCount -eq 1 ]; then
     adds='multi-auth'
   elif [ $credCount -eq 0 ]; then
