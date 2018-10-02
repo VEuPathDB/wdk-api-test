@@ -14,9 +14,13 @@ public class UsersTest extends TestBase {
   protected static final String DEFAULT_USER = "current";
   protected static final String INVALID_USER = "-1";
 
-  protected final AuthenticatedRequestFactory req;
+  private final AuthenticatedRequestFactory _authenticatedRequestFactory;
 
   public UsersTest(AuthenticatedRequestFactory req) {
-    this.req = req;
+    _authenticatedRequestFactory = req;
+  }
+  
+  protected AuthenticatedRequestFactory getAuthenticatedRequestFactory() {
+    return _authenticatedRequestFactory;
   }
 }
