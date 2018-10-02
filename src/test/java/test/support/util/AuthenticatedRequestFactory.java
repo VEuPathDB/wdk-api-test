@@ -1,5 +1,7 @@
 package test.support.util;
 
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
 
 /**
@@ -13,7 +15,9 @@ public class AuthenticatedRequestFactory implements RequestFactory {
   }
 
   public RequestSpecification emptyRequest() {
-    return auth.prepRequest();
+    return auth.prepRequest()
+        .filter(new RequestLoggingFilter())
+        .filter(new ResponseLoggingFilter());
   }
 
   public static AuthenticatedRequestFactory getInstance(AuthUtil auth) {
