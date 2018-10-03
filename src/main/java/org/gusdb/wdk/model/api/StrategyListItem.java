@@ -1,16 +1,19 @@
 package org.gusdb.wdk.model.api;
 
 import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 public class StrategyListItem {
   private long strategyId;
   private String description;
   private String name;
-  private String displayName;
+  private String author;
   private long latestStepId;
-  private String recordClassNamePlural;
+  private String recordClassName;
   private String signature;
-  private Date lastModifiedTime;
+  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSS")
+  private Date lastModified;
   private String organization;
   private Boolean isPublic;
   private Boolean isSaved;
@@ -35,11 +38,11 @@ public class StrategyListItem {
   public void setName(String name) {
     this.name = name;
   }
-  public String getDisplayName() {
-    return displayName;
+  public String getAuthor() {
+    return author;
   }
-  public void setDisplayName(String displayName) {
-    this.displayName = displayName;
+  public void setAuthor(String author) {
+    this.author = author;
   }
   public long getLatestStepId() {
     return latestStepId;
@@ -47,11 +50,11 @@ public class StrategyListItem {
   public void setLatestStepId(long latestStepId) {
     this.latestStepId = latestStepId;
   }
-  public String getRecordClassNamePlural() {
-    return recordClassNamePlural;
+  public String getRecordClassName() {
+    return recordClassName;
   }
-  public void setRecordClassNamePlural(String recordClassNamePlural) {
-    this.recordClassNamePlural = recordClassNamePlural;
+  public void setRecordClassName(String recordClassName) {
+    this.recordClassName = recordClassName;
   }
   public String getSignature() {
     return signature;
@@ -59,11 +62,11 @@ public class StrategyListItem {
   public void setSignature(String signature) {
     this.signature = signature;
   }
-  public Date getLastModifiedTime() {
-    return lastModifiedTime;
+  public Date getLastModified() {
+    return lastModified;
   }
-  public void setLastModifiedTime(Date lastModifiedTime) {
-    this.lastModifiedTime = lastModifiedTime;
+  public void setLastModified(Date lastModified) {
+    this.lastModified = lastModified;
   }
   public String getOrganization() {
     return organization;
