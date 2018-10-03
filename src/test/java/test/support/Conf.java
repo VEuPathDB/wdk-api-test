@@ -73,7 +73,11 @@ public class Conf {
     final Map<String, String> env = System.getenv();
     final ObjectMapper json = new ObjectMapper();
 
-    SITE_PATH = Objects.requireNonNull(env.get("SITE_PATH"));
+    String sitePath = Objects.requireNonNull(env.get("SITE_PATH"));
+    SITE_PATH = sitePath.endsWith("/")
+        ? sitePath.substring(0, sitePath.length() - 1)
+        : sitePath;
+
     AUTH_TYPE = AuthUtil.Type.valueOf(env.getOrDefault("AUTH_TYPE", AuthUtil.Type.OAUTH.name()));
     QA_AUTH = env.get("QA_AUTH");
 
