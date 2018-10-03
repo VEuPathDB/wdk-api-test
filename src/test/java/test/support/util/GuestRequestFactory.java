@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.specification.RequestSpecification;
+import test.support.Conf;
 
 public class GuestRequestFactory implements RequestFactory {
   private static GuestRequestFactory instance;
@@ -11,9 +12,15 @@ public class GuestRequestFactory implements RequestFactory {
 
   @Override
   public RequestSpecification emptyRequest() {
-    return RestAssured.given()
+    RequestSpecification req = RestAssured.given()
         .filter(new RequestLoggingFilter())
         .filter(new ResponseLoggingFilter());
+
+    if(Conf.QA_AUTH != null && !Conf.QA_AUTH.isEmpty()) {
+      req.cookie(Conf.QA_AUTH_COOKIE, Conf.QA_AUTH);
+    }
+
+    return req;
   }
 
   public static GuestRequestFactory getInstance() {

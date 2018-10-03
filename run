@@ -9,6 +9,9 @@ credentials="$CREDENTIALS"
 # Path to the site under test
 sitePath="$SITE_PATH"
 
+# QA Auth token
+qaAuth="$QA_AUTH"
+
 # Authentication type
 #
 # Controls what mechanism the tests should expect when
@@ -118,6 +121,11 @@ Arguments:
 
   -D <value>            Arbitrary JVM params.
 
+  -q                    QA Token.  \"auth_tkt\" value used to bypass the extra
+                        login step for QA sites.  This value can be attained by
+                        logging into a QA site in a browser and retrieving the
+                        \"auth_tkt\" query param given after a successful login.
+
   -t <tags>             Only run tests annotated with a tag in this comma
                         separated list of tags.
 
@@ -212,7 +220,7 @@ function interactiveSite {
   echo
 }
 
-while getopts "a:cd:hls:t:T:u:" opt; do
+while getopts "a:cd:hlq:s:t:T:u:" opt; do
   case $opt in
     a)
       credTmp+=("$OPTARG")
@@ -230,20 +238,23 @@ while getopts "a:cd:hls:t:T:u:" opt; do
     l)
       authType="LEGACY"
       ;;
+    q)
+      qaAuth="${OPTARG}";
+      ;;
     s)
-      gradleFlags="${gradleFlags} --tests $OPTARG"
+      gradleFlags="${gradleFlags} --tests $OPTARG";
       ;;
     t)
-      incTags="$OPTARG"
+      incTags="$OPTARG";
       ;;
     T)
-      exTags="$OPTARG"
+      exTags="$OPTARG";
       ;;
     D)
-      gradleParams="${gradleParams} -D$OPTARG"
+      gradleParams="${gradleParams} -D$OPTARG";
       ;;
     \?)
-      invalid=1
+      invalid=1;
       ;;
   esac
 done
@@ -278,4 +289,5 @@ fi
 CREDENTIALS="${credentials:-[]}" \
   SITE_PATH="${sitePath:?}" \
   AUTH_TYPE="${authType:?}" \
+  QA_AUTH="${qaAuth}" \
   ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} -PexcludeTags="`buildTagExclusions "$SITE_NAME" "$exTags"`" $@

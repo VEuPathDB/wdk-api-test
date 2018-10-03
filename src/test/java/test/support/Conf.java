@@ -56,6 +56,7 @@ public class Conf {
    */
   public static final String EUPATH_AUTH_COOKIE = "eupathdb-login";
 
+  public static final String QA_AUTH_COOKIE = "auth_tkt";
 
   /**
    * URL of service providing OAuth endpoints.
@@ -66,12 +67,15 @@ public class Conf {
    */
   public static final String OAUTH_SERVICE;
 
+  public static final String QA_AUTH;
+
   static {
     final Map<String, String> env = System.getenv();
     final ObjectMapper json = new ObjectMapper();
 
     SITE_PATH = Objects.requireNonNull(env.get("SITE_PATH"));
     AUTH_TYPE = AuthUtil.Type.valueOf(env.getOrDefault("AUTH_TYPE", AuthUtil.Type.OAUTH.name()));
+    QA_AUTH = env.get("QA_AUTH");
 
     // External service used for OAuth authentication
     OAUTH_SERVICE = env.getOrDefault("OAUTH_SERVICE",
