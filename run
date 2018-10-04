@@ -200,7 +200,7 @@ function buildTagExclusions {
   tags="${2}"
   sites=`echo "${SITES[@]}" | sed "s/ $current\|$current //"`
 
-  credCount=$(echo ${credentials} grep -oE '\{\s*"email"' | wc -l);
+  credCount=$(echo -n ${credentials} grep -oE '\{\s*"email"' | wc -l);
 
   if [ $credCount -eq 1 ]; then
     adds='multi-auth'
