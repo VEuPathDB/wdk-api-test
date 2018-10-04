@@ -219,7 +219,7 @@ function buildTagExclusions {
 
 # Interactively retrieve the path to the site
 function interactiveSite {
-  echo -n "Site URL (with protocol): "
+  echo -n "Site URL (with protocol & webepp name): "
   read sitePath
   echo
 }
