@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.support.Category;
@@ -41,7 +40,10 @@ public class StepsTest extends UsersTest {
   void createAndDeleteGuestStep() throws JsonProcessingException {
     
     Response stepResponse = createExonCountStep(_guestRequestFactory);
-    long stepId = stepResponse.body().jsonPath().getLong("ID"); // TODO: use JsonKeys
+    long stepId = stepResponse
+        .body()
+        .jsonPath()
+        .getLong("id"); // TODO: use JsonKeys
     String cookieId = stepResponse.getCookie("JSESSIONID");
 
     // delete the step
@@ -55,14 +57,15 @@ public class StepsTest extends UsersTest {
     AnswerSpec answerSpec = new AnswerSpec("GeneQuestions.GenesByExonCount");
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
+    paramsMap.put("scope", "Gene");
     paramsMap.put("num_exons_gte", "6");
     paramsMap.put("num_exons_lte", "7");
     answerSpec.setParameters(paramsMap);
     Step step = new Step(answerSpec);
     
     return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
-        .when()
-        .post(BASE_PATH, "current");    
+      .when()
+      .post(BASE_PATH, "current");    
   }
   
   private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
@@ -72,6 +75,7 @@ public class StepsTest extends UsersTest {
     .expect()
     .statusCode(expectedStatus)
     .when()
-    .delete(BY_ID_PATH, stepId); 
+      .delete(BY_ID_PATH, "current", stepId); 
   }
 }
+
