@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 # Credentials JSON array
 #
@@ -37,7 +37,7 @@ invalid=0
 credTmp=()
 
 # Sites
-readonly SITES=(
+SITES=(
   "amoeba"
   "clinepi"
   "crypto"
@@ -54,7 +54,7 @@ readonly SITES=(
   "tritryp"
 )
 
-readonly USER_SPLIT_CHAR=":"
+USER_SPLIT_CHAR=":"
 
 # Splits a given string on the first instance of
 # $USER_SPLIT_CHAR.
@@ -63,6 +63,10 @@ function splitPairs {
   echo "${input:?}" | sed "s#${USER_SPLIT_CHAR}# #"
 }
 
+# Print a json object with the 2 first input params as
+# values to the keys "email" and "pass"
+#
+# Params: <site-login-email> <site-login-pass>
 function pairToJson {
   input=("$@")
   printf '{"email":"%s","pass":"%s"},' "${input[0]}" $(echo -n ${input[1]} | base64)
@@ -192,11 +196,11 @@ function parseSite {
 #  - tags:        A comma separated list of additional tags
 #                 to exclude.
 function buildTagExclusions {
-  readonly current="${1:?}"
-  readonly tags="${2}"
-  readonly sites=`echo "${SITES[@]}" | sed "s/ $current\|$current //"`
+  current="${1:?}"
+  tags="${2}"
+  sites=`echo "${SITES[@]}" | sed "s/ $current\|$current //"`
 
-  readonly credCount=$(echo ${credentials} grep -oP '\{\s*"email"' | wc -l);
+  credCount=$(echo ${credentials} grep -oP '\{\s*"email"' | wc -l);
 
   if [ $credCount -eq 1 ]; then
     adds='multi-auth'
