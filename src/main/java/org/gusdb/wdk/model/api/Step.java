@@ -5,11 +5,21 @@ public class Step {
   String collapsedName;
   Boolean isCollapsed;
   AnswerSpec answerSpec;
+  AnswerFormatting answerFormatting;
   
-  public Step(AnswerSpec answerSpec) {
+  public Step(AnswerSpec answerSpec, AnswerFormatting answerFormatting) {
     this.answerSpec = answerSpec;
+    this.answerFormatting = answerFormatting;
   }
   
+  public AnswerFormatting getAnswerFormatting() {
+    return answerFormatting;
+  }
+
+  public void setAnswerFormatting(AnswerFormatting answerFormatting) {
+    this.answerFormatting = answerFormatting;
+  }
+
   public String getCustomName() {
     return customName;
   }
