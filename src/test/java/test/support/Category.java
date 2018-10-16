@@ -20,6 +20,7 @@ public final class Category {
   public static final String TOXO_TEST          = "toxo";
   public static final String TRICH_TEST         = "trich";
   public static final String TRITRYP_TEST       = "tritryp";
+  public static final String PUBLIC_STRATEGIES_TEST       = "public-strategies";
 
 
   private Category() {}
