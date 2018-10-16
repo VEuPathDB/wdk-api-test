@@ -39,7 +39,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create and delete a guest step")
   void createAndDeleteGuestStep() throws JsonProcessingException {
     
-    Response stepResponse = createExonCountStep(_guestRequestFactory);
+    Response stepResponse = createExonCountStepResponse(_guestRequestFactory);
     long stepId = stepResponse
         .body()
         .jsonPath()
@@ -53,7 +53,17 @@ public class StepsTest extends UsersTest {
     deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
   
-  private Response createExonCountStep(RequestFactory requestFactory) throws JsonProcessingException {
+  public static Response createExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
+
+    Step step = createExonCountStep(requestFactory);
+    
+    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
+      .when()
+      .post(BASE_PATH, "current");    
+  }
+  
+  //TODO: factor into util file
+  public static Step createExonCountStep(RequestFactory requestFactory) throws JsonProcessingException {
     AnswerSpec answerSpec = new AnswerSpec("GeneQuestions.GenesByExonCount");
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
@@ -61,12 +71,9 @@ public class StepsTest extends UsersTest {
     paramsMap.put("num_exons_gte", "6");
     paramsMap.put("num_exons_lte", "7");
     answerSpec.setParameters(paramsMap);
-    Step step = new Step(answerSpec);
-    
-    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
-      .when()
-      .post(BASE_PATH, "current");    
+    return new Step(answerSpec);
   }
+
   
   private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
 
