@@ -105,5 +105,8 @@ public class StrategyListItem {
     this.estimatedSize = estimatedSize;
   }
   
-  
+  // a simple toString method for use in reporting info about failed strats
+  public String toString() {
+    return "Strategy: " + getName() + " (signature " + getSignature() +")";
+  }
 }
