@@ -16,6 +16,7 @@ import test.support.util.GuestRequestFactory;
 import test.wdk.StrategyListTest;
 import test.wdk.UsersTest;
 
+@Disabled
 public class PublicStrategiesTest extends UsersTest {
   public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
   public static final String BY_ID_PATH = BASE_PATH + "/{strategyId}";
@@ -30,9 +31,9 @@ public class PublicStrategiesTest extends UsersTest {
   }
 
   @SuppressWarnings("unused")
-  private StrategyListItem[] getPublicStrategies() {
+  private static StrategyListItem[] getPublicStrategies() {
     StrategyListItem[] strategyList = 
-        _guestRequestFactory.jsonSuccessRequest()
+        GuestRequestFactory.getInstance().jsonSuccessRequest()
         .when().get(StrategyListTest.PUBLIC_STRATS_PATH)
         .as(StrategyListItem[].class);
     return strategyList;
@@ -41,7 +42,6 @@ public class PublicStrategiesTest extends UsersTest {
   @ParameterizedTest
   @DisplayName("Run public strategies")
   @MethodSource("getPublicStrategies")
-  @Disabled
   @Tag (Category.PUBLIC_STRATEGIES_TEST)
   void runPublicStrategy(StrategyListItem strategyListItem) throws JsonProcessingException {
     

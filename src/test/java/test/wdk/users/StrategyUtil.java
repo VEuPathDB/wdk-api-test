@@ -13,6 +13,7 @@ import test.wdk.UsersTest;
 public class StrategyUtil {
   
   public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
+  public static final String STRATEGY_ID_PATH = BASE_PATH + "/{id}";
 
   public static void runStrategyFromSignature(String signature, RequestFactory reqFactory) {
     
@@ -20,7 +21,13 @@ public class StrategyUtil {
     strategy.setSourceSignature(signature);
     Response response = reqFactory.jsonPayloadRequest(strategy, HttpStatus.SC_OK, ContentType.JSON)
         .when()
-        .post(BASE_PATH, "current");    
+        .post(BASE_PATH, "current");
+
+    long strategyId = response.body().jsonPath().getLong("id");
+
+    response = reqFactory.jsonPayloadRequest(strategy, HttpStatus.SC_OK, ContentType.JSON)
+        .when()
+        .get(STRATEGY_ID_PATH, "current", strategyId);        
     
     long rootStepId = response.body().jsonPath().getLong("latestStepId");
 
