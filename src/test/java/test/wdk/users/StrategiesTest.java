@@ -2,8 +2,6 @@ package test.wdk.users;
 
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.AnswerFormatting;
-import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatConfig;
-import org.gusdb.wdk.model.api.Pagination;
 import org.gusdb.wdk.model.api.Strategy;
 import org.gusdb.wdk.model.api.StrategyListItem;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.support.Category;
+import test.support.util.AnswerUtil;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
 import test.support.util.GuestRequestFactory;
@@ -55,12 +54,7 @@ import test.wdk.UsersTest;
       
       long rootStepId = response.body().jsonPath().getLong("latestStepId");
  
-      AnswerFormatting formatting = new AnswerFormatting("wdk-service-json");
-      Pagination paging = new Pagination();
-      paging.setNumRecords(1);
-      DefaultJsonAnswerFormatConfig formatConfig = new DefaultJsonAnswerFormatConfig();
-      formatConfig.setPagination(paging);
-      formatting.setFormatConfig(formatConfig);
+      AnswerFormatting formatting = AnswerUtil.getDefaultFormattingOneRecord();
 
       _guestRequestFactory.jsonPayloadRequest(formatting, HttpStatus.SC_OK, ContentType.JSON)
         .when()

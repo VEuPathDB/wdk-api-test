@@ -4,12 +4,12 @@ import java.util.List;
 
 public class DefaultJsonAnswerFormatConfig extends StandardAnswerFormatConfig {
 
-  Pagination pagination;
+  AnswerPagination pagination;
   List<SortSpec> sorting;
-  public Pagination getPagination() {
+  public AnswerPagination getPagination() {
     return pagination;
   }
-  public void setPagination(Pagination pagination) {
+  public void setPagination(AnswerPagination pagination) {
     this.pagination = pagination;
   }
   public List<SortSpec> getSorting() {

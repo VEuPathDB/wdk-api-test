@@ -8,8 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import test.support.util.GuestRequestFactory;
 
-import javax.naming.Name;
-
 import static test.support.Conf.SERVICE_PATH;
 
 @DisplayName("Ontologies")

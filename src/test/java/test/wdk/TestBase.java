@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.RestAssured;
 import io.restassured.config.ObjectMapperConfig;
-import io.restassured.mapper.factory.Jackson2ObjectMapperFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import test.support.Conf;
 import test.support.ParamResolver;
-
-import java.lang.reflect.Type;
 
 @ExtendWith(ParamResolver.class)
 public class TestBase {

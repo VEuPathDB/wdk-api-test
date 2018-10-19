@@ -1,10 +1,6 @@
 package test.wdk.users;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.http.HttpStatus;
-import org.gusdb.wdk.model.api.AnswerSpec;
 import org.gusdb.wdk.model.api.Step;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -14,6 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.support.Category;
+import test.support.util.AnswerUtil;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
 import test.support.util.GuestRequestFactory;
@@ -55,25 +52,12 @@ public class StepsTest extends UsersTest {
   
   public static Response createExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
 
-    Step step = createExonCountStep(requestFactory);
+    Step step = new Step(AnswerUtil.createExonCountAnswerSpec(requestFactory));
     
     return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
       .when()
       .post(BASE_PATH, "current");    
   }
-  
-  //TODO: factor into util file
-  public static Step createExonCountStep(RequestFactory requestFactory) throws JsonProcessingException {
-    AnswerSpec answerSpec = new AnswerSpec("GeneQuestions.GenesByExonCount");
-    Map<String, String> paramsMap = new HashMap<String, String>();
-    paramsMap.put("organism", "Plasmodium adleri G01");
-    paramsMap.put("scope", "Gene");
-    paramsMap.put("num_exons_gte", "6");
-    paramsMap.put("num_exons_lte", "7");
-    answerSpec.setParameters(paramsMap);
-    return new Step(answerSpec);
-  }
-
   
   private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
 
