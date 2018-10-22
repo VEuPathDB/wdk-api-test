@@ -9,6 +9,8 @@ import org.gusdb.wdk.model.api.AnswerSpec;
 import org.gusdb.wdk.model.api.DefaultAnswerReportRequest;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatConfig;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatting;
+import org.gusdb.wdk.model.api.GenomeViewRecordInstance;
+import org.gusdb.wdk.model.api.IsolateRecordInstance;
 import org.gusdb.wdk.model.api.RecordInstance;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -70,7 +72,7 @@ public class ReportersTest extends TestBase {
   @DisplayName("Test Blast Reporter Failure")
   void testBlastReporterFailure() throws JsonProcessingException {
     
-    // should return ? when the search is not BLAST 
+    // should return 400 when the search is not BLAST 
     AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
     DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
     DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("blastSummaryView", formatConfig);
@@ -79,5 +81,40 @@ public class ReportersTest extends TestBase {
         .when()
         .post(BASE_PATH);
   }
+  
+  @Test
+  @Tag(Category.PLASMO_TEST)
+  @DisplayName("Test isolates summary view reporter")
+  void testIsolatesSummaryView() throws JsonProcessingException {
+    AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
+    DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
+    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("geoIsolateSummaryView", formatConfig);
+    DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
+    Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
+        ContentType.JSON).when().post(BASE_PATH);
+    
+    // parsing into IsolateRecordInstance validates the response contents, and confirm we got exactly one record
+    List<IsolateRecordInstance> records = response.body().jsonPath().getList("records", IsolateRecordInstance.class);
+    assertEquals(1, records.size(), "Expected exactly one record, but got " + records.size());
+
+  }
+
+  @Test
+  @Tag(Category.PLASMO_TEST)
+  @DisplayName("Test Gene Genome summary view reporter")
+  void testGeneGenomeSummaryView() throws JsonProcessingException {
+    AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
+    DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
+    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("geneGenomeSummaryView", formatConfig);
+    DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
+    Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
+        ContentType.JSON).when().post(BASE_PATH);
+    
+    // parsing into IsolateRecordInstance validates the response contents, and confirm we got exactly one record
+    List<GenomeViewRecordInstance> records = response.body().jsonPath().getList("records", GenomeViewRecordInstance.class);
+    assertEquals(1, records.size(), "Expected exactly one record, but got " + records.size());
+
+  }
+
 
 }

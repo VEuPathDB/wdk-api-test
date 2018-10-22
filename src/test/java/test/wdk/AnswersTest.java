@@ -35,7 +35,7 @@ public class AnswersTest extends TestBase {
   @Test
   @Tag(Category.PLASMO_TEST)
   @DisplayName("Test answer GET (by POST)")
-  void testBlastReporterSuccess() throws JsonProcessingException {
+  void testSingleRecordAnswer() throws JsonProcessingException {
     AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
     DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
     DefaultAnswerRequestBody requestBody = new DefaultAnswerRequestBody(answerSpec);
