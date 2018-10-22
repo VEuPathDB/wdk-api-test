@@ -42,7 +42,13 @@ public class AnswerUtil {
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
     paramsMap.put("scope", "Gene");
-    paramsMap.put("Blast", "GCAGGAAATATGATTCCAGATAATGATAAAAATTCAAATTATAAATATCCAGCTGTTTATGATGACAAAGATAAAAAGTGTCATATATTATATATTGCAGCTCAAGAAAATAATGGTCCT");
+    paramsMap.put("BlastDatabaseOrganism", "Plasmodium falciparum 3D7");
+    paramsMap.put("BlastDatabaseType", "Transcripts");
+    paramsMap.put("-e", "10");
+    paramsMap.put("-b", "50");
+    paramsMap.put("-filter", "no");
+    paramsMap.put("BlastAlgorithm", "blastn");
+    paramsMap.put("BlastQuerySequence", "GCAGGAAATATGATTCCAGATAATGATAAAAATTCAAATTATAAATATCCAGCTGTTTATGATGACAAAGATAAAAAGTGTCATATATTATATATTGCAGCTCAAGAAAATAATGGTCCT");
     answerSpec.setParameters(paramsMap);
     return answerSpec;
   }

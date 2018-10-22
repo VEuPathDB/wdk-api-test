@@ -1,19 +1,19 @@
 package org.gusdb.wdk.model.api;
 
 public class DefaultJsonAnswerFormatting {
-  private String reporterName;
+  private String format;
   private DefaultJsonAnswerFormatConfig formatConfig;
   
-  public DefaultJsonAnswerFormatting(String reporterName, DefaultJsonAnswerFormatConfig formatConfig) {
-    this.reporterName = reporterName;
+  public DefaultJsonAnswerFormatting(String format, DefaultJsonAnswerFormatConfig formatConfig) {
+    this.format = format;
     this.formatConfig = formatConfig;
   }
   
-  public String getReporterName() {
-    return reporterName;
+  public String getFormat() {
+    return format;
   }
-  public void setReporterName(String reporterName) {
-    this.reporterName = reporterName;
+  public void setFormat(String format) {
+    this.format = format;
   }
   public DefaultJsonAnswerFormatConfig getFormatConfig() {
     return formatConfig;

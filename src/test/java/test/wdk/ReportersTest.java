@@ -1,5 +1,6 @@
 package test.wdk;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static test.support.Conf.SERVICE_PATH;
 
@@ -8,9 +9,11 @@ import org.gusdb.wdk.model.api.AnswerSpec;
 import org.gusdb.wdk.model.api.DefaultAnswerReportRequest;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatConfig;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatting;
+import org.gusdb.wdk.model.api.RecordInstance;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -31,11 +34,30 @@ public class ReportersTest extends TestBase {
 
   @Test
   @Tag (Category.PLASMO_TEST)
+  @DisplayName("Test Default Answer Reporter")
+  void testDefaultJsonReporterSuccess() throws JsonProcessingException {
+    
+    // should return ? when the search is not BLAST 
+    AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
+    DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
+    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("wdk-service-json", formatConfig);
+    DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
+    Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.JSON)
+        .when()
+        .post(BASE_PATH);
+    
+    // minimally, confirm we got exactly one record
+    List<RecordInstance> records = response.body().jsonPath().getList("records", RecordInstance.class);
+    assertEquals(1, records.size(), "Expected exactly one record, but got " + records.size());
+  }
+
+  @Test
+  @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Blast Reporter Success")
   void testBlastReporterSuccess() throws JsonProcessingException {
     AnswerSpec answerSpec = AnswerUtil.createBlastAnswerSpec(_guestRequestFactory);
     DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
-    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("BlastViewReporter", formatConfig);
+    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("blastSummaryView", formatConfig);
     DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.JSON)
         .when()
@@ -51,7 +73,7 @@ public class ReportersTest extends TestBase {
     // should return ? when the search is not BLAST 
     AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
     DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
-    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("BlastViewReporter", formatConfig);
+    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("blastSummaryView", formatConfig);
     DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
     _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_BAD_REQUEST)
         .when()

@@ -45,7 +45,7 @@ public class AnswersTest extends TestBase {
     
     // minimally, confirm we got exactly one record
     List<RecordInstance> records = response.body().jsonPath().getList("records", RecordInstance.class);
-    assertEquals(records.size(), 1);
+    assertEquals(1, records.size(), "Expected exactly one record, but got " + records.size());
 
   }
 
