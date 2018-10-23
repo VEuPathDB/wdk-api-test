@@ -9,7 +9,7 @@ import org.gusdb.wdk.model.api.AnswerSpec;
 import org.gusdb.wdk.model.api.DefaultAnswerReportRequest;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatConfig;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatting;
-import org.gusdb.wdk.model.api.GenomeViewRecordInstance;
+import org.gusdb.wdk.model.api.GenomeViewInstance;
 import org.gusdb.wdk.model.api.IsolateRecordInstance;
 import org.gusdb.wdk.model.api.RecordInstance;
 import org.junit.jupiter.api.DisplayName;
@@ -108,12 +108,10 @@ public class ReportersTest extends TestBase {
     DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("geneGenomeSummaryView", formatConfig);
     DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
-        ContentType.JSON).when().post(BASE_PATH);
+        ContentType.TEXT).when().post(BASE_PATH);
     
-    // parsing into IsolateRecordInstance validates the response contents, and confirm we got exactly one record
-    List<GenomeViewRecordInstance> records = response.body().jsonPath().getList("records", GenomeViewRecordInstance.class);
-    assertEquals(1, records.size(), "Expected exactly one record, but got " + records.size());
-
+    // parsing into IsolateRecordInstance validates the response contents
+    response.body().as(GenomeViewInstance.class);
   }
 
 
