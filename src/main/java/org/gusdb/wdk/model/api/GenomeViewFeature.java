@@ -51,9 +51,13 @@ public class GenomeViewFeature {
   public String getSourceId() {
     return sourceId;
   }
-  public boolean isForward() {
+  public boolean getIsForward() {
     return forward;
   }
+  public void setIsForward(boolean f) {
+    this.forward = f;
+  }
+
   public String getSequenceId() {
     return sequenceId;
   }

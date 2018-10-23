@@ -16,8 +16,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.util.List;
+import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -101,8 +103,8 @@ public class ReportersTest extends TestBase {
 
   @Test
   @Tag(Category.PLASMO_TEST)
-  @DisplayName("Test Gene Genome summary view reporter")
-  void testGeneGenomeSummaryView() throws JsonProcessingException {
+  @DisplayName("Test Gene Genome summary view reporter") 
+  void testGeneGenomeSummaryView() throws JsonProcessingException, IOException {
     AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
     DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
     DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("geneGenomeSummaryView", formatConfig);
@@ -111,7 +113,7 @@ public class ReportersTest extends TestBase {
         ContentType.TEXT).when().post(BASE_PATH);
     
     // parsing into IsolateRecordInstance validates the response contents
-    response.body().as(GenomeViewInstance.class);
+    new ObjectMapper().readValue(response.body().asString(), GenomeViewInstance.class);
   }
 
 

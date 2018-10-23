@@ -31,8 +31,9 @@ public class AnswerUtil {
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
     paramsMap.put("scope", "Gene");
-    paramsMap.put("num_exons_gte", "6");
-    paramsMap.put("num_exons_lte", "7");
+    // use counts that produce a small number of results
+    paramsMap.put("num_exons_gte", "16");
+    paramsMap.put("num_exons_lte", "17");
     answerSpec.setParameters(paramsMap);
     return answerSpec;
   }
