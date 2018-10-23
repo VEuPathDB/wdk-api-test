@@ -54,4 +54,12 @@ public class AnswerUtil {
     return answerSpec;
   }
 
+  public static AnswerSpec createPopsetByCountryAnswerSpec(RequestFactory requestFactory) throws JsonProcessingException {
+    AnswerSpec answerSpec = new AnswerSpec("PopsetQuestions.PopsetByCountry");
+    Map<String, String> paramsMap = new HashMap<String, String>();
+    paramsMap.put("country", "GAZ_00002560");
+    answerSpec.setParameters(paramsMap);
+    return answerSpec;
+  }
+
 }
