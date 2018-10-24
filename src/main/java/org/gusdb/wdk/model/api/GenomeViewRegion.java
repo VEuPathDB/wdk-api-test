@@ -8,10 +8,10 @@ public class GenomeViewRegion {
   private double percentLength;
   private double percentStart;
   
-  public boolean isForward() {
+  public boolean getIsForward() {
     return forward;
   }
-  public void setForward(boolean forward) {
+  public void setIsForward(boolean forward) {
     this.forward = forward;
   }
   public List<GenomeViewFeature> getFeatures() {

@@ -2,8 +2,9 @@ package org.gusdb.wdk.model.api;
 
 import java.util.List;
 
-public class IsolateRecordInstance extends RecordInstance {
+public class IsolateViewInstance {
   List<Isolate> isolates;
+  Integer maxLength;
 
   public List<Isolate> getIsolates() {
     return isolates;
@@ -11,6 +12,10 @@ public class IsolateRecordInstance extends RecordInstance {
 
   public void setIsolates(List<Isolate> isolates) {
     this.isolates = isolates;
+  }
+
+  public void setMaxLength(Integer i) {
+    maxLength = i;
   }
   
   

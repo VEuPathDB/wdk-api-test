@@ -10,14 +10,16 @@ import org.gusdb.wdk.model.api.DefaultAnswerReportRequest;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatConfig;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatting;
 import org.gusdb.wdk.model.api.GenomeViewInstance;
-import org.gusdb.wdk.model.api.IsolateRecordInstance;
+import org.gusdb.wdk.model.api.IsolateViewInstance;
 import org.gusdb.wdk.model.api.RecordInstance;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import java.util.List;
+import java.io.IOException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -85,24 +87,23 @@ public class ReportersTest extends TestBase {
   @Test
   @Tag(Category.PLASMO_TEST)
   @DisplayName("Test isolates summary view reporter")
-  void testIsolatesSummaryView() throws JsonProcessingException {
-    AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
+  void testIsolatesSummaryView() throws JsonProcessingException, IOException  {
+    AnswerSpec answerSpec = AnswerUtil.createPopsetByCountryAnswerSpec(_guestRequestFactory);
     DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
     DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("geoIsolateSummaryView", formatConfig);
     DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
-        ContentType.JSON).when().post(BASE_PATH);
+        ContentType.TEXT).when().post(BASE_PATH);
     
-    // parsing into IsolateRecordInstance validates the response contents, and confirm we got exactly one record
-    List<IsolateRecordInstance> records = response.body().jsonPath().getList("records", IsolateRecordInstance.class);
-    assertEquals(1, records.size(), "Expected exactly one record, but got " + records.size());
+    // parsing into IsolateRecordInstance validates the response contents
+    new ObjectMapper().readValue(response.body().asString(), IsolateViewInstance.class);
 
   }
 
   @Test
   @Tag(Category.PLASMO_TEST)
-  @DisplayName("Test Gene Genome summary view reporter")
-  void testGeneGenomeSummaryView() throws JsonProcessingException {
+  @DisplayName("Test Gene Genome summary view reporter") 
+  void testGeneGenomeSummaryView() throws JsonProcessingException, IOException {
     AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
     DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
     DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("geneGenomeSummaryView", formatConfig);
@@ -111,7 +112,7 @@ public class ReportersTest extends TestBase {
         ContentType.TEXT).when().post(BASE_PATH);
     
     // parsing into IsolateRecordInstance validates the response contents
-    response.body().as(GenomeViewInstance.class);
+    new ObjectMapper().readValue(response.body().asString(), GenomeViewInstance.class);
   }
 
 
