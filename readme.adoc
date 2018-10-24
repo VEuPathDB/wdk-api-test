@@ -22,61 +22,58 @@ Usage:
 
 Arguments:
 
-  -a <credentials>      Site login email address and password formatted as:
+  -a <credentials>    Site login email address and password formatted as:
 
-                            -a {email}:{password}
+                          -a {email}:{password}
 
-                        This can be specified more than once to provide multiple
-                        users.  Leaving this out will disable tests that require
-                        a user session.  Only specifying one set of credentials
-                        will disable tests requiring more than one user.
+                      This can be specified more than once to provide multiple
+                      users.  Leaving this out will disable tests that require a
+                      user session.  Only specifying one set of credentials will
+                      disable tests requiring more than one user.
 
-                        This value can also be specified by setting the
-                        CREDENTIALS environment variable to a JSON array of
-                        objects containing the login email and password set as
-                        the properties \"email\" and \"pass\" respectively.
+                      This value can also be specified by setting the
+                      CREDENTIALS environment variable to a JSON array of
+                      objects containing the login email and password set as the
+                      properties \"email\" and \"pass\" respectively.
 
 
-  -u <site url>         URL of the site which will have it's API tested.  If
-                        this value is not provided it will be requested
-                        interactively.
+  -u <site url>       URL of the site which will have it's API tested.
 
-                        The site url must include the protocol (http or https)
-                        as well as the webapp name.  For example:
-                          http://qa.plasmodb.org/plasmo.b40
+                      This value can also be set using the SITE_PATH environment
+                      variable.
 
-                        This value can also be set using the SITE_PATH
-                        environment variable.
+  -s <test>           Test class or method to run.  Allows wildcard matching
+                      with '*'.  Can be specified multiple times to run multiple
+                      tests.
 
-  -s <test>             Test class or method to run.  Allows wildcard matching
-                        with '*'.  Can be specified multiple times to run
-                        multiple tests.
+  -c                  Clean run.  This runs gradle clean to clear out any
+                      remnants of previous builds or test runs.
 
-  -c                    Clean run.  This runs gradle clean to clear out any
-                        remnants of previous builds or test runs.
+  -l                  Use legacy login scheme for authentication instead of
+                      OAuth.
 
-  -l                    Use legacy login scheme for authentication instead of
-                        OAuth.
+  -d                  Debug test run script (prints the commands that would be
+                      run)
 
-  -D <value>            Arbitrary JVM params.
+  -D <value>          Arbitrary JVM params.
 
-  -q                    QA Token.  \"auth_tkt\" value used to bypass the extra
-                        login step for QA sites.  This value can be attained by
-                        logging into a QA site in a browser and retrieving the
-                        \"auth_tkt\" query param given after a successful login.
+  -q                  QA Token.  \"auth_tkt\" value used to bypass the extra
+                      login step for QA sites.  This value can be attained by
+                      logging into a QA site in a browser and retrieving the
+                      \"auth_tkt\" query param given after a successful login.
 
-  -t <tags>             Only run tests annotated with a tag in this comma
-                        separated list of tags.
+  -t <tags>           Only run tests annotated with a tag in this comma
+                      separated list of tags.
 
-  -T <tags>             Exclude tests annotated with a tag in this comma
-                        separated list of tags.
+  -T <tags>           Exclude tests annotated with a tag in this comma separated
+                      list of tags.
 
-  -h                    Show this help text
+  -h                  Show this help text
 
 Additional Params:
 
-  [gradle args...]        Additional arguments/parameters that will be passed
-                          to gradle.
+  [gradle args...]    Additional arguments/parameters that will be passed
+                      to gradle.
 
 Examples
 
