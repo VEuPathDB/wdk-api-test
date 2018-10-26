@@ -16,8 +16,10 @@ public class AuthenticatedRequestFactory implements RequestFactory {
   }
 
   public RequestSpecification emptyRequest() {
-    RequestSpecification req = auth.prepRequest()
-        .filter(new RequestLoggingFilter())
+    RequestSpecification req = auth.prepRequest();
+
+    if(Conf.PRINT_REQUESTS)
+      req.filter(new RequestLoggingFilter())
         .filter(new ResponseLoggingFilter());
 
     if(Conf.QA_AUTH != null && !Conf.QA_AUTH.isEmpty()) {

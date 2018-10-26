@@ -34,33 +34,31 @@ Arguments:
                       This value can also be specified by setting the
                       CREDENTIALS environment variable to a JSON array of
                       objects containing the login email and password set as the
-                      properties \"email\" and \"pass\" respectively.
-
-
-  -u <site url>       URL of the site which will have it's API tested.
-
-                      This value can also be set using the SITE_PATH environment
-                      variable.
-
-  -s <test>           Test class or method to run.  Allows wildcard matching
-                      with '*'.  Can be specified multiple times to run multiple
-                      tests.
+                      properties "email" and "pass" respectively.
 
   -c                  Clean run.  This runs gradle clean to clear out any
                       remnants of previous builds or test runs.
-
-  -l                  Use legacy login scheme for authentication instead of
-                      OAuth.
 
   -d                  Debug test run script (prints the commands that would be
                       run)
 
   -D <value>          Arbitrary JVM params.
 
-  -q                  QA Token.  \"auth_tkt\" value used to bypass the extra
+  -f                  Force rerun tests.
+
+  -h                  Show this help text
+
+  -l                  Use legacy login scheme for authentication instead of
+                      OAuth.
+
+  -q                  QA Token.  "auth_tkt" value used to bypass the extra
                       login step for QA sites.  This value can be attained by
                       logging into a QA site in a browser and retrieving the
-                      \"auth_tkt\" query param given after a successful login.
+                      "auth_tkt" query param given after a successful login.
+
+  -s <test>           Test class or method to run.  Allows wildcard matching
+                      with '*'.  Can be specified multiple times to run multiple
+                      tests.
 
   -t <tags>           Only run tests annotated with a tag in this comma
                       separated list of tags.
@@ -68,7 +66,12 @@ Arguments:
   -T <tags>           Exclude tests annotated with a tag in this comma separated
                       list of tags.
 
-  -h                  Show this help text
+  -u <site url>       URL of the site which will have it's API tested.
+
+                      This value can also be set using the SITE_PATH environment
+                      variable.
+
+  -v                  Print verbose test info (including HTTP request details).
 
 Additional Params:
 
@@ -88,7 +91,7 @@ Examples
 
   Run specific tests:
 
-    run -s 'LoginTest' -s '*StepAnalysisTest\$GetAnalysisDetails.invalidUserId'
+    run -s 'LoginTest' -s '*StepAnalysisTest$GetAnalysisDetails.invalidUserId'
 
   Exclude specific tags:
 
@@ -97,6 +100,7 @@ Examples
   Run specific tags:
 
     run -t some,tags,to,run
+
 ----
 
 ==== Running Specific Tests

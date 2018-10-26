@@ -12,9 +12,11 @@ public class GuestRequestFactory implements RequestFactory {
 
   @Override
   public RequestSpecification emptyRequest() {
-    RequestSpecification req = RestAssured.given()
-        .filter(new RequestLoggingFilter())
-        .filter(new ResponseLoggingFilter());
+    RequestSpecification req = RestAssured.given();
+
+    if(Conf.PRINT_REQUESTS)
+      req.filter(new RequestLoggingFilter())
+          .filter(new ResponseLoggingFilter());
 
     if(Conf.QA_AUTH != null && !Conf.QA_AUTH.isEmpty()) {
       req.cookie(Conf.QA_AUTH_COOKIE, Conf.QA_AUTH);

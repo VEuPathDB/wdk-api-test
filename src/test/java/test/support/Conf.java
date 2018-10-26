@@ -69,6 +69,8 @@ public class Conf {
 
   public static final String QA_AUTH;
 
+  public static final boolean PRINT_REQUESTS;
+
   static {
     final Map<String, String> env = System.getenv();
     final ObjectMapper json = new ObjectMapper();
@@ -77,6 +79,8 @@ public class Conf {
     SITE_PATH = sitePath.endsWith("/")
         ? sitePath.substring(0, sitePath.length() - 1)
         : sitePath;
+
+    PRINT_REQUESTS="true".equals(env.get("PRINT_HTTP"));
 
     AUTH_TYPE = AuthUtil.Type.valueOf(env.getOrDefault("AUTH_TYPE", AuthUtil.Type.OAUTH.name()));
     QA_AUTH = env.get("QA_AUTH");

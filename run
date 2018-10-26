@@ -86,31 +86,29 @@ Arguments:
                       objects containing the login email and password set as the
                       properties \"email\" and \"pass\" respectively.
 
-
-  -u <site url>       URL of the site which will have it's API tested.
-
-                      This value can also be set using the SITE_PATH environment
-                      variable.
-
-  -s <test>           Test class or method to run.  Allows wildcard matching
-                      with '*'.  Can be specified multiple times to run multiple
-                      tests.
-
   -c                  Clean run.  This runs gradle clean to clear out any
                       remnants of previous builds or test runs.
-
-  -l                  Use legacy login scheme for authentication instead of
-                      OAuth.
 
   -d                  Debug test run script (prints the commands that would be
                       run)
 
   -D <value>          Arbitrary JVM params.
 
+  -f                  Force rerun tests.
+
+  -h                  Show this help text
+
+  -l                  Use legacy login scheme for authentication instead of
+                      OAuth.
+
   -q                  QA Token.  \"auth_tkt\" value used to bypass the extra
                       login step for QA sites.  This value can be attained by
                       logging into a QA site in a browser and retrieving the
                       \"auth_tkt\" query param given after a successful login.
+
+  -s <test>           Test class or method to run.  Allows wildcard matching
+                      with '*'.  Can be specified multiple times to run multiple
+                      tests.
 
   -t <tags>           Only run tests annotated with a tag in this comma
                       separated list of tags.
@@ -118,7 +116,12 @@ Arguments:
   -T <tags>           Exclude tests annotated with a tag in this comma separated
                       list of tags.
 
-  -h                  Show this help text
+  -u <site url>       URL of the site which will have it's API tested.
+
+                      This value can also be set using the SITE_PATH environment
+                      variable.
+
+  -v                  Print verbose test info (including HTTP request details).
 
 Additional Params:
 
@@ -304,7 +307,7 @@ invalid=0
 # Input credential array
 credTmp=()
 
-while getopts "a:cdD:hlq:s:t:T:u:" opt; do
+while getopts "a:cdD:fhlq:s:t:T:u:v" opt; do
   case ${opt} in
     a)
       credTmp+=("$OPTARG")
@@ -315,12 +318,15 @@ while getopts "a:cdD:hlq:s:t:T:u:" opt; do
     d)
       debugMode=1
       ;;
+    D)
+      gradleParams="${gradleParams} -D$OPTARG";
+      ;;
+    f)
+      rerun="--rerun-tasks"
+      ;;
     h)
       printHelp
       exit 0
-      ;;
-    u)
-      sitePath="$OPTARG"
       ;;
     l)
       authType="LEGACY"
@@ -337,8 +343,12 @@ while getopts "a:cdD:hlq:s:t:T:u:" opt; do
     T)
       exTags="$OPTARG";
       ;;
-    D)
-      gradleParams="${gradleParams} -D$OPTARG";
+    u)
+      sitePath="$OPTARG"
+      ;;
+    v)
+      verbose="--info";
+      PRINT_HTTP="true";
       ;;
     \?)
       invalid=1;
@@ -386,12 +396,15 @@ else
   exclusions="-PexcludeTags=\"${exclusions}\"";
 fi
 
+ADD_FLAGS=`removeItem "-- " $@`
+
 if [[ ${debugMode} -eq 1 ]]; then
   echo CREDENTIALS="${credentials:-[]}" \
   SITE_PATH="${sitePath:?}" \
   AUTH_TYPE="${authType:?}" \
   QA_AUTH="${qaAuth}" \
-  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} ${exclusions} $@
+  PRINT_HTTP="${PRINT_HTTP}" \
+  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} ${exclusions} ${verbose} ${rerun} ${ADD_FLAGS}
   exit 0
 fi
 
@@ -399,4 +412,5 @@ CREDENTIALS="${credentials:-[]}" \
   SITE_PATH="${sitePath:?}" \
   AUTH_TYPE="${authType:?}" \
   QA_AUTH="${qaAuth}" \
-  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} ${exclusions} $@
+  PRINT_HTTP="${PRINT_HTTP}" \
+  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} ${exclusions} ${verbose} ${rerun} ${ADD_FLAGS}
