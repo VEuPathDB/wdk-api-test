@@ -16,7 +16,6 @@ import test.support.util.GuestRequestFactory;
 import test.wdk.StrategyListTest;
 import test.wdk.UsersTest;
 
-@Disabled
 public class PublicStrategiesTest extends UsersTest {
   public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
   public static final String BY_ID_PATH = BASE_PATH + "/{strategyId}";
