@@ -2,14 +2,14 @@ package org.gusdb.wdk.model.api;
 
 import java.util.List;
 
-public class DefaultJsonAnswerFormatConfig extends StandardAnswerFormatConfig {
+public class StandardReportConfig extends BaseStandardReportConfig {
 
-  AnswerPagination pagination;
+  ReportPagination pagination;
   List<SortSpec> sorting;
-  public AnswerPagination getPagination() {
+  public ReportPagination getPagination() {
     return pagination;
   }
-  public void setPagination(AnswerPagination pagination) {
+  public void setPagination(ReportPagination pagination) {
     this.pagination = pagination;
   }
   public List<SortSpec> getSorting() {

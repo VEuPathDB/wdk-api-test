@@ -4,10 +4,10 @@ public class Step {
   String customName;
   String collapsedName;
   Boolean isCollapsed;
-  AnswerSpec answerSpec;
+  SearchConfig searchConfig;
   
-  public Step(AnswerSpec answerSpec) {
-    this.answerSpec = answerSpec;
+  public Step(SearchConfig searchConfig) {
+    this.searchConfig = searchConfig;
   }
   
   public String getCustomName() {
@@ -28,11 +28,11 @@ public class Step {
   public void setIsCollapsed(Boolean isCollapsed) {
     this.isCollapsed = isCollapsed;
   }
-  public AnswerSpec getAnswerSpec() {
-    return answerSpec;
+  public SearchConfig getSearchConfig() {
+    return searchConfig;
   }
-  public void setAnswerSpec(AnswerSpec answerSpec) {
-    this.answerSpec = answerSpec;
+  public void setSearchConfig(SearchConfig searchConfig) {
+    this.searchConfig = searchConfig;
   }
   
   

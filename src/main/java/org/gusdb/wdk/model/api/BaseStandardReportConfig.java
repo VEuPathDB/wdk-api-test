@@ -1,7 +1,7 @@
 package org.gusdb.wdk.model.api;
 import java.util.List;
 
-public class StandardAnswerFormatConfig {
+public class BaseStandardReportConfig {
   List<String> attributes;
   List<String> tables;
   String attachmentType;

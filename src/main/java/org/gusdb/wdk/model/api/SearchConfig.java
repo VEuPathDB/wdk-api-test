@@ -4,23 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AnswerSpec {
-  String questionName;
+public class SearchConfig {
   Map<String,String> parameters = new HashMap<String, String>();
   String legacyFilterName;
   Integer wdk_weight;
   List<FilterValueSpec> filters = new ArrayList<FilterValueSpec>();
   List<FilterValueSpec> viewFilters = new ArrayList<FilterValueSpec>();
   
-  public AnswerSpec(String questionName) {
-    this.questionName = questionName;
+  public SearchConfig() {
   }
-  public String getQuestionName() {
-    return questionName;
-  }
-  public void setQuestionName(String questionName) {
-    this.questionName = questionName;
-  }
+
   public Map<String, String> getParameters() {
     return parameters;
   }

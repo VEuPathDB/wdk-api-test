@@ -18,7 +18,7 @@ public class ParamResolver implements ParameterResolver {
   private static final Map<Class<?>, Object> INJECTABLES = new HashMap<Class<?>, Object>(){{
     put(AuthenticatedRequestFactory.class, null);
     put(AuthUtil.class, null);
-    put(QuestionUtil.class, null);
+    put(SearchUtil.class, null);
     put(GuestRequestFactory.class, null);
     put(StepUtil.class, null);
     put(UserUtil.class, null);

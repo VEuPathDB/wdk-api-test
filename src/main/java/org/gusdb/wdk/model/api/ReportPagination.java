@@ -1,6 +1,6 @@
 package org.gusdb.wdk.model.api;
 
-public class AnswerPagination {
+public class ReportPagination {
   int offset;
   int numRecords;
   

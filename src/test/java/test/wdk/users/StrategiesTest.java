@@ -1,7 +1,7 @@
 package test.wdk.users;
 
 import org.apache.http.HttpStatus;
-import org.gusdb.wdk.model.api.AnswerFormatting;
+import org.gusdb.wdk.model.api.StandardReportConfig;
 import org.gusdb.wdk.model.api.Strategy;
 import org.gusdb.wdk.model.api.StrategyListItem;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.support.Category;
-import test.support.util.AnswerUtil;
+import test.support.util.ReportUtil;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
 import test.support.util.GuestRequestFactory;
@@ -54,11 +54,11 @@ import test.wdk.UsersTest;
       
       long rootStepId = response.body().jsonPath().getLong("latestStepId");
  
-      AnswerFormatting formatting = AnswerUtil.getDefaultFormattingOneRecord();
+      StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
 
-      _guestRequestFactory.jsonPayloadRequest(formatting, HttpStatus.SC_OK, ContentType.JSON)
+      _guestRequestFactory.jsonPayloadRequest(reportConfig, HttpStatus.SC_OK, ContentType.JSON)
         .when()
-        .post(StepsTest.BY_ID_PATH + "/answer", "current", rootStepId);    
+        .post(StepsTest.BY_ID_PATH + "/reports/standard", "current", rootStepId);    
     }
 
 }
