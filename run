@@ -248,7 +248,7 @@ function excludeAuth() {
   categories="$@"
 
   # Remove the auth blocks
-  declare -r credCount=$(echo -n ${credentials:?} | grep -oE '\{\s*"email"' | wc -l);
+  declare -r credCount=$(echo -n ${credentials:-""} | grep -oE '\{\s*"email"' | wc -l);
 
   if [ "$credCount" -gt 1 ]; then
     categories=`removeItem "multi-auth" ${categories}`
