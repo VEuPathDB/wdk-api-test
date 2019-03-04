@@ -95,7 +95,7 @@ public class StepsTest extends UsersTest {
   
   public static Response createExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
 
-    Step step = new Step(ReportUtil.createExonCountSearchConfig(requestFactory));
+    Step step = new Step(ReportUtil.createExonCountSearchConfig(requestFactory), "GenesByExonCount");
     
     return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
       .when()

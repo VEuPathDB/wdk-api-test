@@ -5,9 +5,18 @@ public class Step {
   String collapsedName;
   Boolean isCollapsed;
   SearchConfig searchConfig;
+  String searchName;
   
-  public Step(SearchConfig searchConfig) {
+  public Step(SearchConfig searchConfig, String searchName) {
     this.searchConfig = searchConfig;
+    this.searchName = searchName;
+  }
+  
+  public String getSearchName() {
+    return searchName;
+  }
+  public void setSearchName(String searchName) {
+    this.searchName = searchName;
   }
   
   public String getCustomName() {
