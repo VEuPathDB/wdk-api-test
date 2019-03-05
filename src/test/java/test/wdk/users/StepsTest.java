@@ -1,5 +1,7 @@
 package test.wdk.users;
 
+import static test.support.Conf.SERVICE_PATH;
+
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.Step;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +26,7 @@ import test.wdk.UsersTest;
     - all params valid
     - not all valid - expect 422
   - with step param
-   - if non-null should fail
+   - if non-null - expect 422
   - with dataset param
    - if null should fail
    - not sure if we need extra test for this but can't hurt
@@ -76,10 +78,10 @@ public class StepsTest extends UsersTest {
   
   @Test
   @Tag (Category.PLASMO_TEST)
-  @DisplayName("Create and delete a guest step")
+  @DisplayName("Create and delete a valid guest step")
   void createAndDeleteGuestStep() throws JsonProcessingException {
     
-    Response stepResponse = createExonCountStepResponse(_guestRequestFactory);
+    Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
     long stepId = stepResponse
         .body()
         .jsonPath()
@@ -93,16 +95,65 @@ public class StepsTest extends UsersTest {
     deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
   
-  public static Response createExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
+  public static Response createValidExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
 
-    Step step = new Step(ReportUtil.createExonCountSearchConfig(requestFactory), "GenesByExonCount");
+    Step step = new Step(ReportUtil.createValidExonCountSearchConfig(requestFactory), "GenesByExonCount");
     
     return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
       .when()
       .post(BASE_PATH, "current");    
   }
   
-  private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Create invalid guest step")
+  void createInvalidGuestStep() throws JsonProcessingException {
+    
+    Step step = new Step(ReportUtil.createInvalidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+    
+    _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY, ContentType.JSON)
+      .when()
+      .post(BASE_PATH, "current");    
+  }
+ 
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Delete invalid step ID")
+  void deleteInvalidStepId() throws JsonProcessingException {
+    
+    String cookieId = getIrrelevantCookieId();
+    deleteStep(1000000000, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
+  }
+
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Create invalid transform step")
+  void createInvalidTransformStep() throws JsonProcessingException {
+    
+    Step leafStep = new Step(ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+    
+    Response stepResponse = _guestRequestFactory.jsonPayloadRequest(leafStep, HttpStatus.SC_OK, ContentType.JSON)
+      .when()
+      .post(BASE_PATH, "current");    
+
+    long leafStepId = stepResponse
+        .body()
+        .jsonPath()
+        .getLong("id"); // TODO: use JsonKeys
+    String cookieId = stepResponse.getCookie("JSESSIONID");
+    
+    Step transformStep = new Step(ReportUtil.createValidOrthologsSearchConfig(_guestRequestFactory, leafStepId), "GenesByOrthologs");
+
+    stepResponse = _guestRequestFactory.jsonPayloadRequest(transformStep, HttpStatus.SC_UNPROCESSABLE_ENTITY, ContentType.JSON)
+        .cookie("JSESSIONID", cookieId)
+        .when()
+        .post(BASE_PATH, "current");    
+
+    // delete the leaf step, to clean up
+    deleteStep(leafStepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+  }
+
+ private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
 
     requestFactory.emptyRequest()
     .cookie("JSESSIONID", cookieId)
@@ -111,5 +162,13 @@ public class StepsTest extends UsersTest {
     .when()
       .delete(BY_ID_PATH, "current", stepId); 
   }
+  
+  private String getIrrelevantCookieId() {
+    return _guestRequestFactory.successRequest()
+        .when()
+        .get(SERVICE_PATH)
+        .getCookie("JSESSIONID");
+  }
+
 }
 

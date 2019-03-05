@@ -19,13 +19,21 @@ public class ReportUtil {
     return searchConfig;
   }
     
-  public static SearchConfig createExonCountSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+  public static SearchConfig createValidExonCountSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
     paramsMap.put("scope", "Gene");
     // use counts that produce a small number of results
     paramsMap.put("num_exons_gte", "16");
     paramsMap.put("num_exons_lte", "17");
+    SearchConfig searchConfig = new SearchConfig();
+    searchConfig.setParameters(paramsMap);
+    return searchConfig;
+  }
+  
+  public static SearchConfig createInvalidExonCountSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+    Map<String, String> paramsMap = new HashMap<String, String>();
+    paramsMap.put("SILLY", "Plasmodium adleri G01");
     SearchConfig searchConfig = new SearchConfig();
     searchConfig.setParameters(paramsMap);
     return searchConfig;
@@ -54,5 +62,15 @@ public class ReportUtil {
     searchConfig.setParameters(paramsMap);
     return searchConfig;
   }
+  
+  public static SearchConfig createValidOrthologsSearchConfig(RequestFactory requestFactory, Long leafStepId) throws JsonProcessingException {
+    Map<String, String> paramsMap = new HashMap<String, String>();
+    paramsMap.put("organism", "Plasmodium adleri G01");
+    paramsMap.put("gene_result", leafStepId.toString());
+    SearchConfig searchConfig = new SearchConfig();
+    searchConfig.setParameters(paramsMap);
+    return searchConfig;
+  }
+
 
 }

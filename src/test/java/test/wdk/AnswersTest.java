@@ -36,7 +36,7 @@ public class AnswersTest extends TestBase {
   @Tag(Category.PLASMO_TEST)
   @DisplayName("Test answer GET (by POST)")
   void testSingleRecordAnswer() throws JsonProcessingException {
-    SearchConfig searchConfig = ReportUtil.createExonCountSearchConfig(_guestRequestFactory);
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequestBody requestBody = new DefaultReportRequestBody(searchConfig);
     requestBody.setFormatConfig(reportConfig);
