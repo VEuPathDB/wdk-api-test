@@ -2,7 +2,14 @@ package test.wdk.users;
 
 import static test.support.Conf.SERVICE_PATH;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpStatus;
+import org.gusdb.wdk.model.api.FilterValueSpec;
+import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.Step;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -111,7 +118,7 @@ public class StepsTest extends UsersTest {
     
     Step step = new Step(ReportUtil.createInvalidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
     
-    _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY, ContentType.JSON)
+    _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
       .when()
       .post(BASE_PATH, "current");    
   }
@@ -144,7 +151,8 @@ public class StepsTest extends UsersTest {
     
     Step transformStep = new Step(ReportUtil.createValidOrthologsSearchConfig(_guestRequestFactory, leafStepId), "GenesByOrthologs");
 
-    stepResponse = _guestRequestFactory.jsonPayloadRequest(transformStep, HttpStatus.SC_UNPROCESSABLE_ENTITY, ContentType.JSON)
+    stepResponse = _guestRequestFactory.jsonPayloadRequest(transformStep, HttpStatus.SC_UNPROCESSABLE_ENTITY)
+        .request()
         .cookie("JSESSIONID", cookieId)
         .when()
         .post(BASE_PATH, "current");    
@@ -152,6 +160,45 @@ public class StepsTest extends UsersTest {
     // delete the leaf step, to clean up
     deleteStep(leafStepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
   }
+  
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Create a step with a step filter")
+  void createStepWithValidStepFilter() throws JsonProcessingException {
+   
+    SearchConfig searchConfig = createSearchConfigWithStepFilter("matchedTranscriptFilter");
+    Step step = new Step(searchConfig, "GenesByExonCount");
+    
+    Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
+      .when()
+      .post(BASE_PATH, "current");    
+ 
+    long stepId = stepResponse
+        .body()
+        .jsonPath()
+        .getLong("id"); // TODO: use JsonKeys
+    String cookieId = stepResponse.getCookie("JSESSIONID");
+
+    // delete the step
+    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+  }
+  
+  private SearchConfig createSearchConfigWithStepFilter(String filterName) throws JsonProcessingException {
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    
+    // add filter to searchConfig
+    FilterValueSpec filterSpec = new FilterValueSpec();
+    filterSpec.setName(filterName);
+    Map<String, Object> value = new HashMap<String, Object>();
+    String[] matches = {"Y", "N"};
+    value.put("values", matches);
+    filterSpec.setValue(value);
+    List<FilterValueSpec> filterSpecs = new ArrayList<FilterValueSpec>();
+    filterSpecs.add(filterSpec);
+    searchConfig.setFilters(filterSpecs);
+    return searchConfig;
+  }
+  
 
  private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
 
