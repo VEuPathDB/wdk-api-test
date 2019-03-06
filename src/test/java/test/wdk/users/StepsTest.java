@@ -101,16 +101,7 @@ public class StepsTest extends UsersTest {
     // deleting again should get a not found
     deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
-  
-  public static Response createValidExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
-
-    Step step = new Step(ReportUtil.createValidExonCountSearchConfig(requestFactory), "GenesByExonCount");
-    
-    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
-      .when()
-      .post(BASE_PATH, "current");    
-  }
-  
+   
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create invalid guest step")
@@ -196,6 +187,59 @@ public class StepsTest extends UsersTest {
     .post(BASE_PATH, "current");    
   }
   
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Create a step with a step filter")
+  void createStepWithValidLegacyFilter() throws JsonProcessingException {
+   
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    searchConfig.setLegacyFilterName("all_results");
+    Step step = new Step(searchConfig, "GenesByExonCount");
+    
+    Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
+      .when()
+      .post(BASE_PATH, "current");    
+ 
+    long stepId = stepResponse
+        .body()
+        .jsonPath()
+        .getLong("id"); // TODO: use JsonKeys
+    String cookieId = stepResponse.getCookie("JSESSIONID");
+
+    // delete the step
+    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+  }
+  
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Create a step with invalid step filter")
+  void createStepWithInvalidLegacyFilter() throws JsonProcessingException {
+    
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    searchConfig.setLegacyFilterName("silly_filter");
+
+    Step step = new Step(searchConfig, "GenesByExonCount");  
+
+    _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
+    .when()
+    .post(BASE_PATH, "current");    
+  }
+
+  
+  /////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////// Helper methods /////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////
+
+  
+  public static Response createValidExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
+
+    Step step = new Step(ReportUtil.createValidExonCountSearchConfig(requestFactory), "GenesByExonCount");
+    
+    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
+      .when()
+      .post(BASE_PATH, "current");    
+  }
+ 
    private SearchConfig createSearchConfigWithStepFilter(String filterName) throws JsonProcessingException {
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
     
@@ -212,8 +256,7 @@ public class StepsTest extends UsersTest {
     return searchConfig;
   }
   
-
- private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
+  private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
 
     requestFactory.emptyRequest()
     .cookie("JSESSIONID", cookieId)

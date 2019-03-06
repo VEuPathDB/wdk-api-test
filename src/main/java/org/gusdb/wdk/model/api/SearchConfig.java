@@ -45,6 +45,4 @@ public class SearchConfig {
     this.viewFilters = viewFilters;
   }
   
-  
-
 }
