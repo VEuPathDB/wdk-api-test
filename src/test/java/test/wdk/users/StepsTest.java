@@ -183,7 +183,20 @@ public class StepsTest extends UsersTest {
     deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
   }
   
-  private SearchConfig createSearchConfigWithStepFilter(String filterName) throws JsonProcessingException {
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Create a step with invalid step filter")
+  void createStepWithInvalidStepFilter() throws JsonProcessingException {
+   
+    SearchConfig searchConfig = createSearchConfigWithStepFilter("sillyFilter");
+    Step step = new Step(searchConfig, "GenesByExonCount");  
+
+    _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
+    .when()
+    .post(BASE_PATH, "current");    
+  }
+  
+   private SearchConfig createSearchConfigWithStepFilter(String filterName) throws JsonProcessingException {
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
     
     // add filter to searchConfig
