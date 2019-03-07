@@ -73,6 +73,7 @@ import test.wdk.UsersTest;
 public class StepsTest extends UsersTest {
   public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/steps";
   public static final String BY_ID_PATH = BASE_PATH + "/{stepId}";
+  static final  Long INVALID_STEP_ID = new Long(-1);
 
   protected final AuthUtil _authUtil;
   private GuestRequestFactory _guestRequestFactory;
@@ -85,15 +86,19 @@ public class StepsTest extends UsersTest {
   
   @Test
   @Tag (Category.PLASMO_TEST)
-  @DisplayName("Create and delete a valid guest step")
-  void createAndDeleteGuestStep() throws JsonProcessingException {
+  @DisplayName("Create, get and delete a valid guest step")
+  void createAndGetAndDeleteGuestStep() throws JsonProcessingException {
     
     Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
+    
     long stepId = stepResponse
         .body()
         .jsonPath()
         .getLong("id"); // TODO: use JsonKeys
     String cookieId = stepResponse.getCookie("JSESSIONID");
+    
+    // get the step
+    getStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_OK);
 
     // delete the step
     deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
@@ -102,6 +107,13 @@ public class StepsTest extends UsersTest {
     deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
    
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Get invalid step id")
+  void getInvalidGuestStepId() throws JsonProcessingException {
+    getStep(INVALID_STEP_ID, _guestRequestFactory, getIrrelevantCookieId(), HttpStatus.SC_NOT_FOUND);
+  }
+ 
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create invalid guest step")
@@ -119,8 +131,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Delete invalid step ID")
   void deleteInvalidStepId() throws JsonProcessingException {
     
-    String cookieId = getIrrelevantCookieId();
-    deleteStep(1000000000, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
+    deleteStep(INVALID_STEP_ID, _guestRequestFactory, getIrrelevantCookieId(), HttpStatus.SC_NOT_FOUND);
   }
 
   @Test
@@ -256,7 +267,17 @@ public class StepsTest extends UsersTest {
     return searchConfig;
   }
   
-  private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
+   private void getStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
+     requestFactory.emptyRequest()
+     .cookie("JSESSIONID", cookieId)
+     .expect()
+     .statusCode(expectedStatus)
+     .when()
+       .get(BY_ID_PATH, "current", stepId); 
+   }
+   
+
+   private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
 
     requestFactory.emptyRequest()
     .cookie("JSESSIONID", cookieId)
