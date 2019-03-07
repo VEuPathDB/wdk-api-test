@@ -10,7 +10,9 @@ import java.util.Map;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.FilterValueSpec;
 import org.gusdb.wdk.model.api.SearchConfig;
+import org.gusdb.wdk.model.api.SortSpec;
 import org.gusdb.wdk.model.api.Step;
+import org.gusdb.wdk.model.api.StepDisplayPreferences;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -235,6 +237,35 @@ public class StepsTest extends UsersTest {
     .when()
     .post(BASE_PATH, "current");    
   }
+  
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Create, and patch a valid guest step")
+  void validPatchStep() throws JsonProcessingException {
+    
+    Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
+    
+    long stepId = stepResponse
+        .body()
+        .jsonPath()
+        .getLong("id"); // TODO: use JsonKeys
+    String cookieId = stepResponse.getCookie("JSESSIONID");
+    
+    // the step prefs are not validated by the server.
+    StepPatch stepPatch = new StepPatch();
+    stepPatch.customName = "yippee";
+    stepPatch.displayPrefs = new StepDisplayPreferences();
+    String[] colSel = {"happy", "birthday"};
+    Map<String, SortSpec.SortDirection> sort = new HashMap<String, SortSpec.SortDirection>();
+    sort.put("dragon", SortSpec.SortDirection.ASC);
+    stepPatch.displayPrefs.setColumnSelection(colSel);
+    stepPatch.displayPrefs.setColumnSorting(sort);
+    
+    _guestRequestFactory.jsonPayloadRequest(stepPatch, HttpStatus.SC_OK, ContentType.JSON)
+    .cookie("JSESSIONID", cookieId)
+    .when()
+    .patch(BY_ID_PATH, "current", stepId);    
+  }
 
   
   /////////////////////////////////////////////////////////////////////////////////////
@@ -275,7 +306,6 @@ public class StepsTest extends UsersTest {
      .when()
        .get(BY_ID_PATH, "current", stepId); 
    }
-   
 
    private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
 
@@ -286,12 +316,18 @@ public class StepsTest extends UsersTest {
     .when()
       .delete(BY_ID_PATH, "current", stepId); 
   }
-  
+    
   private String getIrrelevantCookieId() {
     return _guestRequestFactory.successRequest()
         .when()
         .get(SERVICE_PATH)
         .getCookie("JSESSIONID");
+  }
+  
+  private class StepPatch {
+    @SuppressWarnings("unused")
+    String customName;
+    StepDisplayPreferences displayPrefs;
   }
 
 }
