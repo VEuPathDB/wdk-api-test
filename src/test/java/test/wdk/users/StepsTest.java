@@ -297,6 +297,33 @@ public class StepsTest extends UsersTest {
 
   }
 
+@Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("PUT a valid search config.  ")
+  void putValidStepSearchConfig() throws JsonProcessingException {
+    
+    Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
+    
+    long stepId = stepResponse
+        .body()
+        .jsonPath()
+        .getLong("id"); // TODO: use JsonKeys
+    String cookieId = stepResponse.getCookie("JSESSIONID");
+    
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    
+    _guestRequestFactory.jsonPayloadRequest(searchConfig, HttpStatus.SC_NO_CONTENT)
+    .request()
+    .cookie("JSESSIONID", cookieId)
+    .when()
+    .put(BY_ID_PATH + "/search-config", "current", stepId);    
+    
+    // delete the step to clean up
+    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+
+  }
+
+
   
   /////////////////////////////////////////////////////////////////////////////////////
   //////////////////////// Helper methods /////////////////////////////////////////////
