@@ -11,6 +11,7 @@ import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.FilterValueSpec;
 import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.SortSpec;
+import org.gusdb.wdk.model.api.StandardReportConfig;
 import org.gusdb.wdk.model.api.Step;
 import org.gusdb.wdk.model.api.StepDisplayPreferences;
 import org.junit.jupiter.api.DisplayName;
@@ -75,6 +76,7 @@ import test.wdk.UsersTest;
 public class StepsTest extends UsersTest {
   public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/steps";
   public static final String BY_ID_PATH = BASE_PATH + "/{stepId}";
+  public static final String REPORTS_PATH = BASE_PATH + "/{stepId}/reports/{reportName}";
   static final  Long INVALID_STEP_ID = new Long(-1);
 
   protected final AuthUtil _authUtil;
@@ -267,6 +269,32 @@ public class StepsTest extends UsersTest {
     .cookie("JSESSIONID", cookieId)
     .when()
     .patch(BY_ID_PATH, "current", stepId);    
+  }
+
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("POST to standard step report")
+  void validStepStandardReport() throws JsonProcessingException {
+    
+    Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
+    
+    long stepId = stepResponse
+        .body()
+        .jsonPath()
+        .getLong("id"); // TODO: use JsonKeys
+    String cookieId = stepResponse.getCookie("JSESSIONID");
+    
+    StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
+    
+    _guestRequestFactory.jsonPayloadRequest(reportConfig, HttpStatus.SC_UNPROCESSABLE_ENTITY)
+    .request()
+    .cookie("JSESSIONID", cookieId)
+    .when()
+      .post(REPORTS_PATH, "current", stepId, "standard");    
+    
+    // delete the step to clean up
+    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+
   }
 
   
