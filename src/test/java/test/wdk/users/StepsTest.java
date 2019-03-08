@@ -253,15 +253,17 @@ public class StepsTest extends UsersTest {
     
     // the step prefs are not validated by the server.
     StepPatch stepPatch = new StepPatch();
-    stepPatch.customName = "yippee";
-    stepPatch.displayPrefs = new StepDisplayPreferences();
+    stepPatch.setCustomName("yippee");
+    StepDisplayPreferences displayPrefs = new StepDisplayPreferences();
+    stepPatch.setDisplayPrefs(displayPrefs);
     String[] colSel = {"happy", "birthday"};
     Map<String, SortSpec.SortDirection> sort = new HashMap<String, SortSpec.SortDirection>();
     sort.put("dragon", SortSpec.SortDirection.ASC);
     stepPatch.displayPrefs.setColumnSelection(colSel);
     stepPatch.displayPrefs.setColumnSorting(sort);
     
-    _guestRequestFactory.jsonPayloadRequest(stepPatch, HttpStatus.SC_OK, ContentType.JSON)
+    _guestRequestFactory.jsonPayloadRequest(stepPatch, HttpStatus.SC_NO_CONTENT)
+    .request()
     .cookie("JSESSIONID", cookieId)
     .when()
     .patch(BY_ID_PATH, "current", stepId);    
@@ -324,10 +326,22 @@ public class StepsTest extends UsersTest {
         .getCookie("JSESSIONID");
   }
   
-  private class StepPatch {
-    @SuppressWarnings("unused")
-    String customName;
-    StepDisplayPreferences displayPrefs;
+  public class StepPatch {
+    public String getCustomName() {
+      return customName;
+    }
+    public void setCustomName(String customName) {
+      this.customName = customName;
+    }
+    public StepDisplayPreferences getDisplayPrefs() {
+      return displayPrefs;
+    }
+    public void setDisplayPrefs(StepDisplayPreferences displayPrefs) {
+      this.displayPrefs = displayPrefs;
+    }
+
+    private String customName;
+    private StepDisplayPreferences displayPrefs;
   }
 
 }
