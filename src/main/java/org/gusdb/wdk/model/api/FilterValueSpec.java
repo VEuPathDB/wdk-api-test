@@ -5,7 +5,14 @@ import java.util.Map;
 public class FilterValueSpec {
   String name;
   Map<String, Object> value;
+  boolean disabled = false;
   
+  public boolean getDisabled() {
+    return disabled;
+  }
+  public void setDisabled(boolean disabled) {
+    this.disabled = disabled;
+  }
   public String getName() {
     return name;
   }
