@@ -204,7 +204,7 @@ public class StepsTest extends UsersTest {
   
   @Test
   @Tag (Category.PLASMO_TEST)
-  @DisplayName("Create a step with a step filter")
+  @DisplayName("Create a step with a legacy filter")
   void createStepWithValidLegacyFilter() throws JsonProcessingException {
    
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
@@ -227,7 +227,7 @@ public class StepsTest extends UsersTest {
   
   @Test
   @Tag (Category.PLASMO_TEST)
-  @DisplayName("Create a step with invalid step filter")
+  @DisplayName("Create a step with invalid legacy filter")
   void createStepWithInvalidLegacyFilter() throws JsonProcessingException {
     
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
