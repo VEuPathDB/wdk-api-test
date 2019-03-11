@@ -27,7 +27,7 @@ import test.support.util.ReportUtil;
 import test.support.util.GuestRequestFactory;
 
 public class ReportersTest extends TestBase {
-  public static final String REPORT_PATH = SERVICE_PATH + "/searches/{searchName}/report/{reportName";
+  public static final String REPORT_PATH = SERVICE_PATH + "/record-types/{record-type}/searches/{searchName}/reports/{reportName}";
 
   public final GuestRequestFactory _guestRequestFactory;
 
@@ -45,7 +45,7 @@ public class ReportersTest extends TestBase {
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.JSON)
         .when()
-        .post(REPORT_PATH, "GenesByExonCount", "standard");
+        .post(REPORT_PATH, "transcript", "GenesByExonCount", "standard");
     
     // minimally, confirm we got exactly one record
     List<RecordInstance> records = response.body().jsonPath().getList("records", RecordInstance.class);
@@ -61,7 +61,7 @@ public class ReportersTest extends TestBase {
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.JSON)
         .when()
-        .post(REPORT_PATH, "GenesBySimilarity", "blastSummaryView");
+        .post(REPORT_PATH, "transcript", "GenesBySimilarity", "blastSummaryView");
     assertNotNull(response.body().jsonPath().get("blastMeta"), "Missing 'blastMeta' object in request body");
   }
 
@@ -76,7 +76,7 @@ public class ReportersTest extends TestBase {
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_BAD_REQUEST)
         .when()
-        .post(REPORT_PATH, "GenesBySimilarity", "blastSummaryView");
+        .post(REPORT_PATH, "transcript", "GenesBySimilarity", "blastSummaryView");
   }
   
   @Test
@@ -87,7 +87,7 @@ public class ReportersTest extends TestBase {
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
-        ContentType.TEXT).when().post(REPORT_PATH, "PopsetByCountry", "geoIsolateSummaryView");
+        ContentType.TEXT).when().post(REPORT_PATH, "popsetSequence", "PopsetByCountry", "geoIsolateSummaryView");
     
     // parsing into IsolateRecordInstance validates the response contents
     new ObjectMapper().readValue(response.body().asString(), IsolateViewInstance.class);
@@ -102,7 +102,7 @@ public class ReportersTest extends TestBase {
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
-        ContentType.TEXT).when().post(REPORT_PATH, "GenesByExonCount", "geneGenomeSummaryView");
+        ContentType.TEXT).when().post(REPORT_PATH, "transcript", "GenesByExonCount", "geneGenomeSummaryView");
     
     // parsing into IsolateRecordInstance validates the response contents
     new ObjectMapper().readValue(response.body().asString(), GenomeViewInstance.class);
