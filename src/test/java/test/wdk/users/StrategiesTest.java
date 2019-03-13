@@ -21,6 +21,36 @@ import test.support.util.GuestRequestFactory;
 import test.wdk.StrategyListTest;
 import test.wdk.UsersTest;
 
+/*
+tests to run
+ - GET strategies
+ 
+ - POST strategies
+   - using step-tree
+     - success case
+     - fail if a step already belongs to a strategy
+     - fail if bum step tree
+   - using sourceStrategy property
+   
+ - PATCH
+   - set isDeleted.  following GET should fail.  unset it.  GET should pass
+   
+     
+
+ - POST step/{id}/reports/standard (for a step that is in a strategy)
+   ?? - should fail if modifying search name or stepParams
+   - should update estimatedSize, lastRunTime
+
+ - POST step/{id}/reports/???
+   ?? - should fail if modifying search name or stepParams
+   - should update estimatedSize, lastRunTime
+
+ - PUT step/{id}/search-config
+   - should clear estmiatedSize of downstream steps if in strat
+   - not allowed to change answerParam
+
+ *
+ */
   @DisplayName("Strategies")
   public class StrategiesTest extends UsersTest {
     public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";

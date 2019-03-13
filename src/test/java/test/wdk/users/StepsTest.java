@@ -273,8 +273,8 @@ public class StepsTest extends UsersTest {
 
   @Test
   @Tag (Category.PLASMO_TEST)
-  @DisplayName("POST to standard step report")
-  void validStepStandardReport() throws JsonProcessingException {
+  @DisplayName("POST to standard step report.  Fail because not in strat")
+  void validStepStandardReportNotInStrat() throws JsonProcessingException {
     
     Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
     
@@ -286,6 +286,7 @@ public class StepsTest extends UsersTest {
     
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     
+    // fail because not in strategy
     _guestRequestFactory.jsonPayloadRequest(reportConfig, HttpStatus.SC_UNPROCESSABLE_ENTITY)
     .request()
     .cookie("JSESSIONID", cookieId)
