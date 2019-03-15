@@ -9,7 +9,6 @@ import org.junit.jupiter.api.TestInstance;
 import test.support.util.GuestRequestFactory;
 
 @DisplayName("Public Strategy List")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StrategyListTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/strategy-lists";
   public static final String PUBLIC_STRATS_PATH = BASE_PATH + "/public";
