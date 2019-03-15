@@ -36,11 +36,12 @@ public class QuestionsTest extends TestBase {
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test a single question (exon count)")
   void getExonCountQuestion() throws JsonProcessingException {
-    req.jsonSuccessRequest().when().get(BY_NAME_PATH, "GenesByExonCount");
+    req.jsonSuccessRequest().when().get(BY_NAME_PATH, "gene", "GenesByExonCount");
   }
 
   // test all questions
   @ParameterizedTest(name = "GET " + BASE_PATH + "/{arguments}")
+  @Tag (Category.PRERELEASE_TEST) // this is an expensive test (runs all vocab queries).  only do at prerelease
   @DisplayName("GET " + BY_NAME_PATH)
   @MethodSource("getQuestionList")
   void getQuestionDetails(String name) {

@@ -21,6 +21,7 @@ public final class Category {
   public static final String TRICH_TEST             = "trichdb";
   public static final String TRITRYP_TEST           = "tritrypdb";
   public static final String PUBLIC_STRATEGIES_TEST = "public-strategies";
+  public static final String PRERELEASE_TEST        = "prerelease";
 
 
   private Category() {}
