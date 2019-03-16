@@ -5,7 +5,7 @@ import static test.support.Conf.SERVICE_PATH;
 import org.gusdb.wdk.model.api.StrategyListItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+
 import test.support.util.GuestRequestFactory;
 
 @DisplayName("Public Strategy List")

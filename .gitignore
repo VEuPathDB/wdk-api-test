@@ -2,5 +2,8 @@ target/
 out/
 build/
 .gradle/
-
 .envrc
+.project
+.classpath
+.settings/
+bin/

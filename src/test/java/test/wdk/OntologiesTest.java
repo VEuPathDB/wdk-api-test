@@ -1,14 +1,14 @@
 package test.wdk;
 
-import org.junit.jupiter.api.Disabled;
+import static test.support.Conf.SERVICE_PATH;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.support.util.GuestRequestFactory;
 
-import static test.support.Conf.SERVICE_PATH;
+import test.support.util.GuestRequestFactory;
 
 @DisplayName("Ontologies")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -33,14 +33,6 @@ public class OntologiesTest extends TestBase {
   @MethodSource("getOntologyList")
   void getOntology(String name) {
     req.jsonSuccessRequest().when().get(BY_NAME_PATH, name);
-  }
-
-  @ParameterizedTest
-  @DisplayName("POST " + BY_NAME_PATH)
-  @MethodSource("getOntologyList")
-  @Disabled("What is this endpoint?")
-  void postOntologyPath(String name) {
-    // TODO
   }
 
   String[] getOntologyList() {

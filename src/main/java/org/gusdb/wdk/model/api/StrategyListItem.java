@@ -106,6 +106,7 @@ public class StrategyListItem {
   }
   
   // a simple toString method for use in reporting info about failed strats
+  @Override
   public String toString() {
     return "Strategy: " + getName() + " (signature " + getSignature() +")";
   }
