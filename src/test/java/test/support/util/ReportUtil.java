@@ -44,6 +44,7 @@ public class ReportUtil {
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
     paramsMap.put("scope", "Gene");
+    paramsMap.put("BlastRecordClass", "TranscriptRecordClasses.TranscriptRecordClass");
     paramsMap.put("BlastDatabaseOrganism", "Plasmodium falciparum 3D7");
     paramsMap.put("BlastDatabaseType", "Transcripts");
     paramsMap.put("-e", "10");
