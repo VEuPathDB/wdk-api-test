@@ -1,19 +1,15 @@
 package test.wdk.users;
 
-import static test.support.Conf.SERVICE_PATH;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpStatus;
-import org.gusdb.wdk.model.api.FilterValueSpec;
 import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.SortSpec;
 import org.gusdb.wdk.model.api.StandardReportConfig;
 import org.gusdb.wdk.model.api.Step;
 import org.gusdb.wdk.model.api.StepDisplayPreferences;
+import org.gusdb.wdk.model.api.StepMeta;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,7 +22,8 @@ import test.support.util.ReportUtil;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
 import test.support.util.GuestRequestFactory;
-import test.support.util.RequestFactory;
+import test.support.util.StepUtil;
+import test.support.util.UserUtil;
 import test.wdk.UsersTest;
 
 /* TESTS TO RUN
@@ -93,7 +90,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create, get and delete a valid guest step")
   void createAndGetAndDeleteGuestStep() throws JsonProcessingException {
     
-    Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
+    Response stepResponse = StepUtil.getInstance().createValidExonCountStepResponse(_guestRequestFactory);
     
     long stepId = stepResponse
         .body()
@@ -102,20 +99,21 @@ public class StepsTest extends UsersTest {
     String cookieId = stepResponse.getCookie("JSESSIONID");
     
     // get the step
-    getStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_OK);
+    StepUtil.getInstance().getStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_OK);
 
     // delete the step
-    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+    StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
 
     // deleting again should get a not found
-    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
+    StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
    
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Get invalid step id")
   void getInvalidGuestStepId() throws JsonProcessingException {
-    getStep(INVALID_STEP_ID, _guestRequestFactory, getIrrelevantCookieId(), HttpStatus.SC_NOT_FOUND);
+    String cookieId = UserUtil.getInstance().getIrrelevantCookieId(_guestRequestFactory);
+    StepUtil.getInstance().getStep(INVALID_STEP_ID, _guestRequestFactory,  cookieId, HttpStatus.SC_NOT_FOUND);
   }
  
   @Test
@@ -135,7 +133,8 @@ public class StepsTest extends UsersTest {
   @DisplayName("Delete invalid step ID")
   void deleteInvalidStepId() throws JsonProcessingException {
     
-    deleteStep(INVALID_STEP_ID, _guestRequestFactory, getIrrelevantCookieId(), HttpStatus.SC_NOT_FOUND);
+    String cookieId = UserUtil.getInstance().getIrrelevantCookieId(_guestRequestFactory);
+    StepUtil.getInstance().deleteStep(INVALID_STEP_ID, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
 
   @Test
@@ -164,7 +163,7 @@ public class StepsTest extends UsersTest {
         .post(BASE_PATH, "current");    
 
     // delete the leaf step, to clean up
-    deleteStep(leafStepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+    StepUtil.getInstance().deleteStep(leafStepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
   }
   
   @Test
@@ -172,7 +171,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create a step with a step filter")
   void createStepWithValidStepFilter() throws JsonProcessingException {
    
-    SearchConfig searchConfig = createSearchConfigWithStepFilter("matchedTranscriptFilter");
+    SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("matchedTranscriptFilter", _guestRequestFactory);
     Step step = new Step(searchConfig, "GenesByExonCount");
     
     Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
@@ -186,7 +185,7 @@ public class StepsTest extends UsersTest {
     String cookieId = stepResponse.getCookie("JSESSIONID");
 
     // delete the step
-    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+    StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
   }
   
   @Test
@@ -194,7 +193,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create a step with invalid step filter")
   void createStepWithInvalidStepFilter() throws JsonProcessingException {
    
-    SearchConfig searchConfig = createSearchConfigWithStepFilter("sillyFilter");
+    SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("sillyFilter", _guestRequestFactory);
     Step step = new Step(searchConfig, "GenesByExonCount");  
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
@@ -222,7 +221,7 @@ public class StepsTest extends UsersTest {
     String cookieId = stepResponse.getCookie("JSESSIONID");
 
     // delete the step
-    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+    StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
   }
   
   @Test
@@ -245,7 +244,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create, and patch a valid guest step")
   void validPatchStep() throws JsonProcessingException {
     
-    Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
+    Response stepResponse = StepUtil.getInstance().createValidExonCountStepResponse(_guestRequestFactory);
     
     long stepId = stepResponse
         .body()
@@ -254,15 +253,15 @@ public class StepsTest extends UsersTest {
     String cookieId = stepResponse.getCookie("JSESSIONID");
     
     // the step prefs are not validated by the server.
-    StepPatch stepPatch = new StepPatch();
+    StepMeta stepPatch = new StepMeta();
     stepPatch.setCustomName("yippee");
     StepDisplayPreferences displayPrefs = new StepDisplayPreferences();
-    stepPatch.setDisplayPrefs(displayPrefs);
+    stepPatch.setDisplayPreferences(displayPrefs);
     String[] colSel = {"happy", "birthday"};
     Map<String, SortSpec.SortDirection> sort = new HashMap<String, SortSpec.SortDirection>();
     sort.put("dragon", SortSpec.SortDirection.ASC);
-    stepPatch.displayPrefs.setColumnSelection(colSel);
-    stepPatch.displayPrefs.setColumnSorting(sort);
+    stepPatch.getDisplayPreferences().setColumnSelection(colSel);
+    stepPatch.getDisplayPreferences().setColumnSorting(sort);
     
     _guestRequestFactory.jsonPayloadRequest(stepPatch, HttpStatus.SC_NO_CONTENT)
     .request()
@@ -276,7 +275,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("POST to standard step report.  Fail because not in strat")
   void validStepStandardReportNotInStrat() throws JsonProcessingException {
     
-    Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
+    Response stepResponse = StepUtil.getInstance().createValidExonCountStepResponse(_guestRequestFactory);
     
     long stepId = stepResponse
         .body()
@@ -294,7 +293,7 @@ public class StepsTest extends UsersTest {
       .post(REPORTS_PATH, "current", stepId, "standard");    
     
     // delete the step to clean up
-    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+    StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
 
   }
 
@@ -303,7 +302,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("PUT a valid search config.  ")
   void putValidStepSearchConfig() throws JsonProcessingException {
     
-    Response stepResponse = createValidExonCountStepResponse(_guestRequestFactory);
+    Response stepResponse = StepUtil.getInstance().createValidExonCountStepResponse(_guestRequestFactory);
     
     long stepId = stepResponse
         .body()
@@ -320,85 +319,9 @@ public class StepsTest extends UsersTest {
     .put(BY_ID_PATH + "/search-config", "current", stepId);    
     
     // delete the step to clean up
-    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+    StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
 
-  }
-
-
-  
-  /////////////////////////////////////////////////////////////////////////////////////
-  //////////////////////// Helper methods /////////////////////////////////////////////
-  /////////////////////////////////////////////////////////////////////////////////////
-
-  
-  public static Response createValidExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
-
-    Step step = new Step(ReportUtil.createValidExonCountSearchConfig(requestFactory), "GenesByExonCount");
-    
-    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
-      .when()
-      .post(BASE_PATH, "current");    
-  }
- 
-   private SearchConfig createSearchConfigWithStepFilter(String filterName) throws JsonProcessingException {
-    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
-    
-    // add filter to searchConfig
-    FilterValueSpec filterSpec = new FilterValueSpec();
-    filterSpec.setName(filterName);
-    Map<String, Object> value = new HashMap<String, Object>();
-    String[] matches = {"Y", "N"};
-    value.put("values", matches);
-    filterSpec.setValue(value);
-    List<FilterValueSpec> filterSpecs = new ArrayList<FilterValueSpec>();
-    filterSpecs.add(filterSpec);
-    searchConfig.setFilters(filterSpecs);
-    return searchConfig;
   }
   
-   private void getStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
-     requestFactory.emptyRequest()
-     .cookie("JSESSIONID", cookieId)
-     .expect()
-     .statusCode(expectedStatus)
-     .when()
-       .get(BY_ID_PATH, "current", stepId); 
-   }
-
-   private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
-
-    requestFactory.emptyRequest()
-    .cookie("JSESSIONID", cookieId)
-    .expect()
-    .statusCode(expectedStatus)
-    .when()
-      .delete(BY_ID_PATH, "current", stepId); 
-  }
-    
-  private String getIrrelevantCookieId() {
-    return _guestRequestFactory.successRequest()
-        .when()
-        .get(SERVICE_PATH)
-        .getCookie("JSESSIONID");
-  }
-  
-  public class StepPatch {
-    public String getCustomName() {
-      return customName;
-    }
-    public void setCustomName(String customName) {
-      this.customName = customName;
-    }
-    public StepDisplayPreferences getDisplayPrefs() {
-      return displayPrefs;
-    }
-    public void setDisplayPrefs(StepDisplayPreferences displayPrefs) {
-      this.displayPrefs = displayPrefs;
-    }
-
-    private String customName;
-    private StepDisplayPreferences displayPrefs;
-  }
-
 }
 

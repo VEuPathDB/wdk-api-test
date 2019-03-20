@@ -1,5 +1,7 @@
 package test.support.util;
 
+import static test.support.Conf.SERVICE_PATH;
+
 import test.support.Conf;
 
 public class UserUtil {
@@ -16,5 +18,12 @@ public class UserUtil {
       instance = new UserUtil();
     }
     return instance;
+  }
+  
+  public String getIrrelevantCookieId(GuestRequestFactory guestRequestFactory) {
+    return guestRequestFactory.successRequest()
+        .when()
+        .get(SERVICE_PATH)
+        .getCookie("JSESSIONID");
   }
 }
