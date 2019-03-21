@@ -1,7 +1,7 @@
 package org.gusdb.wdk.model.api;
 
 // TODO: for now this is just for copy
-public class Strategy {
+public class StrategyCopyRequest {
   String sourceSignature;
 
   public String getSourceSignature() {
