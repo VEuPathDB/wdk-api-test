@@ -56,9 +56,9 @@ public class StepUtil {
     return searchConfig;
   }
 
-  public void getStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus)
+  public Response getStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus)
       throws JsonProcessingException {
-    requestFactory.emptyRequest().cookie("JSESSIONID", cookieId).expect().statusCode(
+    return requestFactory.emptyRequest().cookie("JSESSIONID", cookieId).expect().statusCode(
         expectedStatus).when().get(BY_ID_PATH, "current", stepId);
   }
 

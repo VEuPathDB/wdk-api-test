@@ -64,14 +64,28 @@ public class ReportUtil {
     return searchConfig;
   }
   
-  public static SearchConfig createValidOrthologsSearchConfig(RequestFactory requestFactory, Long leafStepId) throws JsonProcessingException {
+  // this is a transform.  not allowed to have non-null step param
+  public static SearchConfig createValidOrthologsSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
-    paramsMap.put("gene_result", leafStepId.toString());
     SearchConfig searchConfig = new SearchConfig();
     searchConfig.setParameters(paramsMap);
     return searchConfig;
   }
 
+  // this is a transform.  not allowed to have non-null step param
+  public static SearchConfig createInvalidOrthologsSearchConfig(RequestFactory requestFactory, Long leafStepId) throws JsonProcessingException {
+    SearchConfig searchConfig = createValidOrthologsSearchConfig(requestFactory);
+    searchConfig.getParameters().put("gene_result", leafStepId.toString()); // naughty naughty
+    return searchConfig;
+  }
+
+  public static SearchConfig createValidBooleanSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+    Map<String, String> paramsMap = new HashMap<String, String>();
+    paramsMap.put("Operator", "INTERSECT");
+    SearchConfig searchConfig = new SearchConfig();
+    searchConfig.setParameters(paramsMap);
+    return searchConfig;
+  }
 
 }

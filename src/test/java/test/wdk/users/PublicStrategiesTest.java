@@ -10,6 +10,7 @@ import test.support.Category;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
 import test.support.util.GuestRequestFactory;
+import test.support.util.StrategyUtil;
 import test.wdk.StrategyListTest;
 import test.wdk.UsersTest;
 
@@ -38,7 +39,7 @@ public class PublicStrategiesTest extends UsersTest {
   @MethodSource("getPublicStrategies")
   @Tag (Category.PUBLIC_STRATEGIES_TEST)
   void runPublicStrategy(StrategyListItem strategyListItem) {
-    StrategyUtil.runStrategyFromSignature(strategyListItem.getSignature(), _guestRequestFactory);
+    StrategyUtil.getInstance().runStrategyFromSignature(strategyListItem.getSignature(), _guestRequestFactory);
   }
   
 }

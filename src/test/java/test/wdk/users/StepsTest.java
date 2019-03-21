@@ -139,7 +139,7 @@ public class StepsTest extends UsersTest {
 
   @Test
   @Tag (Category.PLASMO_TEST)
-  @DisplayName("Create invalid transform step")
+  @DisplayName("Create invalid transform step.  Not in strategy, so not allowed to have a non-null step param")
   void createInvalidTransformStep() throws JsonProcessingException {
     
     Step leafStep = new Step(ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
@@ -154,7 +154,7 @@ public class StepsTest extends UsersTest {
         .getLong("id"); // TODO: use JsonKeys
     String cookieId = stepResponse.getCookie("JSESSIONID");
     
-    Step transformStep = new Step(ReportUtil.createValidOrthologsSearchConfig(_guestRequestFactory, leafStepId), "GenesByOrthologs");
+    Step transformStep = new Step(ReportUtil.createInvalidOrthologsSearchConfig(_guestRequestFactory, leafStepId), "GenesByOrthologs");
 
     stepResponse = _guestRequestFactory.jsonPayloadRequest(transformStep, HttpStatus.SC_UNPROCESSABLE_ENTITY)
         .request()
