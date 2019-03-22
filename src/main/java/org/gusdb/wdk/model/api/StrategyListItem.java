@@ -12,7 +12,6 @@ public class StrategyListItem {
   private long latestStepId;
   private String recordClassName;
   private String signature;
-  @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss.SSS")
   private Date lastModified;
   private String organization;
   private Boolean isPublic;
