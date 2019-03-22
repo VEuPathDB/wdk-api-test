@@ -6,8 +6,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+
+/*
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+*/
 
 import test.support.Category;
 import test.support.util.GuestRequestFactory;
@@ -25,9 +28,10 @@ public class QuestionsTest extends TestBase {
   }
 
   @Test
-  @DisplayName("GET " + BASE_PATH)
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("GET all transcript questions, without parameters")
   void getQuestions() {
-    getQuestionList();
+    req.jsonSuccessRequest().when().get(BASE_PATH, "transcript");
   }
   
   @Test
@@ -37,7 +41,17 @@ public class QuestionsTest extends TestBase {
     req.jsonSuccessRequest().when().get(BY_NAME_PATH, "gene", "GenesByExonCount");
   }
 
-  // test all questions
+  @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Test a single question (exon count)")
+  void getSrtQuestion() {
+    req.jsonSuccessRequest().when().get(BY_NAME_PATH, "transcript", "SRT");
+  }
+
+
+  /* commented out for now: this needs to iterate across all record classes, and then all searches
+ 
+  // get all questions in detail
   @ParameterizedTest(name = "GET " + BASE_PATH + "/{arguments}")
   @Tag (Category.PRERELEASE_TEST) // this is an expensive test (runs all vocab queries).  only do at prerelease
   @DisplayName("GET " + BY_NAME_PATH)
@@ -46,7 +60,10 @@ public class QuestionsTest extends TestBase {
     req.jsonSuccessRequest().when().get(BY_NAME_PATH, name);
   }
 
-  public String[] getQuestionList() {
-    return req.jsonSuccessRequest().when().get(BASE_PATH).as(String[].class);
+  public String[] getQuestionList(String recordClassUrlSegment) {
+    return req.jsonSuccessRequest().when().get(BASE_PATH, recordClassUrlSegment).as(String[].class);
   }
+   
+  */
+ 
 }
