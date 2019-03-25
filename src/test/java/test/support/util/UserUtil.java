@@ -20,7 +20,7 @@ public class UserUtil {
     return instance;
   }
   
-  public String getIrrelevantCookieId(GuestRequestFactory guestRequestFactory) {
+  public String getNewCookieId(GuestRequestFactory guestRequestFactory) {
     return guestRequestFactory.successRequest()
         .when()
         .get(SERVICE_PATH)

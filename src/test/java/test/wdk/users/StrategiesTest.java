@@ -1,11 +1,14 @@
 package test.wdk.users;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.apache.http.HttpStatus;
+import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.StandardReportConfig;
 import org.gusdb.wdk.model.api.StepTreeNode;
 import org.gusdb.wdk.model.api.StrategyCopyRequest;
-import org.gusdb.wdk.model.api.StrategyCreationRequest;
 import org.gusdb.wdk.model.api.StrategyListItem;
+import org.gusdb.wdk.model.api.StrategyResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -17,8 +20,9 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.support.Category;
 import test.support.util.ReportUtil;
-import test.support.util.StrategyUtil;
 import test.support.util.StepUtil;
+import test.support.util.StrategyUtil;
+import test.support.util.UserUtil;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
 import test.support.util.GuestRequestFactory;
@@ -87,39 +91,101 @@ tests to run
     @DisplayName("create single step strategy") 
     @Tag (Category.PLASMO_TEST)
     void createValidSingleStepStrat() throws JsonProcessingException {
-      Response stepResponse = StepUtil.getInstance().createValidExonCountStepResponse(_guestRequestFactory);
       
-      long stepId = stepResponse
-          .body()
-          .jsonPath()
-          .getLong("id"); // TODO: use JsonKeys
-      String cookieId = stepResponse.getCookie("JSESSIONID");
+      String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
       
-      StepTreeNode stepTree = new StepTreeNode();
-      stepTree.setStepId(stepId);
-      StrategyCreationRequest strat = new StrategyCreationRequest("my strat", stepTree);   
+      // create a step, and GET its ID
+      Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+      long stepId = stepResponse.body().jsonPath().getLong("id");  
+
+      Long strategyId = StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory, cookieId, stepId);
       
-      Response stratResponse = _guestRequestFactory.jsonPayloadRequest(strat, HttpStatus.SC_OK, ContentType.JSON)
-        .request().cookie("JSESSIONID", cookieId).when().post(BASE_PATH,
-          "current");
+      // GET the strategy
+      Response strategyResponse = StrategyUtil.getInstance().getStrategy(strategyId, _guestRequestFactory,
+          cookieId, HttpStatus.SC_OK);
+      StrategyResponseBody strategy = strategyResponse.as(StrategyResponseBody.class);
+      
+      // confirm that the stepTree has our step ID
+      long stepIdFromTree = strategy.getStepTree().getStepId();
+      assertEquals(stepId, stepIdFromTree, "Expected stepTree.stepId (" + stepIdFromTree + ") to equal submitted stepId: " + stepId);
 
-      long strategyId = stratResponse
-          .body()
-          .jsonPath()
-          .getLong("id"); // TODO: use JsonKeys
-
-      // get the step
-      StrategyUtil.getInstance().getStrategy(strategyId, _guestRequestFactory, cookieId, HttpStatus.SC_OK);
-
-      // delete the Strategy
+      // DELETE the Strategy
       StrategyUtil.getInstance().deleteStrategy(strategyId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
 
-      // deleting again should get a not found
+      // DELETE again should get a not found
       StrategyUtil.getInstance().deleteStrategy(strategyId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
-
       
     }
     
+  @Test
+  @DisplayName("revise a strategy with a PUT.")
+  @Tag(Category.PLASMO_TEST)
+  void reviseStrategy() throws JsonProcessingException {
+
+    String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
+    
+    // create a step, GET its ID, and use it to create single step strategy
+    SearchConfig exonCountSrchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, exonCountSrchConfig, "GenesByExonCount");
+    long firstLeafStepId = stepResponse.body().jsonPath().getLong("id"); 
+    Long strategyId = StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory,
+        cookieId, firstLeafStepId);
+
+    // request a new leaf step to add to the tree (re-use the same search config, for simplicity)
+    stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, exonCountSrchConfig, "GenesByExonCount");
+    long secondLeafStepId = stepResponse.body().jsonPath().getLong("id");
+
+    // request a combiner step to add to the tree
+    SearchConfig combinerSrchConfig = StepUtil.getInstance().createValidBooleanSearchConfig(
+        _guestRequestFactory);
+    stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, combinerSrchConfig, "GenesByExonCount");
+    long combineStepId = stepResponse.body().jsonPath().getLong("id");
+
+    // make new tree
+    StepTreeNode newTree = new StepTreeNode(combineStepId);
+    newTree.setPrimaryInput(new StepTreeNode(firstLeafStepId));
+    newTree.setSecondaryInput(new StepTreeNode(secondLeafStepId));
+    
+    // do the PUT
+    StrategyUtil.getInstance().putStrategy(_guestRequestFactory, cookieId, strategyId, newTree,
+        HttpStatus.SC_NO_CONTENT);
+    
+    // GET the revised strategy
+    Response strategyResponse = StrategyUtil.getInstance().getStrategy(strategyId, _guestRequestFactory,
+        cookieId, HttpStatus.SC_OK);
+    StrategyResponseBody strategy = strategyResponse.as(StrategyResponseBody.class);
+    
+    // confirm that the stepTree is what we PUT
+    assertEquals(newTree.toString(), strategy.getStepTree().toString(),
+        "Expected step trees to be equal. Submitted:  " +  newTree + " received: "  + strategy.getStepTree());
+  
+    // DELETE the Strategy
+    StrategyUtil.getInstance().deleteStrategy(strategyId, _guestRequestFactory, cookieId,
+        HttpStatus.SC_NO_CONTENT);
+  }
+    
+    @Test
+    @DisplayName("get strategies lists") 
+    @Tag (Category.PLASMO_TEST)
+    void getStrategiesListing() throws JsonProcessingException {
+      
+      String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
+      Long strategyId_1 = StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory, cookieId);
+      Long strategyId_2 = StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory, cookieId);
+      
+      // GET list of strategies for this user
+      Response stratListResponse = StrategyUtil.getInstance().getStrategyList(_guestRequestFactory, cookieId);
+
+      // confirm the list has correct number
+      StrategyListItem[] list = stratListResponse.as(StrategyListItem[].class);
+      assertEquals(2, list.length, "Expected exactly two strategies, but got " + list.length);
+      
+      // DELETE the Strategies
+      StrategyUtil.getInstance().deleteStrategy(strategyId_1, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+      StrategyUtil.getInstance().deleteStrategy(strategyId_2, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+
+    }
+
     @Test
     @DisplayName("Run public strategy")
     @Disabled("Strategy service is not ready for this test")

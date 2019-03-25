@@ -29,15 +29,17 @@ public class StepUtil {
     }
     return instance;
   }
-
-  public Response createValidExonCountStepResponse(RequestFactory requestFactory)
+  
+  public Response createValidStepResponse(RequestFactory requestFactory, String cookieId, SearchConfig searchConfig, String searchUrlSegment)
       throws JsonProcessingException {
 
-    Step step = new Step(ReportUtil.createValidExonCountSearchConfig(requestFactory), "GenesByExonCount");
+    Step step = new Step(searchConfig, searchUrlSegment);
 
-    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON).when().post(BASE_PATH,
+    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON).cookie("JSESSIONID", cookieId).when().post(BASE_PATH,
         "current");
   }
+
+
 
   public SearchConfig createSearchConfigWithStepFilter(String filterName, RequestFactory requestFactory)
       throws JsonProcessingException {
@@ -53,6 +55,30 @@ public class StepUtil {
     List<FilterValueSpec> filterSpecs = new ArrayList<FilterValueSpec>();
     filterSpecs.add(filterSpec);
     searchConfig.setFilters(filterSpecs);
+    return searchConfig;
+  }
+  
+  // this is a transform.  not allowed to have non-null step param
+  public SearchConfig createValidOrthologsSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+    Map<String, String> paramsMap = new HashMap<String, String>();
+    paramsMap.put("organism", "Plasmodium adleri G01");
+    SearchConfig searchConfig = new SearchConfig();
+    searchConfig.setParameters(paramsMap);
+    return searchConfig;
+  }
+
+  // this is a transform.  not allowed to have non-null step param
+  public SearchConfig createInvalidOrthologsSearchConfig(RequestFactory requestFactory, Long leafStepId) throws JsonProcessingException {
+    SearchConfig searchConfig = createValidOrthologsSearchConfig(requestFactory);
+    searchConfig.getParameters().put("gene_result", leafStepId.toString()); // naughty naughty
+    return searchConfig;
+  }
+
+  public SearchConfig createValidBooleanSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+    Map<String, String> paramsMap = new HashMap<String, String>();
+    paramsMap.put("Operator", "INTERSECT");
+    SearchConfig searchConfig = new SearchConfig();
+    searchConfig.setParameters(paramsMap);
     return searchConfig;
   }
 
