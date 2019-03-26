@@ -77,6 +77,7 @@ tests to run
   public class StrategiesTest extends UsersTest {
     public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
     public static final String BY_ID_PATH = BASE_PATH + "/{strategyId}";
+    public static final String DUPLICATE_TREE_PATH = BASE_PATH + "/{strategyId}/duplicated-step-tree";
 
     protected final AuthUtil _authUtil;
     private GuestRequestFactory _guestRequestFactory;
@@ -138,27 +139,47 @@ tests to run
     // request a combiner step to add to the tree
     SearchConfig combinerSrchConfig = StepUtil.getInstance().createValidBooleanSearchConfig(
         _guestRequestFactory);
-    stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, combinerSrchConfig, "GenesByExonCount");
+    String transcriptBooleanUrlSegment = "boolean_question_TranscriptRecordClasses_TranscriptRecordClass";
+    stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, combinerSrchConfig, transcriptBooleanUrlSegment);
     long combineStepId = stepResponse.body().jsonPath().getLong("id");
 
     // make new tree
-    StepTreeNode newTree = new StepTreeNode(combineStepId);
-    newTree.setPrimaryInput(new StepTreeNode(firstLeafStepId));
-    newTree.setSecondaryInput(new StepTreeNode(secondLeafStepId));
+    StepTreeNode combineTree = new StepTreeNode(combineStepId);
+    combineTree.setPrimaryInput(new StepTreeNode(firstLeafStepId));
+    combineTree.setSecondaryInput(new StepTreeNode(secondLeafStepId));
     
     // do the PUT
-    StrategyUtil.getInstance().putStrategy(_guestRequestFactory, cookieId, strategyId, newTree,
+    StrategyUtil.getInstance().putStrategy(_guestRequestFactory, cookieId, strategyId, combineTree,
         HttpStatus.SC_NO_CONTENT);
     
     // GET the revised strategy
     Response strategyResponse = StrategyUtil.getInstance().getStrategy(strategyId, _guestRequestFactory,
         cookieId, HttpStatus.SC_OK);
-    StrategyResponseBody strategy = strategyResponse.as(StrategyResponseBody.class);
+    StrategyResponseBody revisedStrategy = strategyResponse.as(StrategyResponseBody.class);
     
-    // confirm that the stepTree is what we PUT
-    assertEquals(newTree.toString(), strategy.getStepTree().toString(),
-        "Expected step trees to be equal. Submitted:  " +  newTree + " received: "  + strategy.getStepTree());
+    // confirm that the response stepTree is the same as what we PUT
+    assertEquals(combineTree.toString(), revisedStrategy.getStepTree().toString(),
+        "Expected step trees to be equal. Submitted:  " +  combineTree + " received: " + revisedStrategy.getStepTree());
   
+    // since we have a tree in hand, also test nesting
+    StepTreeNode dupTree = _guestRequestFactory.jsonPayloadRequest(null, HttpStatus.SC_OK,
+        ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().post(DUPLICATE_TREE_PATH, "current", strategyId).as(StepTreeNode.class);
+    combineTree.setSecondaryInput(dupTree);
+    
+    // PUT the strat with nested tree
+    StrategyUtil.getInstance().putStrategy(_guestRequestFactory, cookieId, strategyId, combineTree,
+        HttpStatus.SC_NO_CONTENT);
+    
+    // GET the newly revised strategy
+     strategyResponse = StrategyUtil.getInstance().getStrategy(strategyId, _guestRequestFactory,
+        cookieId, HttpStatus.SC_OK);
+     revisedStrategy = strategyResponse.as(StrategyResponseBody.class);
+    
+    // confirm that the response stepTree is the same as what we PUT
+    assertEquals(combineTree.toString(), revisedStrategy.getStepTree().toString(),
+        "Expected step trees to be equal. Submitted:  " +  combineTree + " received: " + revisedStrategy.getStepTree());
+
+
     // DELETE the Strategy
     StrategyUtil.getInstance().deleteStrategy(strategyId, _guestRequestFactory, cookieId,
         HttpStatus.SC_NO_CONTENT);
