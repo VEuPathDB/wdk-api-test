@@ -19,7 +19,7 @@ public class ReportUtil {
     return searchConfig;
   }
     
-  public static SearchConfig createValidExonCountSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+  public static SearchConfig createValidExonCountSearchConfig() throws JsonProcessingException {
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
     paramsMap.put("scope", "Gene");
@@ -31,7 +31,7 @@ public class ReportUtil {
     return searchConfig;
   }
   
-  public static SearchConfig createInvalidExonCountSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+  public static SearchConfig createInvalidExonCountSearchConfig() throws JsonProcessingException {
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("SILLY", "Plasmodium adleri G01");
     SearchConfig searchConfig = new SearchConfig();
@@ -39,7 +39,7 @@ public class ReportUtil {
     return searchConfig;
   }
 
-  public static SearchConfig createBlastSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+  public static SearchConfig createBlastSearchConfig() throws JsonProcessingException {
     SearchConfig searchConfig = new SearchConfig();
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
@@ -56,7 +56,7 @@ public class ReportUtil {
     return searchConfig;
   }
 
-  public static SearchConfig createPopsetByCountryAnswerSpec(RequestFactory requestFactory) throws JsonProcessingException {
+  public static SearchConfig createPopsetByCountryAnswerSpec() throws JsonProcessingException {
     SearchConfig searchConfig = new SearchConfig();
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("country", "GAZ_00002560");

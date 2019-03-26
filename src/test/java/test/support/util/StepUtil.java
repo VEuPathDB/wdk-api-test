@@ -35,15 +35,13 @@ public class StepUtil {
 
     Step step = new Step(searchConfig, searchUrlSegment);
 
-    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON).cookie("JSESSIONID", cookieId).when().post(BASE_PATH,
+    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().post(BASE_PATH,
         "current");
   }
 
-
-
-  public SearchConfig createSearchConfigWithStepFilter(String filterName, RequestFactory requestFactory)
+  public SearchConfig createSearchConfigWithStepFilter(String filterName)
       throws JsonProcessingException {
-    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(requestFactory);
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
 
     // add filter to searchConfig
     FilterValueSpec filterSpec = new FilterValueSpec();

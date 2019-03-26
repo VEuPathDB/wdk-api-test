@@ -96,7 +96,7 @@ tests to run
       String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
       
       // create a step, and GET its ID
-      Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+      Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
       long stepId = stepResponse.body().jsonPath().getLong("id");  
 
       Long strategyId = StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory, cookieId, stepId);
@@ -126,7 +126,7 @@ tests to run
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     
     // create a step, GET its ID, and use it to create single step strategy
-    SearchConfig exonCountSrchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    SearchConfig exonCountSrchConfig = ReportUtil.createValidExonCountSearchConfig();
     Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, exonCountSrchConfig, "GenesByExonCount");
     long firstLeafStepId = stepResponse.body().jsonPath().getLong("id"); 
     Long strategyId = StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory,

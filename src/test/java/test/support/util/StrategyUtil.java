@@ -31,7 +31,7 @@ public class StrategyUtil {
   public long createAndPostSingleStepStrategy(RequestFactory requestFactory, String cookieId) throws JsonProcessingException {
 
     // create step, and get its ID
-    SearchConfig exonCountSrchConfig = ReportUtil.createValidExonCountSearchConfig(requestFactory);
+    SearchConfig exonCountSrchConfig = ReportUtil.createValidExonCountSearchConfig();
     Response stepResponse = StepUtil.getInstance().createValidStepResponse(requestFactory, cookieId, exonCountSrchConfig, "GenesByExonCount");
     long stepId = stepResponse.body().jsonPath().getLong("id"); 
 

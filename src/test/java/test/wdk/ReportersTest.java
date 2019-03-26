@@ -40,7 +40,7 @@ public class ReportersTest extends TestBase {
   @DisplayName("Test Default Answer Reporter")
   void testDefaultJsonReporterSuccess() throws JsonProcessingException {
     
-    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.JSON)
@@ -56,7 +56,7 @@ public class ReportersTest extends TestBase {
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Blast Reporter Success")
   void testBlastReporterSuccess() throws JsonProcessingException {
-    SearchConfig searchConfig = ReportUtil.createBlastSearchConfig(_guestRequestFactory);
+    SearchConfig searchConfig = ReportUtil.createBlastSearchConfig();
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.JSON)
@@ -71,7 +71,7 @@ public class ReportersTest extends TestBase {
   void testBlastReporterFailure() throws JsonProcessingException {
     
     // should return 400 when the search is not BLAST 
-    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_BAD_REQUEST)
@@ -83,7 +83,7 @@ public class ReportersTest extends TestBase {
   @Tag(Category.PLASMO_TEST)
   @DisplayName("Test isolates summary view reporter")
   void testIsolatesSummaryView() throws JsonProcessingException, IOException  {
-    SearchConfig searchConfig = ReportUtil.createPopsetByCountryAnswerSpec(_guestRequestFactory);
+    SearchConfig searchConfig = ReportUtil.createPopsetByCountryAnswerSpec();
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
@@ -98,7 +98,7 @@ public class ReportersTest extends TestBase {
   @Tag(Category.PLASMO_TEST)
   @DisplayName("Test Gene Genome summary view reporter") 
   void testGeneGenomeSummaryView() throws JsonProcessingException, IOException { 
-    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,

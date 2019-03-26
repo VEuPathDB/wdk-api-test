@@ -92,7 +92,7 @@ public class StepsTest extends UsersTest {
     
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     Response stepResponse = 
-        StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+        StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
     
     long stepId = stepResponse
         .body()
@@ -122,7 +122,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create invalid guest step")
   void createInvalidGuestStep() throws JsonProcessingException {
     
-    Step step = new Step(ReportUtil.createInvalidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+    Step step = new Step(ReportUtil.createInvalidExonCountSearchConfig(), "GenesByExonCount");
     
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
       .when()
@@ -143,7 +143,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create invalid transform step.  Not in strategy, so not allowed to have a non-null step param")
   void createInvalidTransformStep() throws JsonProcessingException {
     
-    Step leafStep = new Step(ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+    Step leafStep = new Step(ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
     
     Response stepResponse = _guestRequestFactory.jsonPayloadRequest(leafStep, HttpStatus.SC_OK, ContentType.JSON)
       .when()
@@ -172,7 +172,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create a step with a step filter")
   void createStepWithValidStepFilter() throws JsonProcessingException {
    
-    SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("matchedTranscriptFilter", _guestRequestFactory);
+    SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("matchedTranscriptFilter");
     Step step = new Step(searchConfig, "GenesByExonCount");
     
     Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
@@ -194,7 +194,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create a step with invalid step filter")
   void createStepWithInvalidStepFilter() throws JsonProcessingException {
    
-    SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("sillyFilter", _guestRequestFactory);
+    SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("sillyFilter");
     Step step = new Step(searchConfig, "GenesByExonCount");  
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
@@ -207,7 +207,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create a step with a legacy filter")
   void createStepWithValidLegacyFilter() throws JsonProcessingException {
    
-    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     searchConfig.setLegacyFilterName("all_results");
     Step step = new Step(searchConfig, "GenesByExonCount");
     
@@ -230,7 +230,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create a step with invalid legacy filter")
   void createStepWithInvalidLegacyFilter() throws JsonProcessingException {
     
-    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     searchConfig.setLegacyFilterName("silly_filter");
 
     Step step = new Step(searchConfig, "GenesByExonCount");  
@@ -246,7 +246,7 @@ public class StepsTest extends UsersTest {
   void validPatchStep() throws JsonProcessingException {
     
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
-    Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+    Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
     
     
     long stepId = stepResponse
@@ -278,7 +278,7 @@ public class StepsTest extends UsersTest {
   void validStepStandardReportNotInStrat() throws JsonProcessingException {
     
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
-    Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+    Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
     
     
     long stepId = stepResponse
@@ -306,14 +306,14 @@ public class StepsTest extends UsersTest {
   void putValidStepSearchConfig() throws JsonProcessingException {
     
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
-    Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory), "GenesByExonCount");
+    Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
     
     long stepId = stepResponse
         .body()
         .jsonPath()
         .getLong("id"); // TODO: use JsonKeys
     
-    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig(_guestRequestFactory);
+    SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     
     _guestRequestFactory.jsonPayloadRequest(searchConfig, HttpStatus.SC_NO_CONTENT)
     .request()
