@@ -36,21 +36,25 @@ public class StrategyUtil {
     long stepId = stepResponse.body().jsonPath().getLong("id"); 
 
     // create and post the strat
-    return createAndPostSingleStepStrategy(requestFactory, cookieId, stepId);
+    return createAndPostValidSingleStepStrategy(requestFactory, cookieId, stepId);
   }
   
-  public long createAndPostSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId) throws JsonProcessingException {
+  public long createAndPostValidSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId) throws JsonProcessingException {
+    Response response = createAndPostSingleStepStrategy(requestFactory, cookieId, stepId, HttpStatus.SC_OK);
+    return response.body().jsonPath().getLong("id"); 
+  }
+  
+  public Response createAndPostSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId, int expectedStatusCode) throws JsonProcessingException {
 
     // create simple step tree using provided stepId
     StepTreeNode stepTree = new StepTreeNode(stepId);
 
     // POST the strat, and extract its ID from the response
     StrategyCreationRequest strat = new StrategyCreationRequest("my strat", stepTree);
-    Response stratResponse = requestFactory.jsonPayloadRequest(strat, HttpStatus.SC_OK,
+    return requestFactory.jsonPayloadRequest(strat, expectedStatusCode,
         ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().post(BASE_PATH, "current");
-    return stratResponse.body().jsonPath().getLong("id"); // TODO: use JsonKeys
   }
-  
+
   public void putStrategy(RequestFactory requestFactory, String cookieId, Long strategyId, StepTreeNode stepTree, int expectedStatus) throws JsonProcessingException {
 
     requestFactory.jsonPayloadRequest(stepTree, HttpStatus.SC_OK,

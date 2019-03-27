@@ -99,7 +99,7 @@ tests to run
       Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
       long stepId = stepResponse.body().jsonPath().getLong("id");  
 
-      Long strategyId = StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory, cookieId, stepId);
+      Long strategyId = StrategyUtil.getInstance().createAndPostValidSingleStepStrategy(_guestRequestFactory, cookieId, stepId);
       
       // GET the strategy
       Response strategyResponse = StrategyUtil.getInstance().getStrategy(strategyId, _guestRequestFactory,
@@ -129,7 +129,7 @@ tests to run
     SearchConfig exonCountSrchConfig = ReportUtil.createValidExonCountSearchConfig();
     Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, exonCountSrchConfig, "GenesByExonCount");
     long firstLeafStepId = stepResponse.body().jsonPath().getLong("id"); 
-    Long strategyId = StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory,
+    Long strategyId = StrategyUtil.getInstance().createAndPostValidSingleStepStrategy(_guestRequestFactory,
         cookieId, firstLeafStepId);
 
     // request a new leaf step to add to the tree (re-use the same search config, for simplicity)
@@ -179,10 +179,28 @@ tests to run
     assertEquals(combineTree.toString(), revisedStrategy.getStepTree().toString(),
         "Expected step trees to be equal. Submitted:  " +  combineTree + " received: " + revisedStrategy.getStepTree());
 
-
     // DELETE the Strategy
     StrategyUtil.getInstance().deleteStrategy(strategyId, _guestRequestFactory, cookieId,
         HttpStatus.SC_NO_CONTENT);
+  }
+  
+  @Test
+  @DisplayName("test that stealing a step from another strategy lands you in jail.") 
+  @Tag (Category.PLASMO_TEST)
+  void testStolenStep() throws JsonProcessingException {
+    
+    String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
+    
+    // create a step, and GET its ID
+    Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
+    long stepId = stepResponse.body().jsonPath().getLong("id");  
+
+    // post valid strategy with that step id.  now the step belongs to the strategy.
+    StrategyUtil.getInstance().createAndPostValidSingleStepStrategy(_guestRequestFactory, cookieId, stepId);
+
+    // try to submit the same step to another strategy.  should fail.
+    StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory, cookieId, stepId, HttpStatus.SC_UNPROCESSABLE_ENTITY);
+    
   }
     
     @Test
