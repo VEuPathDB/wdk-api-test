@@ -3,13 +3,13 @@ package org.gusdb.wdk.model.api;
 import java.util.Map;
 
 public class StrategyResponseBody extends StrategyListItem {
-  private Map<Long, StepRequestBody> _steps;
+  private Map<Long, StepResponseBody> _steps;
   private StepTreeNode _stepTree;
   
-  public Map<Long, StepRequestBody> getSteps() {
+  public Map<Long, StepResponseBody> getSteps() {
     return _steps;
   }
-  public void setSteps(Map<Long, StepRequestBody> steps) {
+  public void setSteps(Map<Long, StepResponseBody> steps) {
     _steps = steps;
   }
   public StepTreeNode getStepTree() {
