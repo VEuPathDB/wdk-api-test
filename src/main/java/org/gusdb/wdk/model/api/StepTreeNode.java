@@ -5,6 +5,9 @@ public class StepTreeNode {
   StepTreeNode primaryInput;
   StepTreeNode secondaryInput;
   
+  public StepTreeNode() {
+  }
+  
   public StepTreeNode(long stepId) {
     this.stepId = stepId;
   }
