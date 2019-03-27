@@ -1,15 +1,15 @@
 package org.gusdb.wdk.model.api;
 
-import java.util.List;
+import java.util.Map;
 
 public class StrategyResponseBody extends StrategyListItem {
-  private List<Step> _steps;
+  private Map<Long, Step> _steps;
   private StepTreeNode _stepTree;
   
-  public List<Step> getSteps() {
+  public Map<Long, Step> getSteps() {
     return _steps;
   }
-  public void setSteps(List<Step> steps) {
+  public void setSteps(Map<Long, Step> steps) {
     _steps = steps;
   }
   public StepTreeNode getStepTree() {
