@@ -7,7 +7,7 @@ import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.SortSpec;
 import org.gusdb.wdk.model.api.StandardReportConfig;
-import org.gusdb.wdk.model.api.Step;
+import org.gusdb.wdk.model.api.StepRequestBody;
 import org.gusdb.wdk.model.api.StepDisplayPreferences;
 import org.gusdb.wdk.model.api.StepMeta;
 import org.junit.jupiter.api.DisplayName;
@@ -122,7 +122,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create invalid guest step")
   void createInvalidGuestStep() throws JsonProcessingException {
     
-    Step step = new Step(ReportUtil.createInvalidExonCountSearchConfig(), "GenesByExonCount");
+    StepRequestBody step = new StepRequestBody(ReportUtil.createInvalidExonCountSearchConfig(), "GenesByExonCount");
     
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
       .when()
@@ -143,7 +143,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create invalid transform step.  Not in strategy, so not allowed to have a non-null step param")
   void createInvalidTransformStep() throws JsonProcessingException {
     
-    Step leafStep = new Step(ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
+    StepRequestBody leafStep = new StepRequestBody(ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
     
     Response stepResponse = _guestRequestFactory.jsonPayloadRequest(leafStep, HttpStatus.SC_OK, ContentType.JSON)
       .when()
@@ -155,7 +155,7 @@ public class StepsTest extends UsersTest {
         .getLong("id"); // TODO: use JsonKeys
     String cookieId = stepResponse.getCookie("JSESSIONID");
     
-    Step transformStep = new Step(StepUtil.getInstance().createInvalidOrthologsSearchConfig(_guestRequestFactory, leafStepId), "GenesByOrthologs");
+    StepRequestBody transformStep = new StepRequestBody(StepUtil.getInstance().createInvalidOrthologsSearchConfig(_guestRequestFactory, leafStepId), "GenesByOrthologs");
 
     stepResponse = _guestRequestFactory.jsonPayloadRequest(transformStep, HttpStatus.SC_UNPROCESSABLE_ENTITY)
         .request()
@@ -173,7 +173,7 @@ public class StepsTest extends UsersTest {
   void createStepWithValidStepFilter() throws JsonProcessingException {
    
     SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("matchedTranscriptFilter");
-    Step step = new Step(searchConfig, "GenesByExonCount");
+    StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
     
     Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
       .when()
@@ -195,7 +195,7 @@ public class StepsTest extends UsersTest {
   void createStepWithInvalidStepFilter() throws JsonProcessingException {
    
     SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("sillyFilter");
-    Step step = new Step(searchConfig, "GenesByExonCount");  
+    StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");  
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
     .when()
@@ -209,7 +209,7 @@ public class StepsTest extends UsersTest {
    
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     searchConfig.setLegacyFilterName("all_results");
-    Step step = new Step(searchConfig, "GenesByExonCount");
+    StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
     
     Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
       .when()
@@ -233,7 +233,7 @@ public class StepsTest extends UsersTest {
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     searchConfig.setLegacyFilterName("silly_filter");
 
-    Step step = new Step(searchConfig, "GenesByExonCount");  
+    StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");  
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
     .when()

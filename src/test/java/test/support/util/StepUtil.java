@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.FilterValueSpec;
 import org.gusdb.wdk.model.api.SearchConfig;
-import org.gusdb.wdk.model.api.Step;
+import org.gusdb.wdk.model.api.StepRequestBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -33,7 +33,7 @@ public class StepUtil {
   public Response createValidStepResponse(RequestFactory requestFactory, String cookieId, SearchConfig searchConfig, String searchUrlSegment)
       throws JsonProcessingException {
 
-    Step step = new Step(searchConfig, searchUrlSegment);
+    StepRequestBody step = new StepRequestBody(searchConfig, searchUrlSegment);
 
     return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().post(BASE_PATH,
         "current");

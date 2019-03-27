@@ -1,15 +1,15 @@
 package org.gusdb.wdk.model.api;
 
-public class Step extends StepMeta {
+public class StepRequestBody extends StepMeta {
   SearchConfig searchConfig;
   String searchName;
 
  
-  public Step() {
+  public StepRequestBody() {
     super();
   }
 
-  public Step(SearchConfig searchConfig, String searchName) {
+  public StepRequestBody(SearchConfig searchConfig, String searchName) {
     super();
     this.searchConfig = searchConfig;
     this.searchName = searchName;
