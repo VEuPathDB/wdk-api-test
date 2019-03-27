@@ -5,6 +5,10 @@ public class Step extends StepMeta {
   String searchName;
 
  
+  public Step() {
+    super();
+  }
+
   public Step(SearchConfig searchConfig, String searchName) {
     super();
     this.searchConfig = searchConfig;
