@@ -7,7 +7,7 @@ import java.util.Map;
 public class SearchConfig {
   Map<String,String> parameters = new HashMap<String, String>();
   String legacyFilterName;
-  Integer wdk_weight;
+  Integer wdkWeight;
   List<FilterValueSpec> filters = new ArrayList<FilterValueSpec>();
   List<FilterValueSpec> viewFilters = new ArrayList<FilterValueSpec>();
   
@@ -26,11 +26,11 @@ public class SearchConfig {
   public void setLegacyFilterName(String legacyFilterName) {
     this.legacyFilterName = legacyFilterName;
   }
-  public Integer getWdk_weight() {
-    return wdk_weight;
+  public Integer getWdkWeight() {
+    return wdkWeight;
   }
-  public void setWdk_weight(Integer wdk_weight) {
-    this.wdk_weight = wdk_weight;
+  public void setWdkWeight(Integer wdk_weight) {
+    this.wdkWeight = wdk_weight;
   }
   public List<FilterValueSpec> getFilters() {
     return filters;
