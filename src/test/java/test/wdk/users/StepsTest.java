@@ -172,7 +172,7 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create a step with a step filter")
   void createStepWithValidStepFilter() throws JsonProcessingException {
    
-    SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("matchedTranscriptFilter");
+    SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("matched_transcript_filter_array");
     StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
     
     Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
