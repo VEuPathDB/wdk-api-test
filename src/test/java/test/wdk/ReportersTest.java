@@ -74,7 +74,7 @@ public class ReportersTest extends TestBase {
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
-    _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_BAD_REQUEST)
+    _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_UNPROCESSABLE_ENTITY)
         .when()
         .post(REPORT_PATH, "transcript", "GenesBySimilarity", "blastSummaryView");
   }
