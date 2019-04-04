@@ -72,9 +72,11 @@ public class StepUtil {
     return searchConfig;
   }
 
-  public SearchConfig createValidBooleanSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+  public SearchConfig createValidBooleanSearchConfig(RequestFactory requestFactory, String recordClassFullName) throws JsonProcessingException {
     Map<String, String> paramsMap = new HashMap<String, String>();
-    paramsMap.put("Operator", "INTERSECT");
+    paramsMap.put("bq_operator", "INTERSECT");
+    paramsMap.put("bq_left_op_" + recordClassFullName.replace(".", "_") , "");
+    paramsMap.put("bq_right_op_" + recordClassFullName.replace(".", "_") , "");
     SearchConfig searchConfig = new SearchConfig();
     searchConfig.setParameters(paramsMap);
     return searchConfig;

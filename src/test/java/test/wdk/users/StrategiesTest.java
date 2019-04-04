@@ -138,7 +138,7 @@ tests to run
 
     // request a combiner step to add to the tree
     SearchConfig combinerSrchConfig = StepUtil.getInstance().createValidBooleanSearchConfig(
-        _guestRequestFactory);
+                                                                                            _guestRequestFactory, "TranscriptRecordClasses.TranscriptRecordClass");
     String transcriptBooleanUrlSegment = "boolean_question_TranscriptRecordClasses_TranscriptRecordClass";
     stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, combinerSrchConfig, transcriptBooleanUrlSegment);
     long combineStepId = stepResponse.body().jsonPath().getLong("id");
