@@ -59,8 +59,7 @@ public class StrategyUtil {
 
   public void putStrategy(RequestFactory requestFactory, String cookieId, Long strategyId, StrategyPutRequest putReq, int expectedStatus) throws JsonProcessingException {
 
-    requestFactory.jsonPayloadRequest(putReq, HttpStatus.SC_OK,
-        ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().put(BY_ID_PATH_WITH_STEP_TREE, "current", strategyId);
+    requestFactory.jsonPayloadRequest(putReq, HttpStatus.SC_NO_CONTENT).request().cookie("JSESSIONID", cookieId).when().put(BY_ID_PATH_WITH_STEP_TREE, "current", strategyId);
   }
   
   public Response getStrategy(long StrategyId, RequestFactory requestFactory, String cookieId, int expectedStatus)

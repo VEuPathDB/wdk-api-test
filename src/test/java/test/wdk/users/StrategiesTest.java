@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.json.JSONObject;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -164,7 +165,7 @@ tests to run
         "Expected step trees to be equal. Submitted:  " +  combineTree + " received: " + revisedStrategy.getStepTree());
   
     // since we have a tree in hand, also test nesting
-    StepTreeNode dupTree = _guestRequestFactory.jsonPayloadRequest(null, HttpStatus.SC_OK,
+    StepTreeNode dupTree = _guestRequestFactory.jsonPayloadRequest(new JSONObject(), HttpStatus.SC_OK,
         ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().post(DUPLICATE_TREE_PATH, "current", strategyId).as(StepTreeNode.class);
     combineTree.setSecondaryInput(dupTree);
     
