@@ -20,6 +20,7 @@ public class StrategyUtil {
 
   public static final String BASE_PATH = UserUtil.BY_ID_PATH + "/strategies";
   public static final String BY_ID_PATH = BASE_PATH + "/{stratId}";
+  public static final String BY_ID_PATH_WITH_STEP_TREE = BY_ID_PATH + "/stepTree";
 
   public static StrategyUtil getInstance() {
     if (instance == null) {
@@ -58,7 +59,7 @@ public class StrategyUtil {
   public void putStrategy(RequestFactory requestFactory, String cookieId, Long strategyId, StepTreeNode stepTree, int expectedStatus) throws JsonProcessingException {
 
     requestFactory.jsonPayloadRequest(stepTree, HttpStatus.SC_OK,
-        ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().put(BY_ID_PATH, "current", strategyId);
+        ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().put(BY_ID_PATH_WITH_STEP_TREE, "current", strategyId);
   }
   
   public Response getStrategy(long StrategyId, RequestFactory requestFactory, String cookieId, int expectedStatus)

@@ -39,17 +39,20 @@ public class LoginTest extends TestBase {
   @Tag(Category.AUTH_TEST)
   @DisplayName("User Login")
   void testLogin() throws UnsupportedEncodingException {
-    switch (Conf.AUTH_TYPE) {
-      case LEGACY:
-        testLegacy();
-        break;
+    // make sure user provided credentials; skip login test if not
+    if (Conf.CREDENTIALS.length != 0) {
+      switch (Conf.AUTH_TYPE) {
+        case LEGACY:
+          testLegacy();
+          break;
 
-      case OAUTH:
-        testOAuth2();
-        break;
+        case OAUTH:
+          testOAuth2();
+          break;
 
-      default:
-        throw new JUnitException("Test not implemented for auth type " + Conf.AUTH_TYPE.name());
+        default:
+          throw new JUnitException("Test not implemented for auth type " + Conf.AUTH_TYPE.name());
+      }
     }
   }
 
