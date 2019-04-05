@@ -8,6 +8,7 @@ import org.gusdb.wdk.model.api.StandardReportConfig;
 import org.gusdb.wdk.model.api.StepTreeNode;
 import org.gusdb.wdk.model.api.StrategyCopyRequest;
 import org.gusdb.wdk.model.api.StrategyListItem;
+import org.gusdb.wdk.model.api.StrategyPutRequest;
 import org.gusdb.wdk.model.api.StrategyResponseBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -148,7 +149,9 @@ tests to run
     combineTree.setSecondaryInput(new StepTreeNode(secondLeafStepId));
     
     // do the PUT
-    StrategyUtil.getInstance().putStrategy(_guestRequestFactory, cookieId, strategyId, combineTree,
+    StrategyPutRequest putReq = new StrategyPutRequest();
+    putReq.setStepTree(combineTree);
+    StrategyUtil.getInstance().putStrategy(_guestRequestFactory, cookieId, strategyId, putReq,
         HttpStatus.SC_NO_CONTENT);
     
     // GET the revised strategy
@@ -166,7 +169,7 @@ tests to run
     combineTree.setSecondaryInput(dupTree);
     
     // PUT the strat with nested tree
-    StrategyUtil.getInstance().putStrategy(_guestRequestFactory, cookieId, strategyId, combineTree,
+    StrategyUtil.getInstance().putStrategy(_guestRequestFactory, cookieId, strategyId, putReq,
         HttpStatus.SC_NO_CONTENT);
     
     // GET the newly revised strategy

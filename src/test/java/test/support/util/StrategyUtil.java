@@ -6,6 +6,7 @@ import org.gusdb.wdk.model.api.StandardReportConfig;
 import org.gusdb.wdk.model.api.StepTreeNode;
 import org.gusdb.wdk.model.api.StrategyCopyRequest;
 import org.gusdb.wdk.model.api.StrategyCreationRequest;
+import org.gusdb.wdk.model.api.StrategyPutRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -56,9 +57,9 @@ public class StrategyUtil {
         expectedContentType).request().cookie("JSESSIONID", cookieId).when().post(BASE_PATH, "current");
   }
 
-  public void putStrategy(RequestFactory requestFactory, String cookieId, Long strategyId, StepTreeNode stepTree, int expectedStatus) throws JsonProcessingException {
+  public void putStrategy(RequestFactory requestFactory, String cookieId, Long strategyId, StrategyPutRequest putReq, int expectedStatus) throws JsonProcessingException {
 
-    requestFactory.jsonPayloadRequest(stepTree, HttpStatus.SC_OK,
+    requestFactory.jsonPayloadRequest(putReq, HttpStatus.SC_OK,
         ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().put(BY_ID_PATH_WITH_STEP_TREE, "current", strategyId);
   }
   
