@@ -40,11 +40,11 @@ public class StrategyUtil {
   }
   
   public long createAndPostValidSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId) throws JsonProcessingException {
-    Response response = createAndPostSingleStepStrategy(requestFactory, cookieId, stepId, HttpStatus.SC_OK);
+    Response response = createAndPostSingleStepStrategy(requestFactory, cookieId, stepId, HttpStatus.SC_OK, ContentType.JSON);
     return response.body().jsonPath().getLong("id"); 
   }
   
-  public Response createAndPostSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId, int expectedStatusCode) throws JsonProcessingException {
+  public Response createAndPostSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId, int expectedStatusCode, ContentType expectedContentType) throws JsonProcessingException {
 
     // create simple step tree using provided stepId
     StepTreeNode stepTree = new StepTreeNode(stepId);
@@ -52,7 +52,7 @@ public class StrategyUtil {
     // POST the strat, and extract its ID from the response
     StrategyCreationRequest strat = new StrategyCreationRequest("my strat", stepTree);
     return requestFactory.jsonPayloadRequest(strat, expectedStatusCode,
-        ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().post(BASE_PATH, "current");
+        expectedContentType).request().cookie("JSESSIONID", cookieId).when().post(BASE_PATH, "current");
   }
 
   public void putStrategy(RequestFactory requestFactory, String cookieId, Long strategyId, StepTreeNode stepTree, int expectedStatus) throws JsonProcessingException {

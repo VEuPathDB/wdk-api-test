@@ -199,7 +199,7 @@ tests to run
     StrategyUtil.getInstance().createAndPostValidSingleStepStrategy(_guestRequestFactory, cookieId, stepId);
 
     // try to submit the same step to another strategy.  should fail.
-    StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory, cookieId, stepId, HttpStatus.SC_UNPROCESSABLE_ENTITY);
+    StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory, cookieId, stepId, HttpStatus.SC_UNPROCESSABLE_ENTITY, ContentType.TEXT);
     
   }
     
