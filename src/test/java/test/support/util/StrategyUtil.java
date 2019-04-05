@@ -20,7 +20,7 @@ public class StrategyUtil {
 
   public static final String BASE_PATH = UserUtil.BY_ID_PATH + "/strategies";
   public static final String BY_ID_PATH = BASE_PATH + "/{stratId}";
-  public static final String BY_ID_PATH_WITH_STEP_TREE = BY_ID_PATH + "/stepTree";
+  public static final String BY_ID_PATH_WITH_STEP_TREE = BY_ID_PATH + "/step-tree";
 
   public static StrategyUtil getInstance() {
     if (instance == null) {
