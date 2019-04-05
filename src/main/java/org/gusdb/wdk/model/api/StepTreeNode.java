@@ -32,6 +32,7 @@ public class StepTreeNode {
   }
   
   // a flattened version also guaranteed to be unique for a step tree node
+  @Override
   public String toString() {
     StringBuilder builder = new StringBuilder();
     buildString(builder);

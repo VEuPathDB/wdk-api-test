@@ -1,8 +1,6 @@
 package org.gusdb.wdk.model.api;
 
 import java.util.Date;
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 
 public class StrategyListItem {
   private long strategyId;
@@ -19,6 +17,7 @@ public class StrategyListItem {
   private Boolean isDeleted;
   private Boolean isValid;
   private Integer estimatedSize;
+  private Integer leafAndTransformStepCount;
   public long getStrategyId() {
     return strategyId;
   }
@@ -104,6 +103,12 @@ public class StrategyListItem {
     this.estimatedSize = estimatedSize;
   }
   
+  public Integer getLeafAndTransformStepCount() {
+    return leafAndTransformStepCount;
+  }
+  public void setLeafAndTransformStepCount(Integer leafAndTransformStepCount) {
+    this.leafAndTransformStepCount = leafAndTransformStepCount;
+  }
   // a simple toString method for use in reporting info about failed strats
   @Override
   public String toString() {
