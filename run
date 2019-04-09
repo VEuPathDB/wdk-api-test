@@ -209,7 +209,7 @@ function getTags() {
 function removeItem() {
   declare -r remove="$1";
   shift;
-  echo "$@" | sed "s# ${remove:?}\|^${remove}##";
+  echo "$@" | sed "s# ${remove:?}##;s#^${remove}##"
 }
 
 # Build the final list of tags to exclude by prepending the
