@@ -6,6 +6,7 @@ import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.StandardReportConfig;
 import org.gusdb.wdk.model.api.StepTreeNode;
+import org.gusdb.wdk.model.api.StepTreeWrapper;
 import org.gusdb.wdk.model.api.StrategyCopyRequest;
 import org.gusdb.wdk.model.api.StrategyListItem;
 import org.gusdb.wdk.model.api.StrategyPutRequest;
@@ -77,6 +78,7 @@ tests to run
  */
   @DisplayName("Strategies")
   public class StrategiesTest extends UsersTest {
+
     public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
     public static final String BY_ID_PATH = BASE_PATH + "/{strategyId}";
     public static final String DUPLICATE_TREE_PATH = BASE_PATH + "/{strategyId}/duplicated-step-tree";
@@ -165,9 +167,9 @@ tests to run
         "Expected step trees to be equal. Submitted:  " +  combineTree + " received: " + revisedStrategy.getStepTree());
   
     // since we have a tree in hand, also test nesting
-    StepTreeNode dupTree = _guestRequestFactory.jsonPayloadRequest(new JSONObject(), HttpStatus.SC_OK,
-        ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().post(DUPLICATE_TREE_PATH, "current", strategyId).as(StepTreeNode.class);
-    combineTree.setSecondaryInput(dupTree);
+    StepTreeWrapper dupTree = _guestRequestFactory.jsonPayloadRequest(new JSONObject(), HttpStatus.SC_OK,
+        ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().post(DUPLICATE_TREE_PATH, "current", strategyId).as(StepTreeWrapper.class);
+    combineTree.setSecondaryInput(dupTree.getStepTree());
     
     // PUT the strat with nested tree
     StrategyUtil.getInstance().putStrategy(_guestRequestFactory, cookieId, strategyId, putReq,
