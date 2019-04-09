@@ -177,11 +177,11 @@ function join() {
 # @return site project id
 function getProjectID() {
   url="$1"
-  if [[ ${url:?} == '/' ]]; then
-    url="${url: -1}"
+  if [[ ${url:?} ]] && [[ ${url: -1} == '/' ]]; then
+    url="${url:0:${#url}-1}";
   fi
 
-  curl "${url:?}${SERVICE_PATH}" 2>&1 \
+  curl $(dLog "Curl URL" "${url}${SERVICE_PATH}") 2>&1 \
     | grep -Eo '"projectId":"[^"]+"' \
     | cut -d: -f2 \
     | tr '[:upper:]' '[:lower:]' \
@@ -193,10 +193,10 @@ function getProjectID() {
 #
 # @return newline separated list of tag categories
 function getTags() {
-  tr -d '\n' < "$CATEGORY_FILE" \
+  echo $(dLog "Full Tag List" $(tr -d '\n' < "$CATEGORY_FILE" \
     | grep -Eo 'public[[:space:]]+static[[:space:]]+final[[:space:]]+String[[:space:]]+[A-Z_]+[[:space:]]+=[[:space:]]+"([^"]+)";' \
     | grep -Eo '".+"' \
-    | tr -d '"'
+    | tr -d '"'));
 }
 
 # Remove a given item from a given list of items if present
@@ -261,13 +261,24 @@ function excludeAuth() {
   echo ${categories}
 }
 
+function dLog() {
+  if [[ ${debugMode} -eq 1 ]]; then
+    tmp=`printf "%20.20s" "$1"`
+    shift
+    echo "$tmp: $@" 1>&2;
+  else
+    shift
+  fi
+
+  echo "$@"
+}
+
 
 #╔════════════════════════════════════════════════════════════════════════════╗#
 #║                                                                            ║#
 #║ Main Script                                                                ║#
 #║                                                                            ║#
 #╚════════════════════════════════════════════════════════════════════════════╝#
-
 
 # Credentials JSON array
 #
@@ -387,24 +398,28 @@ fi
 
 # Build tag whitelist string if include tags are present
 if [[ ! -z "$incTags" ]]; then
-  incTags="-PincludeTags=$incTags";
+  incTags="-PincludeTags=$(dLog 'Tag Whitelist' $incTags)";
 else
   exclusions=`getTags`;
   exclusions=`excludeSite ${SITE_NAME} ${exclusions}`;
   exclusions=`excludeAuth ${credentials} ${exclusions}`;
   exclusions=`buildExclusions ${exTags} ${exclusions}`;
-  exclusions="-PexcludeTags=\"${exclusions}\"";
+  exclusions="-PexcludeTags=\"$(dLog 'Tag Blacklist' ${exclusions})\"";
 fi
 
 ADD_FLAGS=`removeItem "-- " $@`
 
 if [[ ${debugMode} -eq 1 ]]; then
-  echo CREDENTIALS="${credentials:-[]}" \
+  dLog "Credentials" "${credentials:-[]}" 1>/dev/null
+  dLog "Site URL" "${sitePath:?}"         1>/dev/null
+  dLog "Auth Scheme" "${authType:?}"      1>/dev/null
+  dLog "QA Token" "${qaAuth}"             1>/dev/null
+  dLog "Gradle Call" CREDENTIALS="${credentials:-[]}" \
   SITE_PATH="${sitePath:?}" \
   AUTH_TYPE="${authType:?}" \
   QA_AUTH="${qaAuth}" \
   PRINT_HTTP="${PRINT_HTTP}" \
-  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} ${exclusions} ${verbose} ${rerun} ${ADD_FLAGS}
+  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} ${exclusions} ${verbose} ${rerun} ${ADD_FLAGS}  1>/dev/null
   exit 0
 fi
 
