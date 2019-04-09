@@ -181,7 +181,7 @@ function getProjectID() {
     url="${url:0:${#url}-1}";
   fi
 
-  curl $(dLog "Curl URL" "${url}${SERVICE_PATH}") 2>&1 \
+  curl $(dLog "Service API" "${url}${SERVICE_PATH}") 2>&1 \
     | grep -Eo '"projectId":"[^"]+"' \
     | cut -d: -f2 \
     | tr '[:upper:]' '[:lower:]' \
@@ -263,9 +263,9 @@ function excludeAuth() {
 
 function dLog() {
   if [[ ${debugMode} -eq 1 ]]; then
-    tmp=`printf "%20.20s" "$1"`
+    tmp=`printf "%16.16s" "$1"`
     shift
-    echo "$tmp: $@" 1>&2;
+    echo -e "\033[1m$tmp\033[0m │ $@" 1>&2;
   else
     shift
   fi
@@ -411,9 +411,9 @@ ADD_FLAGS=`removeItem "-- " $@`
 
 if [[ ${debugMode} -eq 1 ]]; then
   dLog "Credentials" "${credentials:-[]}" 1>/dev/null
-  dLog "Site URL" "${sitePath:?}"         1>/dev/null
+  dLog "Site URL"    "${sitePath:?}"      1>/dev/null
   dLog "Auth Scheme" "${authType:?}"      1>/dev/null
-  dLog "QA Token" "${qaAuth}"             1>/dev/null
+  dLog "QA Token"    "${qaAuth}"          1>/dev/null
   dLog "Gradle Call" CREDENTIALS="${credentials:-[]}" \
   SITE_PATH="${sitePath:?}" \
   AUTH_TYPE="${authType:?}" \
