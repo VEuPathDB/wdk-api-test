@@ -1,5 +1,6 @@
 package org.gusdb.wdk.model.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StandardReportConfig extends BaseStandardReportConfig {
@@ -19,4 +20,12 @@ public class StandardReportConfig extends BaseStandardReportConfig {
     this.sorting = sorting;
   }
 
+  public StandardReportConfig addAttribute(String attr) {
+    if (attributes == null)
+      attributes = new ArrayList<>();
+
+    attributes.add(attr);
+
+    return this;
+  }
 }

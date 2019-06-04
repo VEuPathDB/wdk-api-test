@@ -5,21 +5,27 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchConfig {
+
   Map<String,String> parameters = new HashMap<String, String>();
   String legacyFilterName;
   Integer wdkWeight;
   List<FilterValueSpec> filters = new ArrayList<FilterValueSpec>();
   List<FilterValueSpec> viewFilters = new ArrayList<FilterValueSpec>();
-  
+
+  public ColumnFilterConfig columnFilters;
+
   public SearchConfig() {
   }
 
   public Map<String, String> getParameters() {
     return parameters;
   }
-  public void setParameters(Map<String, String> parameters) {
+
+  public SearchConfig setParameters(Map<String, String> parameters) {
     this.parameters = parameters;
+    return this;
   }
+
   public String getLegacyFilterName() {
     return legacyFilterName;
   }
@@ -44,5 +50,5 @@ public class SearchConfig {
   public void setViewFilters(List<FilterValueSpec> viewFilters) {
     this.viewFilters = viewFilters;
   }
-  
+
 }
