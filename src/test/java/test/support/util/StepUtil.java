@@ -10,8 +10,6 @@ import org.gusdb.wdk.model.api.FilterValueSpec;
 import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.StepRequestBody;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
@@ -30,8 +28,7 @@ public class StepUtil {
     return instance;
   }
   
-  public Response createValidStepResponse(RequestFactory requestFactory, String cookieId, SearchConfig searchConfig, String searchUrlSegment)
-      throws JsonProcessingException {
+  public Response createValidStepResponse(RequestFactory requestFactory, String cookieId, SearchConfig searchConfig, String searchUrlSegment) {
 
     StepRequestBody step = new StepRequestBody(searchConfig, searchUrlSegment);
 
@@ -39,8 +36,7 @@ public class StepUtil {
         "current");
   }
 
-  public SearchConfig createSearchConfigWithStepFilter(String filterName)
-      throws JsonProcessingException {
+  public SearchConfig createSearchConfigWithStepFilter(String filterName) {
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
 
     // add filter to searchConfig
@@ -57,7 +53,7 @@ public class StepUtil {
   }
   
   // this is a transform.  not allowed to have non-null step param
-  public SearchConfig createValidOrthologsSearchConfig(RequestFactory requestFactory) throws JsonProcessingException {
+  public SearchConfig createValidOrthologsSearchConfig() {
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
     SearchConfig searchConfig = new SearchConfig();
@@ -66,13 +62,13 @@ public class StepUtil {
   }
 
   // this is a transform.  not allowed to have non-null step param
-  public SearchConfig createInvalidOrthologsSearchConfig(RequestFactory requestFactory, Long leafStepId) throws JsonProcessingException {
-    SearchConfig searchConfig = createValidOrthologsSearchConfig(requestFactory);
+  public SearchConfig createInvalidOrthologsSearchConfig(Long leafStepId) {
+    SearchConfig searchConfig = createValidOrthologsSearchConfig();
     searchConfig.getParameters().put("gene_result", leafStepId.toString()); // naughty naughty
     return searchConfig;
   }
 
-  public SearchConfig createValidBooleanSearchConfig(RequestFactory requestFactory, String recordClassFullName) throws JsonProcessingException {
+  public SearchConfig createValidBooleanSearchConfig(String recordClassFullName) {
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("bq_operator", "INTERSECT");
     paramsMap.put("bq_left_op_" + recordClassFullName.replace(".", "_") , "");
@@ -82,14 +78,12 @@ public class StepUtil {
     return searchConfig;
   }
 
-  public Response getStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus)
-      throws JsonProcessingException {
+  public Response getStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) {
     return requestFactory.emptyRequest().cookie("JSESSIONID", cookieId).expect().statusCode(
         expectedStatus).when().get(BY_ID_PATH, "current", stepId);
   }
 
-  public void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus)
-      throws JsonProcessingException {
+  public void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) {
 
     requestFactory.emptyRequest().cookie("JSESSIONID", cookieId).expect().statusCode(
         expectedStatus).when().delete(BY_ID_PATH, "current", stepId);

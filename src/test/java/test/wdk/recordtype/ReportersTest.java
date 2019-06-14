@@ -1,23 +1,9 @@
 package test.wdk.recordtype;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
-import org.apache.http.HttpStatus;
-import org.gusdb.wdk.model.api.*;
-import org.junit.jupiter.api.*;
-import test.support.Category;
-import test.support.util.GuestRequestFactory;
-import test.support.util.ReportUtil;
-import test.support.util.SearchUtil;
-import test.wdk.TestBase;
-import util.Json;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,8 +11,31 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.StreamSupport;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import org.apache.http.HttpStatus;
+import org.gusdb.wdk.model.api.ColumnFilterConfig;
+import org.gusdb.wdk.model.api.DefaultReportRequest;
+import org.gusdb.wdk.model.api.GenomeViewInstance;
+import org.gusdb.wdk.model.api.IsolateViewInstance;
+import org.gusdb.wdk.model.api.RecordInstance;
+import org.gusdb.wdk.model.api.SearchConfig;
+import org.gusdb.wdk.model.api.StandardReportConfig;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import test.support.Category;
+import test.support.util.GuestRequestFactory;
+import test.support.util.ReportUtil;
+import test.support.util.SearchUtil;
+import test.wdk.TestBase;
+import util.Json;
 
 public class ReportersTest extends TestBase {
   public static final String REPORT_PATH = SearchUtil.KEYED_URI + "/reports/{reportName}";
@@ -57,7 +66,7 @@ public class ReportersTest extends TestBase {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Blast Reporter Success")
-  void testBlastReporterSuccess() throws JsonProcessingException {
+  void testBlastReporterSuccess() {
     SearchConfig searchConfig = ReportUtil.createBlastSearchConfig();
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
@@ -78,7 +87,7 @@ public class ReportersTest extends TestBase {
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_UNPROCESSABLE_ENTITY)
         .when()
-        .post(REPORT_PATH, "transcript", "GenesBySimilarity", "blastSummaryView");
+        .post(REPORT_PATH, "transcript", "GenesByExonCount", "blastSummaryView");
   }
 
   @Test

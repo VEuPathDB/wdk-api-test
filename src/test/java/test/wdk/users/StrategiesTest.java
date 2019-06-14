@@ -11,24 +11,22 @@ import org.gusdb.wdk.model.api.StrategyCopyRequest;
 import org.gusdb.wdk.model.api.StrategyListItem;
 import org.gusdb.wdk.model.api.StrategyPutRequest;
 import org.gusdb.wdk.model.api.StrategyResponseBody;
+import org.json.JSONObject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import org.json.JSONObject;
 
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.support.Category;
+import test.support.util.AuthUtil;
+import test.support.util.AuthenticatedRequestFactory;
+import test.support.util.GuestRequestFactory;
 import test.support.util.ReportUtil;
 import test.support.util.StepUtil;
 import test.support.util.StrategyUtil;
 import test.support.util.UserUtil;
-import test.support.util.AuthUtil;
-import test.support.util.AuthenticatedRequestFactory;
-import test.support.util.GuestRequestFactory;
 import test.wdk.StrategyListTest;
 import test.wdk.UsersTest;
 
@@ -95,7 +93,7 @@ tests to run
     @Test
     @DisplayName("create single step strategy") 
     @Tag (Category.PLASMO_TEST)
-    void createValidSingleStepStrat() throws JsonProcessingException {
+    void createValidSingleStepStrat() {
       
       String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
       
@@ -125,7 +123,7 @@ tests to run
   @Test
   @DisplayName("revise a strategy with a PUT.")
   @Tag(Category.PLASMO_TEST)
-  void reviseStrategy() throws JsonProcessingException {
+  void reviseStrategy() {
 
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     
@@ -141,7 +139,7 @@ tests to run
     long secondLeafStepId = stepResponse.body().jsonPath().getLong("id");
 
     // request a combiner step to add to the tree
-    SearchConfig combinerSrchConfig = StepUtil.getInstance().createValidBooleanSearchConfig(_guestRequestFactory, "TranscriptRecordClasses.TranscriptRecordClass");
+    SearchConfig combinerSrchConfig = StepUtil.getInstance().createValidBooleanSearchConfig("TranscriptRecordClasses.TranscriptRecordClass");
     String transcriptBooleanUrlSegment = "boolean_question_TranscriptRecordClasses_TranscriptRecordClass";
     stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, combinerSrchConfig, transcriptBooleanUrlSegment);
     long combineStepId = stepResponse.body().jsonPath().getLong("id");
@@ -192,7 +190,7 @@ tests to run
   @Test
   @DisplayName("test that stealing a step from another strategy lands you in jail.") 
   @Tag (Category.PLASMO_TEST)
-  void testStolenStep() throws JsonProcessingException {
+  void testStolenStep() {
     
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     
@@ -211,7 +209,7 @@ tests to run
     @Test
     @DisplayName("get strategies lists") 
     @Tag (Category.PLASMO_TEST)
-    void getStrategiesListing() throws JsonProcessingException {
+    void getStrategiesListing() {
       
       String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
       Long strategyId_1 = StrategyUtil.getInstance().createAndPostSingleStepStrategy(_guestRequestFactory, cookieId);
@@ -234,7 +232,7 @@ tests to run
     @DisplayName("Run public strategy")
     @Disabled("Strategy service is not ready for this test")
     @Tag (Category.PLASMO_TEST)
-    void runPublicStrategy() throws JsonProcessingException {
+    void runPublicStrategy() {
       // find a random strategy:  first one in list of public strats
       StrategyListItem[] strategyList =  _guestRequestFactory.jsonSuccessRequest().when().get(StrategyListTest.PUBLIC_STRATS_PATH).as(StrategyListItem[].class);
       String signature = strategyList[0].getSignature();
