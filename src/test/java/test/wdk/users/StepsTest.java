@@ -27,7 +27,7 @@ import test.support.util.UserUtil;
 import test.wdk.UsersTest;
 
 /* TESTS TO RUN
- * 
+ *
  - POST step/
   - with no step or dataset params
     - all params valid
@@ -74,31 +74,35 @@ public class StepsTest extends UsersTest {
   public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/steps";
   public static final String BY_ID_PATH = BASE_PATH + "/{stepId}";
   public static final String REPORTS_PATH = BASE_PATH + "/{stepId}/reports/{reportName}";
-  static final  Long INVALID_STEP_ID = new Long(-1);
+  public static final Long INVALID_STEP_ID = -1L;
 
   protected final AuthUtil _authUtil;
   private GuestRequestFactory _guestRequestFactory;
 
-  public StepsTest(AuthUtil auth, AuthenticatedRequestFactory authReqFactory, GuestRequestFactory guestReqFactory ) {
+  public StepsTest(
+    AuthUtil auth,
+    AuthenticatedRequestFactory authReqFactory,
+    GuestRequestFactory guestReqFactory
+  ) {
     super(authReqFactory);
     this._authUtil = auth;
     _guestRequestFactory = guestReqFactory;
   }
-  
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create, get and delete a valid guest step")
   void createAndGetAndDeleteGuestStep() throws JsonProcessingException {
-    
+
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
-    Response stepResponse = 
+    Response stepResponse =
         StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
-    
+
     long stepId = stepResponse
         .body()
         .jsonPath()
         .getLong("id"); // TODO: use JsonKeys
-     
+
     // get the step
     StepUtil.getInstance().getStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_OK);
 
@@ -108,7 +112,7 @@ public class StepsTest extends UsersTest {
     // deleting again should get a not found
     StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
-   
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Get invalid step id")
@@ -116,24 +120,24 @@ public class StepsTest extends UsersTest {
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     StepUtil.getInstance().getStep(INVALID_STEP_ID, _guestRequestFactory,  cookieId, HttpStatus.SC_NOT_FOUND);
   }
- 
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create invalid guest step")
   void createInvalidGuestStep() throws JsonProcessingException {
-    
+
     StepRequestBody step = new StepRequestBody(ReportUtil.createInvalidExonCountSearchConfig(), "GenesByExonCount");
-    
+
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
       .when()
-      .post(BASE_PATH, "current");    
+      .post(BASE_PATH, "current");
   }
- 
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Delete invalid step ID")
   void deleteInvalidStepId() throws JsonProcessingException {
-    
+
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     StepUtil.getInstance().deleteStep(INVALID_STEP_ID, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
@@ -142,43 +146,43 @@ public class StepsTest extends UsersTest {
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create invalid transform step.  Not in strategy, so not allowed to have a non-null step param")
   void createInvalidTransformStep() throws JsonProcessingException {
-    
+
     StepRequestBody leafStep = new StepRequestBody(ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
-    
+
     Response stepResponse = _guestRequestFactory.jsonPayloadRequest(leafStep, HttpStatus.SC_OK, ContentType.JSON)
       .when()
-      .post(BASE_PATH, "current");    
+      .post(BASE_PATH, "current");
 
     long leafStepId = stepResponse
         .body()
         .jsonPath()
         .getLong("id"); // TODO: use JsonKeys
     String cookieId = stepResponse.getCookie("JSESSIONID");
-    
+
     StepRequestBody transformStep = new StepRequestBody(StepUtil.getInstance().createInvalidOrthologsSearchConfig(_guestRequestFactory, leafStepId), "GenesByOrthologs");
 
     stepResponse = _guestRequestFactory.jsonPayloadRequest(transformStep, HttpStatus.SC_UNPROCESSABLE_ENTITY)
         .request()
         .cookie("JSESSIONID", cookieId)
         .when()
-        .post(BASE_PATH, "current");    
+        .post(BASE_PATH, "current");
 
     // delete the leaf step, to clean up
     StepUtil.getInstance().deleteStep(leafStepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
   }
-  
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create a step with a step filter")
   void createStepWithValidStepFilter() throws JsonProcessingException {
-   
+
     SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("matched_transcript_filter_array");
     StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
-    
+
     Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
       .when()
-      .post(BASE_PATH, "current");    
- 
+      .post(BASE_PATH, "current");
+
     long stepId = stepResponse
         .body()
         .jsonPath()
@@ -188,33 +192,33 @@ public class StepsTest extends UsersTest {
     // delete the step
     StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
   }
-  
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create a step with invalid step filter")
   void createStepWithInvalidStepFilter() throws JsonProcessingException {
-   
+
     SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("sillyFilter");
-    StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");  
+    StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
     .when()
-    .post(BASE_PATH, "current");    
+    .post(BASE_PATH, "current");
   }
-  
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create a step with a legacy filter")
   void createStepWithValidLegacyFilter() throws JsonProcessingException {
-   
+
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     searchConfig.setLegacyFilterName("all_results");
     StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
-    
+
     Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
       .when()
-      .post(BASE_PATH, "current");    
- 
+      .post(BASE_PATH, "current");
+
     long stepId = stepResponse
         .body()
         .jsonPath()
@@ -224,36 +228,36 @@ public class StepsTest extends UsersTest {
     // delete the step
     StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
   }
-  
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create a step with invalid legacy filter")
   void createStepWithInvalidLegacyFilter() throws JsonProcessingException {
-    
+
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     searchConfig.setLegacyFilterName("silly_filter");
 
-    StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");  
+    StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
     .when()
-    .post(BASE_PATH, "current");    
+    .post(BASE_PATH, "current");
   }
-  
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create, and patch a valid guest step")
   void validPatchStep() throws JsonProcessingException {
-    
+
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
-    
-    
+
+
     long stepId = stepResponse
         .body()
         .jsonPath()
         .getLong("id"); // TODO: use JsonKeys
-    
+
     // the step prefs are not validated by the server.
     StepMeta stepPatch = new StepMeta();
     stepPatch.setCustomName("yippee");
@@ -264,37 +268,37 @@ public class StepsTest extends UsersTest {
     sort.put("dragon", SortSpec.SortDirection.ASC);
     stepPatch.getDisplayPreferences().setColumnSelection(colSel);
     stepPatch.getDisplayPreferences().setColumnSorting(sort);
-    
+
     _guestRequestFactory.jsonPayloadRequest(stepPatch, HttpStatus.SC_NO_CONTENT)
     .request()
     .cookie("JSESSIONID", cookieId)
     .when()
-    .patch(BY_ID_PATH, "current", stepId);    
+    .patch(BY_ID_PATH, "current", stepId);
   }
 
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("POST to standard step report.  Fail because not in strat")
   void validStepStandardReportNotInStrat() throws JsonProcessingException {
-    
+
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
-    
-    
+
+
     long stepId = stepResponse
         .body()
         .jsonPath()
         .getLong("id"); // TODO: use JsonKeys
-    
+
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
-    
+
     // fail because not in strategy
     _guestRequestFactory.jsonPayloadRequest(reportConfig, HttpStatus.SC_UNPROCESSABLE_ENTITY)
     .request()
     .cookie("JSESSIONID", cookieId)
     .when()
-      .post(REPORTS_PATH, "current", stepId, "standard");    
-    
+      .post(REPORTS_PATH, "current", stepId, "standard");
+
     // delete the step to clean up
     StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
 
@@ -304,27 +308,27 @@ public class StepsTest extends UsersTest {
   @Tag (Category.PLASMO_TEST)
   @DisplayName("PUT a valid search config.  ")
   void putValidStepSearchConfig() throws JsonProcessingException {
-    
+
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
-    
+
     long stepId = stepResponse
         .body()
         .jsonPath()
         .getLong("id"); // TODO: use JsonKeys
-    
+
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
-    
+
     _guestRequestFactory.jsonPayloadRequest(searchConfig, HttpStatus.SC_NO_CONTENT)
     .request()
     .cookie("JSESSIONID", cookieId)
     .when()
-    .put(BY_ID_PATH + "/search-config", "current", stepId);    
-    
+    .put(BY_ID_PATH + "/search-config", "current", stepId);
+
     // delete the step to clean up
     StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
 
   }
-  
+
 }
 
