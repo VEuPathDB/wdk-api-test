@@ -1,6 +1,5 @@
 package test.wdk.recordtype;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
@@ -50,7 +49,7 @@ public class ReportersTest extends TestBase {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Blast Reporter Success")
-  void testBlastReporterSuccess() throws JsonProcessingException {
+  void testBlastReporterSuccess() {
     SearchConfig searchConfig = ReportUtil.createBlastSearchConfig();
     StandardReportConfig reportConfig = ReportUtil.getStandardReportConfigOneRecord();
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
@@ -71,7 +70,7 @@ public class ReportersTest extends TestBase {
     DefaultReportRequest  requestBody = new DefaultReportRequest(searchConfig, reportConfig);
     _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_UNPROCESSABLE_ENTITY)
         .when()
-        .post(REPORT_PATH, "transcript", "GenesBySimilarity", "blastSummaryView");
+        .post(REPORT_PATH, "transcript", "GenesByExonCount", "blastSummaryView");
   }
 
   @Test

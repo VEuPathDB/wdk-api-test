@@ -7,21 +7,20 @@ import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.SortSpec;
 import org.gusdb.wdk.model.api.StandardReportConfig;
-import org.gusdb.wdk.model.api.StepRequestBody;
 import org.gusdb.wdk.model.api.StepDisplayPreferences;
 import org.gusdb.wdk.model.api.StepMeta;
+import org.gusdb.wdk.model.api.StepRequestBody;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.support.Category;
-import test.support.util.ReportUtil;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
 import test.support.util.GuestRequestFactory;
+import test.support.util.ReportUtil;
 import test.support.util.StepUtil;
 import test.support.util.UserUtil;
 import test.wdk.UsersTest;
@@ -92,8 +91,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create, get and delete a valid guest step")
-  void createAndGetAndDeleteGuestStep() throws JsonProcessingException {
-
+  void createAndGetAndDeleteGuestStep() {
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     Response stepResponse =
         StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
@@ -116,7 +114,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Get invalid step id")
-  void getInvalidGuestStepId() throws JsonProcessingException {
+  void getInvalidGuestStepId() {
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     StepUtil.getInstance().getStep(INVALID_STEP_ID, _guestRequestFactory,  cookieId, HttpStatus.SC_NOT_FOUND);
   }
@@ -124,8 +122,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create invalid guest step")
-  void createInvalidGuestStep() throws JsonProcessingException {
-
+  void createInvalidGuestStep() {
     StepRequestBody step = new StepRequestBody(ReportUtil.createInvalidExonCountSearchConfig(), "GenesByExonCount");
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
@@ -136,8 +133,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Delete invalid step ID")
-  void deleteInvalidStepId() throws JsonProcessingException {
-
+  void deleteInvalidStepId() {
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     StepUtil.getInstance().deleteStep(INVALID_STEP_ID, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
@@ -145,8 +141,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create invalid transform step.  Not in strategy, so not allowed to have a non-null step param")
-  void createInvalidTransformStep() throws JsonProcessingException {
-
+  void createInvalidTransformStep() {
     StepRequestBody leafStep = new StepRequestBody(ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
 
     Response stepResponse = _guestRequestFactory.jsonPayloadRequest(leafStep, HttpStatus.SC_OK, ContentType.JSON)
@@ -158,8 +153,7 @@ public class StepsTest extends UsersTest {
         .jsonPath()
         .getLong("id"); // TODO: use JsonKeys
     String cookieId = stepResponse.getCookie("JSESSIONID");
-
-    StepRequestBody transformStep = new StepRequestBody(StepUtil.getInstance().createInvalidOrthologsSearchConfig(_guestRequestFactory, leafStepId), "GenesByOrthologs");
+    StepRequestBody transformStep = new StepRequestBody(StepUtil.getInstance().createInvalidOrthologsSearchConfig(leafStepId), "GenesByOrthologs");
 
     stepResponse = _guestRequestFactory.jsonPayloadRequest(transformStep, HttpStatus.SC_UNPROCESSABLE_ENTITY)
         .request()
@@ -174,8 +168,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create a step with a step filter")
-  void createStepWithValidStepFilter() throws JsonProcessingException {
-
+  void createStepWithValidStepFilter() {
     SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("matched_transcript_filter_array");
     StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
 
@@ -196,8 +189,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create a step with invalid step filter")
-  void createStepWithInvalidStepFilter() throws JsonProcessingException {
-
+  void createStepWithInvalidStepFilter() {
     SearchConfig searchConfig = StepUtil.getInstance().createSearchConfigWithStepFilter("sillyFilter");
     StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
 
@@ -209,8 +201,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create a step with a legacy filter")
-  void createStepWithValidLegacyFilter() throws JsonProcessingException {
-
+  void createStepWithValidLegacyFilter() {
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     searchConfig.setLegacyFilterName("all_results");
     StepRequestBody step = new StepRequestBody(searchConfig, "GenesByExonCount");
@@ -232,8 +223,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create a step with invalid legacy filter")
-  void createStepWithInvalidLegacyFilter() throws JsonProcessingException {
-
+  void createStepWithInvalidLegacyFilter() {
     SearchConfig searchConfig = ReportUtil.createValidExonCountSearchConfig();
     searchConfig.setLegacyFilterName("silly_filter");
 
@@ -247,8 +237,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create, and patch a valid guest step")
-  void validPatchStep() throws JsonProcessingException {
-
+  void validPatchStep() {
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
 
@@ -279,8 +268,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("POST to standard step report.  Fail because not in strat")
-  void validStepStandardReportNotInStrat() throws JsonProcessingException {
-
+  void validStepStandardReportNotInStrat() {
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
 
@@ -307,8 +295,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("PUT a valid search config.  ")
-  void putValidStepSearchConfig() throws JsonProcessingException {
-
+  void putValidStepSearchConfig() {
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
     Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
 

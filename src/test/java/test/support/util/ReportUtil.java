@@ -3,11 +3,10 @@ package test.support.util;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.gusdb.wdk.model.api.ReportPagination;
 import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.StandardReportConfig;
-import org.gusdb.wdk.model.api.ReportPagination;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import util.Json;
 
 public class ReportUtil {
@@ -82,7 +81,7 @@ public class ReportUtil {
     return new SearchConfig().setParameters(new HashMap<>());
   }
 
-  public static SearchConfig createInvalidExonCountSearchConfig() throws JsonProcessingException {
+  public static SearchConfig createInvalidExonCountSearchConfig() {
     Map<String, String> paramsMap = new HashMap<>();
     paramsMap.put("SILLY", "Plasmodium adleri G01");
     SearchConfig searchConfig = new SearchConfig();
@@ -90,7 +89,7 @@ public class ReportUtil {
     return searchConfig;
   }
 
-  public static SearchConfig createBlastSearchConfig() throws JsonProcessingException {
+  public static SearchConfig createBlastSearchConfig() {
     SearchConfig searchConfig = new SearchConfig();
     Map<String, String> paramsMap = new HashMap<>();
     paramsMap.put("scope", "Gene");
@@ -106,7 +105,7 @@ public class ReportUtil {
     return searchConfig;
   }
 
-  public static SearchConfig createPopsetByCountryAnswerSpec() throws JsonProcessingException {
+  public static SearchConfig createPopsetByCountryAnswerSpec() {
     SearchConfig searchConfig = new SearchConfig();
     Map<String, String> paramsMap = new HashMap<String, String>();
     paramsMap.put("country", "GAZ_00002560");

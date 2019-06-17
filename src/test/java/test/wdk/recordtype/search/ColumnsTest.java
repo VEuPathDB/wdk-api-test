@@ -1,6 +1,5 @@
 package test.wdk.recordtype.search;
 
-import groovy.lang.Tuple;
 import org.gusdb.wdk.model.api.Attribute;
 import org.gusdb.wdk.model.api.RecordType;
 import org.gusdb.wdk.model.api.Search;

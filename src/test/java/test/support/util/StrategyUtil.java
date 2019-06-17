@@ -8,8 +8,6 @@ import org.gusdb.wdk.model.api.StrategyCopyRequest;
 import org.gusdb.wdk.model.api.StrategyCreationRequest;
 import org.gusdb.wdk.model.api.StrategyPutRequest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.wdk.users.StepsTest;
@@ -30,7 +28,7 @@ public class StrategyUtil {
     return instance;
   }
   
-  public long createAndPostSingleStepStrategy(RequestFactory requestFactory, String cookieId) throws JsonProcessingException {
+  public long createAndPostSingleStepStrategy(RequestFactory requestFactory, String cookieId) {
 
     // create step, and get its ID
     SearchConfig exonCountSrchConfig = ReportUtil.createValidExonCountSearchConfig();
@@ -41,12 +39,12 @@ public class StrategyUtil {
     return createAndPostValidSingleStepStrategy(requestFactory, cookieId, stepId);
   }
   
-  public long createAndPostValidSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId) throws JsonProcessingException {
+  public long createAndPostValidSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId) {
     Response response = createAndPostSingleStepStrategy(requestFactory, cookieId, stepId, HttpStatus.SC_OK, ContentType.JSON);
     return response.body().jsonPath().getLong("id"); 
   }
   
-  public Response createAndPostSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId, int expectedStatusCode, ContentType expectedContentType) throws JsonProcessingException {
+  public Response createAndPostSingleStepStrategy(RequestFactory requestFactory, String cookieId, long stepId, int expectedStatusCode, ContentType expectedContentType) {
 
     // create simple step tree using provided stepId
     StepTreeNode stepTree = new StepTreeNode(stepId);
@@ -57,25 +55,21 @@ public class StrategyUtil {
         expectedContentType).request().cookie("JSESSIONID", cookieId).when().post(BASE_PATH, "current");
   }
 
-  public void putStrategy(RequestFactory requestFactory, String cookieId, Long strategyId, StrategyPutRequest putReq, int expectedStatus) throws JsonProcessingException {
-
-    requestFactory.jsonPayloadRequest(putReq, HttpStatus.SC_NO_CONTENT).request().cookie("JSESSIONID", cookieId).when().put(BY_ID_PATH_WITH_STEP_TREE, "current", strategyId);
+  public void putStrategy(RequestFactory requestFactory, String cookieId, Long strategyId, StrategyPutRequest putReq, int expectedStatus) {
+    requestFactory.jsonPayloadRequest(putReq, expectedStatus).request().cookie("JSESSIONID", cookieId).when().put(BY_ID_PATH_WITH_STEP_TREE, "current", strategyId);
   }
   
-  public Response getStrategy(long StrategyId, RequestFactory requestFactory, String cookieId, int expectedStatus)
-      throws JsonProcessingException {
+  public Response getStrategy(long StrategyId, RequestFactory requestFactory, String cookieId, int expectedStatus) {
     return requestFactory.emptyRequest().cookie("JSESSIONID", cookieId).expect().statusCode(
         expectedStatus).when().get(BY_ID_PATH, "current", StrategyId);
   }
 
-  public Response getStrategyList(RequestFactory requestFactory, String cookieId)
-      throws JsonProcessingException {
+  public Response getStrategyList(RequestFactory requestFactory, String cookieId) {
     return requestFactory.emptyRequest().cookie("JSESSIONID", cookieId).expect().statusCode(
         HttpStatus.SC_OK).when().get(BASE_PATH, "current");
   }
   
-  public void deleteStrategy(long StrategyId, RequestFactory requestFactory, String cookieId, int expectedStatus)
-      throws JsonProcessingException {
+  public void deleteStrategy(long StrategyId, RequestFactory requestFactory, String cookieId, int expectedStatus) {
 
     requestFactory.emptyRequest().cookie("JSESSIONID", cookieId).expect().statusCode(
         expectedStatus).when().delete(BY_ID_PATH, "current", StrategyId);
