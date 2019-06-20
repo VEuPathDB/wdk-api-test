@@ -35,7 +35,7 @@ public class ColumnReportersTest extends TestBase {
   private final static String RECORD = "transcript";
   private final static String SEARCH = "GenesByExonCount";
 
-  private final static String PATH = ColumnUtil.KEYED_URI + "/reporters/standard";
+  private final static String COLUMN_REPORT_PATH = ColumnUtil.KEYED_URI + "/reports/multiType";
 
   private final RequestFactory rFac;
 
@@ -68,7 +68,7 @@ public class ColumnReportersTest extends TestBase {
         rFac.jsonIoSuccessRequest(
           new DefaultReportRequest(conf, new StandardReportConfig()))
           .when()
-          .post(PATH, RECORD, SEARCH, column)
+          .post(COLUMN_REPORT_PATH, RECORD, SEARCH, column)
           .as(JsonNode.class),
         new TypeReference<Histogram<BigDecimal>>(){}
       );
@@ -99,7 +99,7 @@ public class ColumnReportersTest extends TestBase {
         rFac.jsonIoSuccessRequest(
           new DefaultReportRequest(conf, new StandardReportConfig()))
           .when()
-          .post(PATH, RECORD, SEARCH, column)
+          .post(COLUMN_REPORT_PATH, RECORD, SEARCH, column)
           .as(JsonNode.class),
         new TypeReference<Histogram<String>>(){}
       );
@@ -133,7 +133,7 @@ public class ColumnReportersTest extends TestBase {
         rFac.jsonIoSuccessRequest(
           new DefaultReportRequest(conf1, new StandardReportConfig()))
           .when()
-          .post(PATH, "DS_0ad509829e_observation",
+          .post(COLUMN_REPORT_PATH, "DS_0ad509829e_observation",
             "ClinicalVisitsByRelativeVisits_prism", column)
           .as(JsonNode.class),
         new TypeReference<Histogram<LocalDateTime>>(){}
