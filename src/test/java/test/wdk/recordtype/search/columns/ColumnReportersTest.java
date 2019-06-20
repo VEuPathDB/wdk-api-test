@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.function.Function;
 
 import org.gusdb.wdk.model.api.DefaultReportRequest;
+import org.gusdb.wdk.model.api.FilterValueSpec;
 import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.StandardReportConfig;
 import org.gusdb.wdk.model.api.record.search.column.reporter.Histogram;
@@ -30,50 +31,74 @@ import test.support.util.RequestFactory;
 import test.wdk.TestBase;
 import util.Json;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class ColumnReportersTest extends TestBase {
 
   private final static String RECORD = "transcript";
   private final static String SEARCH = "GenesByExonCount";
 
-  private final static String COLUMN_REPORT_PATH = ColumnUtil.KEYED_URI + "/reports/multiType";
+  private final static String COLUMN_REPORT_PATH = ColumnUtil.KEYED_URI + "/reports/histogram";
 
   private final RequestFactory rFac;
 
   public ColumnReportersTest(GuestRequestFactory rFac) {
     this.rFac = rFac;
   }
+  
+  // choose search config to try to get at least some genes w/ multiple transcripts
+  private static SearchConfig getExonCountSearchConfig() {
+    SearchConfig config =  new SearchConfig()
+      .setParameters(new HashMap<>(){{
+        put("organism", "Plasmodium falciparum 3D7");
+        put("scope", "Transcript");
+        put("num_exons_gte", "15");
+        put("num_exons_lte", "20");
+      }});
+    return config;
+  }
+  
+  private static SearchConfig getExonCountSearchConfigWithFilter() {
+    FilterValueSpec oneGenePerTranFilter = new FilterValueSpec();
+    oneGenePerTranFilter.setName("representativeTranscriptOnly");
+    oneGenePerTranFilter.setValue(new HashMap<String,Object>());
+    oneGenePerTranFilter.setDisabled(false);
+    ArrayList<FilterValueSpec> filters = new ArrayList<FilterValueSpec>();
+    filters.add(oneGenePerTranFilter);
+    SearchConfig config =  getExonCountSearchConfig();
+    config.setViewFilters(filters);
+    return config;
+  }
 
   @Nested
   public class SuperReporter {
+    
     @Test
     @Tag(Category.PLASMO_TEST)
     @DisplayName("Test super column reporter on a number column")
     void numberColumn() {
       final var column = "exon_count";
 
-      SearchConfig conf = ReportUtil.allExonCountSearch();
-
-      conf.getParameters().put("num_exons_lte", "15");
-      conf.getParameters().put("num_exons_gte", "14");
-
-      JsonReporterResponse value = rFac.jsonIoSuccessRequest(
-        new DefaultReportRequest(conf, new StandardReportConfig()
+      // filter standard report so we get count of genes, not transcripts, to match histogram
+      JsonReporterResponse standardReport = rFac.jsonIoSuccessRequest(
+        new DefaultReportRequest(getExonCountSearchConfigWithFilter(), new StandardReportConfig()
           .addAttribute(column))
       )
         .when()
         .post(REPORT_PATH, RECORD, SEARCH, "standard")
         .as(JsonReporterResponse.class);
 
-      Histogram<BigDecimal> report = Json.MAPPER.convertValue(
+      Histogram<BigDecimal> histogramReport = Json.MAPPER.convertValue(
         rFac.jsonIoSuccessRequest(
-          new DefaultReportRequest(conf, new StandardReportConfig()))
+          new DefaultReportRequest(getExonCountSearchConfig(), new StandardReportConfig()))
           .when()
           .post(COLUMN_REPORT_PATH, RECORD, SEARCH, column)
           .as(JsonNode.class),
         new TypeReference<Histogram<BigDecimal>>(){}
       );
 
-      compareHistogram(value, report, column, BigDecimal::new);
+      compareHistogram(standardReport, histogramReport, column, BigDecimal::new);
     }
 
     @Test
@@ -82,29 +107,25 @@ public class ColumnReportersTest extends TestBase {
     void stringColumn() {
       final var column = "organism";
 
-      SearchConfig conf = ReportUtil.allExonCountSearch();
-
-      conf.getParameters().put("num_exons_lte", "15");
-      conf.getParameters().put("num_exons_gte", "14");
-
-      JsonReporterResponse value = rFac.jsonIoSuccessRequest(
-        new DefaultReportRequest(conf, new StandardReportConfig()
+      // filter standard report so we get count of genes, not transcripts, to match histogram
+      JsonReporterResponse standardReport = rFac.jsonIoSuccessRequest(
+        new DefaultReportRequest(getExonCountSearchConfigWithFilter(), new StandardReportConfig()
           .addAttribute(column))
       )
         .when()
         .post(REPORT_PATH, RECORD, SEARCH, "standard")
         .as(JsonReporterResponse.class);
 
-      Histogram<String> report = Json.MAPPER.convertValue(
+      Histogram<String> histogramReport = Json.MAPPER.convertValue(
         rFac.jsonIoSuccessRequest(
-          new DefaultReportRequest(conf, new StandardReportConfig()))
+          new DefaultReportRequest(getExonCountSearchConfig(), new StandardReportConfig()))
           .when()
           .post(COLUMN_REPORT_PATH, RECORD, SEARCH, column)
           .as(JsonNode.class),
         new TypeReference<Histogram<String>>(){}
       );
 
-      compareHistogram(value, report, column, Function.identity());
+      compareHistogram(standardReport, histogramReport, column, Function.identity());
     }
 
     @Test
