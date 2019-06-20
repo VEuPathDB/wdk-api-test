@@ -1,8 +1,14 @@
 package test.wdk.recordtype.search.columns;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static test.wdk.recordtype.ReportersTest.REPORT_PATH;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.function.Function;
+
 import org.gusdb.wdk.model.api.DefaultReportRequest;
 import org.gusdb.wdk.model.api.SearchConfig;
 import org.gusdb.wdk.model.api.StandardReportConfig;
@@ -12,6 +18,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import test.support.Category;
 import test.support.util.ColumnUtil;
 import test.support.util.GuestRequestFactory;
@@ -19,16 +29,6 @@ import test.support.util.ReportUtil;
 import test.support.util.RequestFactory;
 import test.wdk.TestBase;
 import util.Json;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.function.Function;
-import java.util.regex.Pattern;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static test.wdk.recordtype.ReportersTest.REPORT_PATH;
 
 public class ColumnReportersTest extends TestBase {
 
@@ -155,9 +155,9 @@ public class ColumnReportersTest extends TestBase {
     assertEquals(std.getRecords().size(), his.getTotalValues());
 
     var nullCount = 0L;
-    var uniques   = new HashSet<T>();
-    var min       = (T) null;
-    var max       = (T) null;
+    var uniques = new HashSet<T>();
+    T min = null;
+    T max = null;
 
     for (var rec : std.getRecords()) {
       var val = rec.getAttributes().get(col);

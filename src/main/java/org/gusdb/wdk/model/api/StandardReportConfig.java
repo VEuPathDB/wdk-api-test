@@ -25,6 +25,7 @@ public class StandardReportConfig extends BaseStandardReportConfig {
     this.sorting = sorting;
   }
 
+  @Override
   public StandardReportConfig addAttribute(String attr) {
     if (attributes == null)
       attributes = new ArrayList<>();
