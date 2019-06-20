@@ -298,7 +298,8 @@ public class StepsTest extends UsersTest {
   @DisplayName("PUT a valid search config.  ")
   void putValidStepSearchConfig() {
     String cookieId = UserUtil.getInstance().getNewCookieId(_guestRequestFactory);
-    Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
+    Response stepResponse = StepUtil.getInstance().createValidStepResponse(
+        _guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
 
     long stepId = stepResponse
         .body()

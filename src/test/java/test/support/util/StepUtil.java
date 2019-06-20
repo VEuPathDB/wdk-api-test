@@ -32,8 +32,12 @@ public class StepUtil {
 
     StepRequestBody step = new StepRequestBody(searchConfig, searchUrlSegment);
 
-    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON).request().cookie("JSESSIONID", cookieId).when().post(BASE_PATH,
-        "current");
+    return requestFactory
+        .jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
+        .request()
+        .cookie("JSESSIONID", cookieId)
+        .when()
+        .post(BASE_PATH, "current");
   }
 
   public SearchConfig createSearchConfigWithStepFilter(String filterName) {
