@@ -1,6 +1,6 @@
 package org.gusdb.wdk.model.api;
 
 public class AttributeToolBundle {
-  public String[] reporters;
+  public String[] reports;
   public String[] filters;
 }
