@@ -39,7 +39,7 @@ public class ColumnReportersTest extends TestBase {
   private final static String RECORD = "transcript";
   private final static String SEARCH = "GenesByExonCount";
 
-  private final static String COLUMN_REPORT_PATH = ColumnUtil.KEYED_URI + "/reports/histogram";
+  private final static String COLUMN_REPORT_PATH = ColumnUtil.KEYED_URI + "/reports/byValue";
 
   private final RequestFactory rFac;
 

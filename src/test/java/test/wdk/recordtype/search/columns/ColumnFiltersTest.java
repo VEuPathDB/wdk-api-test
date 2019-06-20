@@ -29,6 +29,7 @@ import static test.wdk.recordtype.ReportersTest.REPORT_PATH;
 public class ColumnFiltersTest extends TestBase {
 
   private final RequestFactory rFac;
+  private final static String filterName = "byValue";
 
   public ColumnFiltersTest(GuestRequestFactory rFac) {
     this.rFac = rFac;
@@ -48,7 +49,7 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("exon_count", new HashMap<>() {{
-          put("standard", new ArrayList<>() {{
+          put(filterName, new ArrayList<>() {{
             add(new HashMap<>() {{
               put("comparator", "lte");
               put("value", 16);
@@ -84,7 +85,7 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("exon_count", new HashMap<>() {{
-          put("standard", new ArrayList<>() {{
+          put(filterName, new ArrayList<>() {{
             add(new HashMap<>() {{
               put("min", 14);
               put("max", 16);
@@ -128,7 +129,7 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("min_comment_date", new HashMap<>() {{
-          put("standard", new ArrayList<>() {{
+          put(filterName, new ArrayList<>() {{
             add(new HashMap<>() {{
               put("filter", "2012-*");
             }});
@@ -176,7 +177,7 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("min_comment_date", new HashMap<>() {{
-          put("standard", new ArrayList<>() {{
+          put(filterName, new ArrayList<>() {{
             add(new HashMap<>() {{
               put("filters", values);
             }});
@@ -210,7 +211,7 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("EUPATH_0000091", new HashMap<>() {{
-          put("standard", new ArrayList<>() {{
+          put(filterName, new ArrayList<>() {{
             add(new HashMap<>() {{
               put("comparator", "gte");
               put("value", "2013-07-01T00:00:00");
@@ -251,7 +252,7 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("EUPATH_0000091", new HashMap<>() {{
-          put("standard", new ArrayList<>() {{
+          put(filterName, new ArrayList<>() {{
             add(new HashMap<>() {{
               put("min", "2013-07-01T00:00:00");
               put("max", "2015-07-01T00:00:00");
