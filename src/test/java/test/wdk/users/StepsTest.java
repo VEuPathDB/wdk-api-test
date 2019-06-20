@@ -70,6 +70,7 @@ import test.wdk.UsersTest;
 
 @DisplayName("Steps")
 public class StepsTest extends UsersTest {
+
   public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/steps";
   public static final String BY_ID_PATH = BASE_PATH + "/{stepId}";
   public static final String REPORTS_PATH = BASE_PATH + "/{stepId}/reports/{reportName}";

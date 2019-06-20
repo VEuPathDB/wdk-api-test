@@ -25,9 +25,9 @@ public class UserIdQueryTest extends TestBase {
     req.jsonIoSuccessRequest(body).when().post(BASE_PATH);
   }
 
-  private static UserIdQueryRequest[] buildUserIdSummaryRequests() {
+  public static UserIdQueryRequest[] buildUserIdSummaryRequests() {
     return new UserIdQueryRequest[]{
-        // TODO: Find a better way of getting these
+      // TODO: Find a better way of getting these
       new UserIdQueryRequest("epharper@upenn.edu", "somebody@example.com")
     };
   }
