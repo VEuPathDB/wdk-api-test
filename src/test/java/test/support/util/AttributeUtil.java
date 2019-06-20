@@ -29,7 +29,7 @@ public class AttributeUtil {
   private static void toolBundlesEqual(AttributeToolBundle ...a) {
     for (int i = 1; i < a.length; i++) {
       assertArrayEquals(a[0].filters, a[i].filters);
-      assertArrayEquals(a[0].reporters, a[i].reporters);
+      assertArrayEquals(a[0].reports, a[i].reports);
     }
   }
 }
