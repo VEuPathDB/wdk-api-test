@@ -3,6 +3,7 @@ package test.wdk.users;
 import org.gusdb.wdk.model.api.StrategyListItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -24,6 +25,14 @@ public class PublicStrategiesTest extends UsersTest {
     this._authUtil = auth;
     _guestRequestFactory = guestReqFactory;
   }
+  
+  @Test
+  @DisplayName("GET invalid public strategies")
+  void getInvalidPublicStrategies() {
+    _guestRequestFactory.jsonSuccessRequest().when().
+    get(StrategyListTest.PUBLIC_STRATS_PATH + "?invalid=true");
+  }
+
 
   @SuppressWarnings("unused")
   private static StrategyListItem[] getPublicStrategies() {

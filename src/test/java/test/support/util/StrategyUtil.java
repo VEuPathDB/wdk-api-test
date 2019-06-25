@@ -6,6 +6,7 @@ import org.gusdb.wdk.model.api.StandardReportConfig;
 import org.gusdb.wdk.model.api.StepTreeNode;
 import org.gusdb.wdk.model.api.StrategyCopyRequest;
 import org.gusdb.wdk.model.api.StrategyCreationRequest;
+import org.gusdb.wdk.model.api.StrategyPatchNameRequest;
 import org.gusdb.wdk.model.api.StrategyPutRequest;
 
 import io.restassured.http.ContentType;
@@ -57,6 +58,10 @@ public class StrategyUtil {
 
   public void putStrategy(RequestFactory requestFactory, String cookieId, Long strategyId, StrategyPutRequest putReq, int expectedStatus) {
     requestFactory.jsonPayloadRequest(putReq, expectedStatus).request().cookie("JSESSIONID", cookieId).when().put(BY_ID_PATH_WITH_STEP_TREE, "current", strategyId);
+  }
+  
+  public void patchStrategyName(RequestFactory requestFactory, String cookieId, Long strategyId, StrategyPatchNameRequest patchReq, int expectedStatus) {
+    requestFactory.jsonPayloadRequest(patchReq, expectedStatus).request().cookie("JSESSIONID", cookieId).when().patch(BY_ID_PATH, "current", strategyId);
   }
   
   public Response getStrategy(long StrategyId, RequestFactory requestFactory, String cookieId, int expectedStatus) {

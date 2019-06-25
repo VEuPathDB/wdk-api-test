@@ -9,6 +9,7 @@ import org.gusdb.wdk.model.api.StepTreeNode;
 import org.gusdb.wdk.model.api.StepTreeWrapper;
 import org.gusdb.wdk.model.api.StrategyCopyRequest;
 import org.gusdb.wdk.model.api.StrategyListItem;
+import org.gusdb.wdk.model.api.StrategyPatchNameRequest;
 import org.gusdb.wdk.model.api.StrategyPutRequest;
 import org.gusdb.wdk.model.api.StrategyResponseBody;
 import org.json.JSONObject;
@@ -101,13 +102,22 @@ tests to run
       Response stepResponse = StepUtil.getInstance().createValidStepResponse(_guestRequestFactory, cookieId, ReportUtil.createValidExonCountSearchConfig(), "GenesByExonCount");
       long stepId = stepResponse.body().jsonPath().getLong("id");  
 
+      // create a single step strategy with that step
       Long strategyId = StrategyUtil.getInstance().createAndPostValidSingleStepStrategy(_guestRequestFactory, cookieId, stepId);
+      
+      // patch the strategy with a new name
+      String newName = "happy";
+      StrategyPatchNameRequest patchReq = new StrategyPatchNameRequest(newName);
+      StrategyUtil.getInstance().patchStrategyName(_guestRequestFactory, cookieId, strategyId, patchReq, HttpStatus.SC_NO_CONTENT);
       
       // GET the strategy
       Response strategyResponse = StrategyUtil.getInstance().getStrategy(strategyId, _guestRequestFactory,
           cookieId, HttpStatus.SC_OK);
       StrategyResponseBody strategy = strategyResponse.as(StrategyResponseBody.class);
       
+      // confirm that the name is as expected
+      assertEquals(newName, strategy.getName(),  "Expected strategy name (" + strategy.getName() + ") to equal patched name: " + newName);
+
       // confirm that the stepTree has our step ID
       long stepIdFromTree = strategy.getStepTree().getStepId();
       assertEquals(stepId, stepIdFromTree, "Expected stepTree.stepId (" + stepIdFromTree + ") to equal submitted stepId: " + stepId);
