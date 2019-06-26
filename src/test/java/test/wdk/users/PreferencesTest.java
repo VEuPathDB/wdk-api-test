@@ -49,7 +49,7 @@ public class PreferencesTest extends UsersTest {
       request().cookie("JSESSIONID", cookieId).when().patch(BY_PROJECT_PATH, "current", "global");
 
     // see if we get it back.
-    Response prefResponse = _guestRequestFactory.jsonSuccessRequest().request().cookie("JSESSIONID", cookieId).when().get(BASE_PATH);
+    Response prefResponse = _guestRequestFactory.jsonSuccessRequest().request().cookie("JSESSIONID", cookieId).when().get(BASE_PATH, "current");
     
     Map<String, String> globalMap = prefResponse
         .body()
