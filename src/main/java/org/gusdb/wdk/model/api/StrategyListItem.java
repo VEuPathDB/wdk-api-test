@@ -18,6 +18,7 @@ public class StrategyListItem {
   private Boolean isValid;
   private Integer estimatedSize;
   private Integer leafAndTransformStepCount;
+  private String  nameOfFirstStep;
 
   public long getStrategyId() {
     return strategyId;
@@ -138,6 +139,15 @@ public class StrategyListItem {
   public void setLeafAndTransformStepCount(Integer leafAndTransformStepCount) {
     this.leafAndTransformStepCount = leafAndTransformStepCount;
   }
+
+  public String getNameOfFirstStep() {
+    return nameOfFirstStep;
+  }
+
+  public void setNameOfFirstStep(String nameOfFirstStep) {
+    this.nameOfFirstStep = nameOfFirstStep;
+  }
+
 
   // a simple toString method for use in reporting info about failed strats
   @Override
