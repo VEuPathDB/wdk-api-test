@@ -48,15 +48,17 @@ public class ColumnFiltersTest extends TestBase {
       conf1.getParameters().put("num_exons_gte", "14");
 
       conf2.columnFilters = new ColumnFilterConfig() {{
-        put("exon_count", new HashMap<>() {{
-          put(filterName, new ArrayList<>() {{
-            add(new HashMap<>() {{
-              put("comparator", "lte");
-              put("value", 16);
-            }});
-            add(new HashMap<>() {{
-              put("comparator", "gte");
-              put("value", 14);
+        put("exon_count", new HashMap<String,Object>() {{
+          put(filterName, new HashMap<String,Object>() {{
+            put("comparators", new ArrayList<HashMap<String,Object>>() {{
+              add(new HashMap<String,Object>() {{
+                put("comparator", "lte");
+                put("value", 16);
+              }});
+              add(new HashMap<String,Object>() {{
+                put("comparator", "gte");
+                put("value", 14);
+              }});
             }});
           }});
         }});
@@ -85,11 +87,9 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("exon_count", new HashMap<>() {{
-          put(filterName, new ArrayList<>() {{
-            add(new HashMap<>() {{
-              put("min", 14);
-              put("max", 16);
-            }});
+          put(filterName, new HashMap<>() {{
+            put("min", 14);
+            put("max", 16);
           }});
         }});
       }};
@@ -129,10 +129,8 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("min_comment_date", new HashMap<>() {{
-          put(filterName, new ArrayList<>() {{
-            add(new HashMap<>() {{
-              put("filter", "2012-*");
-            }});
+          put(filterName, new HashMap<>() {{
+            put("filter", "2012-*");
           }});
         }});
       }};
@@ -177,10 +175,8 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("min_comment_date", new HashMap<>() {{
-          put(filterName, new ArrayList<>() {{
-            add(new HashMap<>() {{
-              put("filters", values);
-            }});
+          put(filterName, new HashMap<>() {{
+            put("filters", values);
           }});
         }});
       }};
@@ -211,14 +207,16 @@ public class ColumnFiltersTest extends TestBase {
 
       conf2.columnFilters = new ColumnFilterConfig() {{
         put("EUPATH_0000091", new HashMap<>() {{
-          put(filterName, new ArrayList<>() {{
-            add(new HashMap<>() {{
-              put("comparator", "gte");
-              put("value", "2013-07-01T00:00:00");
-            }});
-            add(new HashMap<>() {{
-              put("comparator", "lte");
-              put("value", "2015-07-01T00:00:00");
+          put(filterName, new HashMap<>() {{
+            put("comparators", new ArrayList<>() {{
+              add(new HashMap<>() {{
+                put("comparator", "gte");
+                put("value", "2013-07-01T00:00:00");
+              }});
+              add(new HashMap<>() {{
+                put("comparator", "lte");
+                put("value", "2015-07-01T00:00:00");
+              }});
             }});
           }});
         }});
