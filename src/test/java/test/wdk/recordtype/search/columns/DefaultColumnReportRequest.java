@@ -1,5 +1,6 @@
 package test.wdk.recordtype.search.columns;
 
+import org.gusdb.wdk.model.api.ColumnReporterConfig;
 import org.gusdb.wdk.model.api.SearchConfig;
 
 public class DefaultColumnReportRequest {
@@ -8,10 +9,10 @@ public class DefaultColumnReportRequest {
   private Object reportConfig; // can be anything
 
   public DefaultColumnReportRequest(SearchConfig searchConfig) {
-    this(searchConfig, new Object());
+    this(searchConfig, new ColumnReporterConfig());
   }
 
-  public DefaultColumnReportRequest(SearchConfig searchConfig, Object reportConfig) {
+  public DefaultColumnReportRequest(SearchConfig searchConfig, ColumnReporterConfig reportConfig) {
     this.searchConfig = searchConfig;
     this.reportConfig = reportConfig;
   }
