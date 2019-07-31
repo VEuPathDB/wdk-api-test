@@ -91,7 +91,7 @@ public class ColumnReportersTest extends TestBase {
 
       Histogram<BigDecimal> histogramReport = Json.MAPPER.convertValue(
         rFac.jsonIoSuccessRequest(
-          new DefaultReportRequest(getExonCountSearchConfig(), new StandardReportConfig()))
+          new DefaultColumnReportRequest(getExonCountSearchConfig()))
           .when()
           .post(COLUMN_REPORT_PATH, RECORD, SEARCH, column)
           .as(JsonNode.class),
@@ -118,7 +118,7 @@ public class ColumnReportersTest extends TestBase {
 
       Histogram<String> histogramReport = Json.MAPPER.convertValue(
         rFac.jsonIoSuccessRequest(
-          new DefaultReportRequest(getExonCountSearchConfig(), new StandardReportConfig()))
+          new DefaultColumnReportRequest(getExonCountSearchConfig()))
           .when()
           .post(COLUMN_REPORT_PATH, RECORD, SEARCH, column)
           .as(JsonNode.class),
@@ -152,7 +152,7 @@ public class ColumnReportersTest extends TestBase {
 
       Histogram<LocalDateTime> report = Json.MAPPER.convertValue(
         rFac.jsonIoSuccessRequest(
-          new DefaultReportRequest(conf1, new StandardReportConfig()))
+          new DefaultColumnReportRequest(conf1))
           .when()
           .post(COLUMN_REPORT_PATH, "DS_0ad509829e_observation",
             "ClinicalVisitsByRelativeVisits_prism", column)

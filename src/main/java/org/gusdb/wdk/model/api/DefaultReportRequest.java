@@ -1,14 +1,15 @@
 package org.gusdb.wdk.model.api;
 
 public class DefaultReportRequest {
+
   private SearchConfig searchConfig;
   private StandardReportConfig reportConfig;
-  
+
   public DefaultReportRequest(SearchConfig searchConfig, StandardReportConfig reportConfig) {
     this.searchConfig = searchConfig;
     this.reportConfig = reportConfig;
   }
-  
+
   public SearchConfig getSearchConfig() {
     return searchConfig;
   }
@@ -21,7 +22,4 @@ public class DefaultReportRequest {
   public void setFormatting(StandardReportConfig reportConfig) {
     this.reportConfig = reportConfig;
   }
-
-  
-
 }

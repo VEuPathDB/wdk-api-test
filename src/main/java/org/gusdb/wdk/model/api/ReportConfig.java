@@ -3,6 +3,7 @@ package org.gusdb.wdk.model.api;
 import java.util.Collection;
 
 public class ReportConfig {
+
   public ReportPagination pagination;
   public Collection<String> attributes;
   public Collection<String> table;
@@ -18,7 +19,7 @@ public class ReportConfig {
     return this;
   }
 
-  public ReportConfig setTable(Collection<String> table) {
+  public ReportConfig setTables(Collection<String> table) {
     this.table = table;
     return this;
   }
