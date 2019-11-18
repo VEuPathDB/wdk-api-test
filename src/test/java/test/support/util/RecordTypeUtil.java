@@ -2,11 +2,9 @@ package test.support.util;
 
 import org.gusdb.wdk.model.api.RecordType;
 
-import static test.support.Conf.SERVICE_PATH;
-
 public class RecordTypeUtil {
   public static final String
-    BASE_URI  = SERVICE_PATH + "/record-types",
+    BASE_URI  = "/record-types",
     KEYED_URI = BASE_URI + "/{recordType}",
     EXPANDED  = BASE_URI + "?format=expanded";
 

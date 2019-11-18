@@ -22,7 +22,6 @@ import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.given;
 import static test.wdk.LoginTest.OAUTH_AUTHORIZE;
 import static test.wdk.LoginTest.OAUTH_LOGIN;
-import static test.support.Conf.SERVICE_PATH;
 
 /**
  * Utility for performing common site session tasks.
@@ -32,7 +31,7 @@ public class AuthUtil {
 
   private static final String ERR_UNSUPPORTED_AUTH = "Auth type %s is not supported.";
 
-  public static final String LOGIN_PATH = SERVICE_PATH + "/login";
+  public static final String LOGIN_PATH = "/login";
 
   private Map < Credentials, String > sessionTokens;
 

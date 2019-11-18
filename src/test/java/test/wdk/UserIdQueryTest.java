@@ -4,13 +4,12 @@ import org.gusdb.wdk.model.api.UserIdQueryRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.support.util.GuestRequestFactory;
 
-import static test.support.Conf.SERVICE_PATH;
+import test.support.util.GuestRequestFactory;
 
 @DisplayName("User ID Query")
 public class UserIdQueryTest extends TestBase {
-  public static final String BASE_PATH = SERVICE_PATH + "/user-id-query";
+  public static final String BASE_PATH = "/user-id-query";
 
   private final GuestRequestFactory req;
 

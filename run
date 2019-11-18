@@ -9,7 +9,6 @@
 
 readonly USER_SPLIT_CHAR=":"
 readonly CATEGORY_FILE="src/test/java/test/support/Category.java"
-readonly SERVICE_PATH="/service"
 
 
 #╔════════════════════════════════════════════════════════════════════════════╗#
@@ -116,7 +115,7 @@ Arguments:
   -T <tags>           Exclude tests annotated with a tag in this comma separated
                       list of tags.
 
-  -u <site url>       URL of the site which will have it's API tested.
+  -u <service_url>    URL of the service which will have its API tested.
 
                       This value can also be set using the SITE_PATH environment
                       variable.
@@ -137,7 +136,7 @@ Examples
 
   Run with single login and site:
 
-    run -l -a some@email.addr:abc123 -u http://username.plasmodb.org/plasmo.username
+    run -l -a some@email.addr:abc123 -u http://username.plasmodb.org/plasmo.username/service
 
   Run specific tests:
 
@@ -181,7 +180,7 @@ function getProjectID() {
     url="${url:0:${#url}-1}";
   fi
 
-  curl $(dLog "Service API" "${url}${SERVICE_PATH}") 2>&1 \
+  curl $(dLog "Service API" "${url}") 2>&1 \
     | grep -Eo '"projectId":"[^"]+"' \
     | cut -d: -f2 \
     | tr '[:upper:]' '[:lower:]' \

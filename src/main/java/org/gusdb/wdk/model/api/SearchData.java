@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import util.Json;
 
 public class SearchData {
+
   public String summary;
   public String urlSegment;
   public Attribute[] dynamicAttributes;
@@ -13,6 +14,7 @@ public class SearchData {
   public String displayName;
   public String fullName;
   public String description;
+  public String queryName;
   public Group[] groups;
   public String[] defaultAttributes;
   public ArrayNode filters; // Not sure what this array looks like
@@ -22,9 +24,12 @@ public class SearchData {
   public String defaultSummaryView;
   public ObjectNode properties;
   public SummaryViewPlugin[] summaryViewPlugins;
+  public Boolean isAnalyzable;
   public String newBuild;
+  public Boolean noSummaryOnSingleRecord;
   public String[] allowedPrimaryInputRecordClassNames;
   public String[] allowedSecondaryInputRecordClassNames;
+  public String[] paramNames;
   public JsonNode parameters;
 
   @Override

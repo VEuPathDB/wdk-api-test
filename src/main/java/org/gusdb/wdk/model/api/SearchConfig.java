@@ -10,7 +10,6 @@ public class SearchConfig {
   String legacyFilterName;
   Integer wdkWeight;
   List<FilterValueSpec> filters = new ArrayList<FilterValueSpec>();
-  List<FilterValueSpec> viewFilters = new ArrayList<FilterValueSpec>();
 
   public ColumnFilterConfig columnFilters;
 
@@ -43,12 +42,6 @@ public class SearchConfig {
   }
   public void setFilters(List<FilterValueSpec> filters) {
     this.filters = filters;
-  }
-  public List<FilterValueSpec> getViewFilters() {
-    return viewFilters;
-  }
-  public void setViewFilters(List<FilterValueSpec> viewFilters) {
-    this.viewFilters = viewFilters;
   }
 
 }

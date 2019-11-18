@@ -1,18 +1,16 @@
 package test.wdk;
 
-import io.restassured.response.Response;
-
 import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import io.restassured.response.Response;
 import test.support.util.GuestRequestFactory;
 import test.support.util.RequestFactory;
 
-import static test.support.Conf.SERVICE_PATH;
-
 @DisplayName("Temporary File")
 public class TempFileTest extends TestBase {
-  public static final String BASE_PATH = SERVICE_PATH + "/temporary-files";
+  public static final String BASE_PATH = "/temporary-files";
   public static final String DELETE_PATH = BASE_PATH + "/{ID}";
 
   private final RequestFactory req;
@@ -61,7 +59,7 @@ public class TempFileTest extends TestBase {
   private String getIrrelevantCookieId() {
     return req.successRequest()
         .when()
-        .get(SERVICE_PATH)
+        .get("/")
         .getCookie("JSESSIONID");
   }
 }

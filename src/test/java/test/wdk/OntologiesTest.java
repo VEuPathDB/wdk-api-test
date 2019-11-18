@@ -1,7 +1,5 @@
 package test.wdk;
 
-import static test.support.Conf.SERVICE_PATH;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -13,7 +11,7 @@ import test.support.util.GuestRequestFactory;
 @DisplayName("Ontologies")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OntologiesTest extends TestBase {
-  public static final String BASE_PATH = SERVICE_PATH + "/ontologies";
+  public static final String BASE_PATH = "/ontologies";
   public static final String BY_NAME_PATH = BASE_PATH + "/{ontologyName}";
 
   public final GuestRequestFactory req;

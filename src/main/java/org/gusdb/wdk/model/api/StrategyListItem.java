@@ -3,6 +3,7 @@ package org.gusdb.wdk.model.api;
 import java.util.Date;
 
 public class StrategyListItem {
+
   private long strategyId;
   private String description;
   private String name;
@@ -10,7 +11,9 @@ public class StrategyListItem {
   private long rootStepId;
   private String recordClassName;
   private String signature;
+  private Date createdTime;
   private Date lastModified;
+  private String releaseVersion;
   private String organization;
   private Boolean isPublic;
   private Boolean isSaved;
@@ -76,12 +79,28 @@ public class StrategyListItem {
     this.signature = signature;
   }
 
+  public Date getCreatedTime() {
+    return createdTime;
+  }
+
+  public void setCreatedTime(Date createdTime) {
+    this.createdTime = createdTime;
+  }
+
   public Date getLastModified() {
     return lastModified;
   }
 
   public void setLastModified(Date lastModified) {
     this.lastModified = lastModified;
+  }
+
+  public String getReleaseVersion() {
+    return releaseVersion;
+  }
+
+  public void setReleaseVersion(String releaseVersion) {
+    this.releaseVersion = releaseVersion;
   }
 
   public String getOrganization() {

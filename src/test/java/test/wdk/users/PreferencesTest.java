@@ -22,8 +22,8 @@ public class PreferencesTest extends UsersTest {
   protected final AuthUtil _authUtil;
   private GuestRequestFactory _guestRequestFactory;
   
-  public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/preferences";
-  public static final String BY_PROJECT_PATH = BASE_PATH + "/{project}";
+  public static final String PREFS_BASE_PATH = UsersTest.BY_ID_PATH + "/preferences";
+  public static final String PREFS_BY_PROJECT_PATH = PREFS_BASE_PATH + "/{project}";
 
 
   public PreferencesTest(
@@ -46,10 +46,10 @@ public class PreferencesTest extends UsersTest {
     
     patch.getUpdates().put("happy", "yes");
     _guestRequestFactory.jsonPayloadRequest(patch, HttpStatus.SC_NO_CONTENT).
-      request().cookie("JSESSIONID", cookieId).when().patch(BY_PROJECT_PATH, "current", "global");
+      request().cookie("JSESSIONID", cookieId).when().patch(PREFS_BY_PROJECT_PATH, "current", "global");
 
     // see if we get it back.
-    Response prefResponse = _guestRequestFactory.jsonSuccessRequest().request().cookie("JSESSIONID", cookieId).when().get(BASE_PATH, "current");
+    Response prefResponse = _guestRequestFactory.jsonSuccessRequest().request().cookie("JSESSIONID", cookieId).when().get(PREFS_BASE_PATH, "current");
     
     Map<String, String> globalMap = prefResponse
         .body()

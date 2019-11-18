@@ -71,9 +71,9 @@ import test.wdk.UsersTest;
 @DisplayName("Steps")
 public class StepsTest extends UsersTest {
 
-  public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/steps";
-  public static final String BY_ID_PATH = BASE_PATH + "/{stepId}";
-  public static final String REPORTS_PATH = BASE_PATH + "/{stepId}/reports/{reportName}";
+  public static final String STEPS_BASE_PATH = UsersTest.BY_ID_PATH + "/steps";
+  public static final String STEP_BY_ID_PATH = STEPS_BASE_PATH + "/{stepId}";
+  public static final String REPORTS_PATH = STEPS_BASE_PATH + "/{stepId}/reports/{reportName}";
   public static final Long INVALID_STEP_ID = -1L;
 
   protected final AuthUtil _authUtil;
@@ -128,7 +128,7 @@ public class StepsTest extends UsersTest {
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
       .when()
-      .post(BASE_PATH, "current");
+      .post(STEPS_BASE_PATH, "current");
   }
 
   @Test
@@ -147,7 +147,7 @@ public class StepsTest extends UsersTest {
 
     Response stepResponse = _guestRequestFactory.jsonPayloadRequest(leafStep, HttpStatus.SC_OK, ContentType.JSON)
       .when()
-      .post(BASE_PATH, "current");
+      .post(STEPS_BASE_PATH, "current");
 
     long leafStepId = stepResponse
         .body()
@@ -160,7 +160,7 @@ public class StepsTest extends UsersTest {
         .request()
         .cookie("JSESSIONID", cookieId)
         .when()
-        .post(BASE_PATH, "current");
+        .post(STEPS_BASE_PATH, "current");
 
     // delete the leaf step, to clean up
     StepUtil.getInstance().deleteStep(leafStepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
@@ -175,7 +175,7 @@ public class StepsTest extends UsersTest {
 
     Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
       .when()
-      .post(BASE_PATH, "current");
+      .post(STEPS_BASE_PATH, "current");
 
     long stepId = stepResponse
         .body()
@@ -196,7 +196,7 @@ public class StepsTest extends UsersTest {
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
     .when()
-    .post(BASE_PATH, "current");
+    .post(STEPS_BASE_PATH, "current");
   }
 
   @Test
@@ -209,7 +209,7 @@ public class StepsTest extends UsersTest {
 
     Response stepResponse =  _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK)
       .when()
-      .post(BASE_PATH, "current");
+      .post(STEPS_BASE_PATH, "current");
 
     long stepId = stepResponse
         .body()
@@ -232,7 +232,7 @@ public class StepsTest extends UsersTest {
 
     _guestRequestFactory.jsonPayloadRequest(step, HttpStatus.SC_UNPROCESSABLE_ENTITY)
     .when()
-    .post(BASE_PATH, "current");
+    .post(STEPS_BASE_PATH, "current");
   }
 
   @Test
@@ -263,7 +263,7 @@ public class StepsTest extends UsersTest {
     .request()
     .cookie("JSESSIONID", cookieId)
     .when()
-    .patch(BY_ID_PATH, "current", stepId);
+    .patch(STEP_BY_ID_PATH, "current", stepId);
   }
 
   @Test
@@ -312,7 +312,7 @@ public class StepsTest extends UsersTest {
     .request()
     .cookie("JSESSIONID", cookieId)
     .when()
-    .put(BY_ID_PATH + "/search-config", "current", stepId);
+    .put(STEP_BY_ID_PATH + "/search-config", "current", stepId);
 
     // delete the step to clean up
     StepUtil.getInstance().deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);

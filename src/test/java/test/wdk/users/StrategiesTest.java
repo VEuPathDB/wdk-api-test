@@ -78,9 +78,9 @@ tests to run
   @DisplayName("Strategies")
   public class StrategiesTest extends UsersTest {
 
-    public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
-    public static final String BY_ID_PATH = BASE_PATH + "/{strategyId}";
-    public static final String DUPLICATE_TREE_PATH = BASE_PATH + "/{strategyId}/duplicated-step-tree";
+    public static final String STRATS_BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
+    public static final String STRAT_BY_ID_PATH = STRATS_BASE_PATH + "/{strategyId}";
+    public static final String DUPLICATE_TREE_PATH = STRATS_BASE_PATH + "/{strategyId}/duplicated-step-tree";
 
     protected final AuthUtil _authUtil;
     private GuestRequestFactory _guestRequestFactory;
@@ -253,7 +253,7 @@ tests to run
       // use its signature in request for strategy, which creates a copy of it
       Response response = _guestRequestFactory.jsonPayloadRequest(strategy, HttpStatus.SC_OK, ContentType.JSON)
           .when()
-          .post(BASE_PATH, "current");    
+          .post(STRATS_BASE_PATH, "current");    
       
       long rootStepId = response.body().jsonPath().getLong("latestStepId");
  
@@ -261,7 +261,7 @@ tests to run
 
       _guestRequestFactory.jsonPayloadRequest(reportConfig, HttpStatus.SC_OK, ContentType.JSON)
         .when()
-        .post(StepsTest.BY_ID_PATH + "/reports/standard", "current", rootStepId);    
+        .post(StepsTest.STEP_BY_ID_PATH + "/reports/standard", "current", rootStepId);    
     }
 
 }

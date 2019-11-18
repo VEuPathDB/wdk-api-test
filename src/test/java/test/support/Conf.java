@@ -28,11 +28,6 @@ public class Conf {
   public static final String SITE_PATH;
 
   /**
-   * Path prefix for REST API service endpoints
-   */
-  public static final String SERVICE_PATH = "/service";
-
-  /**
    * Name of the WDK Auth token cookie
    */
   public static final String WDK_AUTH_COOKIE = "wdk_check_auth";

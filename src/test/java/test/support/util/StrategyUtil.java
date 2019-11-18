@@ -100,7 +100,7 @@ public class StrategyUtil {
 
     reqFactory.jsonPayloadRequest(reportConfig, HttpStatus.SC_OK, ContentType.JSON)
       .when()
-      .post(StepsTest.BY_ID_PATH + "/reports/standard", "current", rootStepId);    
+      .post(StepsTest.STEP_BY_ID_PATH + "/reports/standard", "current", rootStepId);    
   }
 
 }

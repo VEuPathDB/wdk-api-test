@@ -6,7 +6,10 @@ import static test.wdk.recordtype.ReportersTest.REPORT_PATH;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.function.Function;
 
 import org.gusdb.wdk.model.api.DefaultReportRequest;
@@ -30,9 +33,6 @@ import test.support.util.ReportUtil;
 import test.support.util.RequestFactory;
 import test.wdk.TestBase;
 import util.Json;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class ColumnReportersTest extends TestBase {
 
@@ -59,16 +59,14 @@ public class ColumnReportersTest extends TestBase {
     return config;
   }
   
-  private static SearchConfig getExonCountSearchConfigWithFilter() {
+  private static List<FilterValueSpec> getSingleTranscriptViewFilter() {
     FilterValueSpec oneGenePerTranFilter = new FilterValueSpec();
     oneGenePerTranFilter.setName("representativeTranscriptOnly");
     oneGenePerTranFilter.setValue(new HashMap<String,Object>());
     oneGenePerTranFilter.setDisabled(false);
-    ArrayList<FilterValueSpec> filters = new ArrayList<FilterValueSpec>();
+    List<FilterValueSpec> filters = new ArrayList<FilterValueSpec>();
     filters.add(oneGenePerTranFilter);
-    SearchConfig config =  getExonCountSearchConfig();
-    config.setViewFilters(filters);
-    return config;
+    return filters;
   }
 
   @Nested
@@ -82,8 +80,8 @@ public class ColumnReportersTest extends TestBase {
 
       // filter standard report so we get count of genes, not transcripts, to match histogram
       JsonReporterResponse standardReport = rFac.jsonIoSuccessRequest(
-        new DefaultReportRequest(getExonCountSearchConfigWithFilter(), new StandardReportConfig()
-          .addAttribute(column))
+        new DefaultReportRequest(getExonCountSearchConfig(), getSingleTranscriptViewFilter(),
+            new StandardReportConfig().addAttribute(column))
       )
         .when()
         .post(REPORT_PATH, RECORD, SEARCH, "standard")
@@ -109,8 +107,8 @@ public class ColumnReportersTest extends TestBase {
 
       // filter standard report so we get count of genes, not transcripts, to match histogram
       JsonReporterResponse standardReport = rFac.jsonIoSuccessRequest(
-        new DefaultReportRequest(getExonCountSearchConfigWithFilter(), new StandardReportConfig()
-          .addAttribute(column))
+        new DefaultReportRequest(getExonCountSearchConfig(), getSingleTranscriptViewFilter(),
+            new StandardReportConfig().addAttribute(column))
       )
         .when()
         .post(REPORT_PATH, RECORD, SEARCH, "standard")
