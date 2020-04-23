@@ -1,431 +1,129 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-#╔════════════════════════════════════════════════════════════════════════════╗#
-#║                                                                            ║#
-#║ Constants                                                                  ║#
-#║                                                                            ║#
-#╚════════════════════════════════════════════════════════════════════════════╝#
+# Modified from: https://gist.github.com/Foxcapades/8c8c80c40b487f09aaf1dca6c5a1a150
+trap "exit 1" TERM
+export TOP_PID=$$
 
+readonly GITHUB_API_URL="https://api.github.com/repos/"
+readonly GITHUB_TARGET="/releases/latest"
 
-readonly USER_SPLIT_CHAR=":"
-readonly CATEGORY_FILE="src/test/java/test/support/Category.java"
-readonly SERVICE_PATH="/service"
+readonly TARGET_DIR=".bin"
 
-
-#╔════════════════════════════════════════════════════════════════════════════╗#
-#║                                                                            ║#
-#║ Functions                                                                  ║#
-#║                                                                            ║#
-#╚════════════════════════════════════════════════════════════════════════════╝#
-
-
-# Splits a given string on the first instance of
-# $USER_SPLIT_CHAR.
-#
-# @params <1>
-#   1: string to split
-#
-# @return input string with the first instance of
-#         $SER_SPLIT_CHAR replaced with a space character.
-function splitPairs() {
-  declare -r input="$1"
-  echo "${input:?}" | sed "s#${USER_SPLIT_CHAR}# #"
-}
-
-# Print a json object with the 2 first input params as
-# values to the keys "email" and "pass"
-#
-# @params <1> <2>
-#   1: site-login-email
-#   2: site-login-pass
-#
-# @return simple json object with the inputs
-function pairToJson() {
-  declare -r email="$1"
-  declare -r pass="$2"
-  printf '{"email":"%s","pass":"%s"}' "${email:?}" $(echo -n ${pass:?} | base64)
-}
-
-# Convert a list of key:value pairs into a JSON array
-# containing objects as defined by pairToJson().
-#
-# @params [1...]
-#   1...: key value pairs separated by $USER_SPLIT_CHAR
-#
-# @return JSON array of objects containing the input pairs.
-function pairsToJson() {
-  for pair in $@; do
-    split=$(splitPairs $pair)
-    tmp="$tmp$(pairToJson $split),"
-  done
-
-  echo "[${tmp::-1}]"
-}
-
-# Print the test runner help text
-#
-# @return The test runner help text block.
-function printHelp() {
-  echo "Usage:
-
-  run [args...] [-- gradle args...]
-
-Arguments:
-
-  -a <credentials>    Site login email address and password formatted as:
-
-                          -a {email}$USER_SPLIT_CHAR{password}
-
-                      This can be specified more than once to provide multiple
-                      users.  Leaving this out will disable tests that require a
-                      user session.  Only specifying one set of credentials will
-                      disable tests requiring more than one user.
-
-                      This value can also be specified by setting the
-                      CREDENTIALS environment variable to a JSON array of
-                      objects containing the login email and password set as the
-                      properties \"email\" and \"pass\" respectively.
-
-  -c                  Clean run.  This runs gradle clean to clear out any
-                      remnants of previous builds or test runs.
-
-  -d                  Debug test run script (prints the commands that would be
-                      run)
-
-  -D <value>          Arbitrary JVM params.
-
-  -f                  Force rerun tests.
-
-  -h                  Show this help text
-
-  -l                  Use legacy login scheme for authentication instead of
-                      OAuth.
-
-  -q                  QA Token.  \"auth_tkt\" value used to bypass the extra
-                      login step for QA sites.  This value can be attained by
-                      logging into a QA site in a browser and retrieving the
-                      \"auth_tkt\" query param given after a successful login.
-
-  -s <test>           Test class or method to run.  Allows wildcard matching
-                      with '*'.  Can be specified multiple times to run multiple
-                      tests.
-
-  -t <tags>           Only run tests annotated with a tag in this comma
-                      separated list of tags.
-
-  -T <tags>           Exclude tests annotated with a tag in this comma separated
-                      list of tags.
-
-  -u <site url>       URL of the site which will have it's API tested.
-
-                      This value can also be set using the SITE_PATH environment
-                      variable.
-
-  -v                  Print verbose test info (including HTTP request details).
-
-Additional Params:
-
-  [gradle args...]    Additional arguments/parameters that will be passed
-                      to gradle.
-
-Examples
-
-  Run in interactive mode (or with env vars) and tell gradle to print
-  stacktraces:
-
-    run -- --stacktrace
-
-  Run with single login and site:
-
-    run -l -a some@email.addr:abc123 -u http://username.plasmodb.org/plasmo.username
-
-  Run specific tests:
-
-    run -s 'LoginTest' -s '*StepAnalysisTest\$GetAnalysisDetails.invalidUserId'
-
-  Exclude specific tags:
-
-    run -T some,tags,to,exclude
-
-  Run specific tags:
-
-    run -t some,tags,to,run
-"
-}
-
-# Join the given strings using the first parameter as the
-# separator
-#
-# @params: <1> [2...]
-#   1:    separator
-#   2...: strings to join
-#
-# @return the input strings joined with the given separator
-function join() {
-  declare -r separator="$1"
-  shift
-  declare -r joined=$(printf "${separator:?}%s" "$@")
-  echo "${joined:1}"
-}
-
-# Retrieve the site name from the given url by requesting
-# the service info.
-#
-# @params: <1>
-#   1: site url
-#
-# @return site project id
-function getProjectID() {
-  url="$1"
-  if [[ ${url:?} ]] && [[ ${url: -1} == '/' ]]; then
-    url="${url:0:${#url}-1}";
+function makeGhApiUrl() {
+  if [ -z "${1}" ]; then
+    echo "function makeGhApiUrl called without required project slug parameter.
+    Example call: 'makeGhApiUrl Foxcapades/Argonaut'" >&2
+    kill -s TERM ${TOP_PID}
   fi
 
-  curl $(dLog "Service API" "${url}${SERVICE_PATH}") 2>&1 \
-    | grep -Eo '"projectId":"[^"]+"' \
-    | cut -d: -f2 \
-    | tr '[:upper:]' '[:lower:]' \
-    | sed 's#"##g'
+  echo "${GITHUB_API_URL}${1}${GITHUB_TARGET}"
 }
 
-# Parse the categories java file and return a list of the
-# declared tag categories
-#
-# @return newline separated list of tag categories
-function getTags() {
-  echo $(dLog "Full Tag List" $(tr -d '\n' < "$CATEGORY_FILE" \
-    | grep -Eo 'public[[:space:]]+static[[:space:]]+final[[:space:]]+String[[:space:]]+[A-Z_]+[[:space:]]+=[[:space:]]+"([^"]+)";' \
-    | grep -Eo '".+"' \
-    | tr -d '"'));
-}
-
-# Remove a given item from a given list of items if present
-#
-# @params <1> <2...>
-#   1:    item to remove
-#   2...: list to remove item from
-#
-# @return list with given item removed
-function removeItem() {
-  declare -r remove="$1";
-  shift;
-  echo "$@" | sed "s# ${remove:?}\|^${remove}##";
-}
-
-# Build the final list of tags to exclude by prepending the
-# site exclusions onto the given list of extra tags.
-#
-# @params: <1> <2...>
-#   1:    user exclusion list as a comma separated string
-#   2...: categories to exclude
-#
-# @return list of tags to be excluded from the test run as a
-#         comma separated string
-function buildExclusions() {
-  declare -r tags="$1";
-  shift;
-  exclusions="$@";
-  exclusions=`join "," ${exclusions}`;
-
-  if [[ ! -z "${tags}" ]]; then
-    exclusions="${exclusions},${tags}";
+function getLatestVersionData() {
+  if [ -z "${1}" ]; then
+    echo "function getLatestVersionData called without required project slug parameter.
+    Example call: 'getLatestVersionData Foxcapades/Argonaut'" >&2
+    kill -s TERM ${TOP_PID}
   fi
 
-  echo "${exclusions}";
+  fullUrl="$(makeGhApiUrl ${1})"
+  curl -sf "${fullUrl}"
+  if [ $? -ne 0 ]; then
+    echo "Failed to fetch version information from ${fullUrl}" >&2
+    kill -s TERM ${TOP_PID}
+  fi
 }
 
-function excludeSite() {
-  declare -r currentSite="$1";
-  shift
-  declare -r categories=("$@")
-
-  removeItem ${currentSite} ${categories[@]}
-}
-
-function excludeAuth() {
-  declare -r credentials="$1"
-  shift
-  categories="$@"
-
-  # Remove the auth blocks
-  declare -r credCount=$(echo -n ${credentials:-""} | grep -oE '\{\s*"email"' | wc -l);
-
-  if [ "$credCount" -gt 1 ]; then
-    categories=`removeItem "multi-auth" ${categories}`
+function parseVersionNumber() {
+  if [ -z "${1}" ]; then
+    echo "function parseVersionNumber called without required project release data." >&2
+    kill -s TERM ${TOP_PID}
   fi
 
-  if [ "$credCount" -gt 0 ]; then
-    categories=`removeItem "auth" ${categories}`
-  fi
-
-  echo ${categories}
+  echo "${1}" | grep "tag_name" | cut -d '"' -f 4
 }
 
-function dLog() {
-  if [[ ${debugMode} -eq 1 ]]; then
-    tmp=`printf "%16.16s" "$1"`
-    shift
-    echo -e "\033[1m$tmp\033[0m │ $@" 1>&2;
+function parseReleaseFile() {
+  if [ -z "${1}" ]; then
+    echo "function parseReleaseFile called without required project release data." >&2
+    kill -s TERM ${TOP_PID}
+  fi
+
+  echo "${1}" | grep "browser_download_url" | grep "$(os)" | cut -d '"' -f 4
+}
+
+function os() {
+  if [[ "$OSTYPE" == "linux-gnu" ]]; then
+    echo "linux"
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "darwin"
   else
-    shift
+    echo "Unsupported OS: $OSTYPE" >&2
+    kill -s TERM ${TOP_PID}
   fi
-
-  echo "$@"
 }
 
+function versionEquals() {
+  if [ -z "${1}" ] || [ -z "${2}" ]; then
+    echo "function versionEquals must be passed 2 parameters containing the versions to check" >&2
+    kill -s TERM ${TOP_PID}
+  fi
 
-#╔════════════════════════════════════════════════════════════════════════════╗#
-#║                                                                            ║#
-#║ Main Script                                                                ║#
-#║                                                                            ║#
-#╚════════════════════════════════════════════════════════════════════════════╝#
+  va="$(sed 's/-.\+//' <<< ${1})"
+  vb="$(sed 's/-.\+//' <<< ${2})"
+  if [[ "${va}" == "${vb}" ]]; then
+    return 0
+  fi
+  return 1
+}
 
-# Credentials JSON array
-#
-# Format:
-# [{"email":"login@email.addr","pass":"pa$$w0rd"}]
-credentials="$CREDENTIALS"
+function downloadIfDifferent() {
+  if [ -z "${1}" ] || [ -z "${2}" ]; then
+    echo "function downloadIfDifferent must be passed a github project slug and a version number to check against" >&2
+    kill -s TERM ${TOP_PID}
+  fi
 
-# Path to the site under test
-sitePath="$SITE_PATH"
+  json="$(getLatestVersionData ${1})"
+  if [ -z "${json}" ]; then
+    echo "empty github response"
+    kill -s TERM ${TOP_PID}
+  fi
 
-# QA Auth token
-qaAuth="$QA_AUTH"
+  vn="$(parseVersionNumber "${json}")"
+  if [ -z "${vn}" ]; then
+    echo "failed to parse version number from github response json" >&2
+    kill -s TERM ${TOP_PID}
+  fi
 
-# Authentication type
-#
-# Controls what mechanism the tests should expect when
-# logging into a site.
-authType="OAUTH"
+  versionEquals "${vn}" "${2}"
 
-# Test mode flags
-gradleFlags=""
+  if [ $? -eq 0 ]; then
+    return 0
+  fi
 
-# Gradle / JVM Parameters
-gradleParams=""
+  fileUrl="$(parseReleaseFile "${json}")"
+  if [ -z "${fileUrl}" ]; then
+    echo "failed to parse release file name from github response json" >&2
+    kill -s TERM ${TOP_PID}
+  fi
 
-# Gradle tasks to run before test
-preSteps=""
+  fileName="$(basename ${fileUrl})"
 
-# Tags
-incTags=""
-exTags=""
+  cd "${TARGET_DIR}"
+  wget -q "${fileUrl}" && tar -xzf "${fileName}" && rm "${fileName}"
+  cd ..
+}
 
-debugMode=0
+readonly SLUG="VEuPathDB/script-api-test-runner"
 
-invalid=0
-
-# Input credential array
-credTmp=()
-
-while getopts "a:cdD:fhlq:s:t:T:u:v" opt; do
-  case ${opt} in
-    a)
-      credTmp+=("$OPTARG")
-      ;;
-    c)
-      preSteps="$preSteps clean"
-      ;;
-    d)
-      debugMode=1
-      ;;
-    D)
-      gradleParams="${gradleParams} -D$OPTARG";
-      ;;
-    f)
-      rerun="--rerun-tasks"
-      ;;
-    h)
-      printHelp
-      exit 0
-      ;;
-    l)
-      authType="LEGACY"
-      ;;
-    q)
-      qaAuth="${OPTARG}";
-      ;;
-    s)
-      gradleFlags="${gradleFlags} --tests $OPTARG";
-      ;;
-    t)
-      incTags="$OPTARG";
-      ;;
-    T)
-      exTags="$OPTARG";
-      ;;
-    u)
-      sitePath="$OPTARG"
-      ;;
-    v)
-      verbose="--info";
-      PRINT_HTTP="true";
-      ;;
-    \?)
-      invalid=1;
-      ;;
-  esac
-done
-
-shift "$(expr $OPTIND - 1)"
-
-# Handle unknown args.
-if [ ${invalid} -eq 1 ]; then
-  echo
-  printHelp
-  exit 1
+if [[ ! -d "${TARGET_DIR}" ]]; then
+  mkdir "${TARGET_DIR}"
 fi
 
-# Parse input credentials if present
-if [ ${#credTmp[@]} -gt 0 ]; then
-  credentials=$(pairsToJson $credTmp)
-fi
-
-# Request site url if not already provided
-if [[ -z "$sitePath" ]]; then
-  echo "missing required arg -u";
-  exit 1;
-fi
-
-# Parse site
-SITE_NAME=$(getProjectID ${sitePath:?})
-
-# Check if site is known
-if [[ -z "$SITE_NAME" ]]; then
-  printf "Cannot reach resource at '%s'.  Please check the url\n" "$sitePath";
-  exit 1;
-fi
-
-# Build tag whitelist string if include tags are present
-if [[ ! -z "$incTags" ]]; then
-  incTags="-PincludeTags=$(dLog 'Tag Whitelist' $incTags)";
+if [[ -f "${TARGET_DIR}/run" ]]; then
+  downloadIfDifferent "${SLUG}" "$(${TARGET_DIR}/run -V)"
 else
-  exclusions=`getTags`;
-  exclusions=`excludeSite ${SITE_NAME} ${exclusions}`;
-  exclusions=`excludeAuth ${credentials} ${exclusions}`;
-  exclusions=`buildExclusions ${exTags} ${exclusions}`;
-  exclusions="-PexcludeTags=\"$(dLog 'Tag Blacklist' ${exclusions})\"";
+  downloadIfDifferent "${SLUG}" "v0.0.0"
 fi
 
-ADD_FLAGS=`removeItem "-- " $@`
-
-if [[ ${debugMode} -eq 1 ]]; then
-  dLog "Credentials" "${credentials:-[]}" 1>/dev/null
-  dLog "Site URL"    "${sitePath:?}"      1>/dev/null
-  dLog "Auth Scheme" "${authType:?}"      1>/dev/null
-  dLog "QA Token"    "${qaAuth}"          1>/dev/null
-  dLog "Gradle Call" CREDENTIALS="${credentials:-[]}" \
-  SITE_PATH="${sitePath:?}" \
-  AUTH_TYPE="${authType:?}" \
-  QA_AUTH="${qaAuth}" \
-  PRINT_HTTP="${PRINT_HTTP}" \
-  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} ${exclusions} ${verbose} ${rerun} ${ADD_FLAGS}  1>/dev/null
-  exit 0
-fi
-
-CREDENTIALS="${credentials:-[]}" \
-  SITE_PATH="${sitePath:?}" \
-  AUTH_TYPE="${authType:?}" \
-  QA_AUTH="${qaAuth}" \
-  PRINT_HTTP="${PRINT_HTTP}" \
-  ./gradlew ${gradleParams} ${preSteps} test ${gradleFlags} ${incTags} ${exclusions} ${verbose} ${rerun} ${ADD_FLAGS}
+"${TARGET_DIR}/run" $@

@@ -7,10 +7,10 @@ import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.LoginRequest;
 import org.gusdb.wdk.model.api.OAuthStateTokenResponse;
-import test.wdk.OAuthTest;
 import test.support.Conf;
 import test.support.Credentials;
 import test.support.Header;
+import test.wdk.OAuthTest;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -20,9 +20,9 @@ import java.util.Map;
 
 import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.given;
+import static test.support.Conf.SERVICE_PATH;
 import static test.wdk.LoginTest.OAUTH_AUTHORIZE;
 import static test.wdk.LoginTest.OAUTH_LOGIN;
-import static test.support.Conf.SERVICE_PATH;
 
 /**
  * Utility for performing common site session tasks.

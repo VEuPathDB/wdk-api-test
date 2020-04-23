@@ -4,6 +4,9 @@ repositories {
   mavenCentral()
 }
 
+sourceCompatibility = 11
+targetCompatibility = 11
+
 def JUNIT_VERSION = '5.2.0'
 def JACKSON_VERSION = '2.9.6'
 

@@ -1,57 +1,57 @@
 package test.wdk;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static test.support.Conf.SERVICE_PATH;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
-import org.gusdb.wdk.model.api.AnswerSpec;
 import org.gusdb.wdk.model.api.DefaultAnswerReportRequest;
-import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatConfig;
-import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatting;
 import org.gusdb.wdk.model.api.GenomeViewInstance;
 import org.gusdb.wdk.model.api.IsolateViewInstance;
 import org.gusdb.wdk.model.api.RecordInstance;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import java.util.List;
-import java.io.IOException;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import test.support.Category;
 import test.support.util.AnswerUtil;
 import test.support.util.GuestRequestFactory;
 
+import java.io.IOException;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static test.support.Conf.SERVICE_PATH;
+
 public class ReportersTest extends TestBase {
-  public static final String BASE_PATH = SERVICE_PATH + "/answer/report";
+  public static final String
+    BASE_PATH = SERVICE_PATH + "/record-types/{recordType}/searches/{search}/reports",
+    BY_NAME_PATH = BASE_PATH + "/{reporter}";
 
   public final GuestRequestFactory _guestRequestFactory;
 
   public ReportersTest(GuestRequestFactory req) {
-    this._guestRequestFactory = req;
+    _guestRequestFactory = req;
   }
 
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Default Answer Reporter")
   void testDefaultJsonReporterSuccess() throws JsonProcessingException {
-    
-    // should return ? when the search is not BLAST 
-    AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
-    DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
-    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("wdk-service-json", formatConfig);
-    DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
-    Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.JSON)
-        .when()
-        .post(BASE_PATH);
-    
+
+    // should return ? when the search is not BLAST
+    var request = new DefaultAnswerReportRequest(
+      AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory),
+      AnswerUtil.getDefaultFormatConfigOneRecord());
+
+    var response = _guestRequestFactory
+      .jsonPayloadRequest(request, HttpStatus.SC_OK, ContentType.JSON)
+      .when()
+      .post(BY_NAME_PATH, "transcript", "GenesByExonCount", "standard");
+
     // minimally, confirm we got exactly one record
-    List<RecordInstance> records = response.body().jsonPath().getList("records", RecordInstance.class);
+    List<RecordInstance> records = response.body()
+      .jsonPath()
+      .getList("records", RecordInstance.class);
+
     assertEquals(1, records.size(), "Expected exactly one record, but got " + records.size());
   }
 
@@ -59,61 +59,69 @@ public class ReportersTest extends TestBase {
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Blast Reporter Success")
   void testBlastReporterSuccess() throws JsonProcessingException {
-    AnswerSpec answerSpec = AnswerUtil.createBlastAnswerSpec(_guestRequestFactory);
-    DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
-    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("blastSummaryView", formatConfig);
-    DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
-    Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.JSON)
-        .when()
-        .post(BASE_PATH);
-    assertNotNull(response.body().jsonPath().get("blastMeta"), "Missing 'blastMeta' object in request body");
+
+    var request = new DefaultAnswerReportRequest(
+      AnswerUtil.createBlastAnswerSpec(_guestRequestFactory),
+      AnswerUtil.getDefaultFormatConfigOneRecord());
+
+    var response = _guestRequestFactory
+      .jsonPayloadRequest(request, HttpStatus.SC_OK, ContentType.JSON)
+      .when()
+      .post(BY_NAME_PATH, "transcript", "GenesBySimilarity", "blastSummaryView");
+
+    assertNotNull(
+      response.body().jsonPath().get("blastMeta"),
+      "Missing 'blastMeta' object in request body");
   }
 
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Blast Reporter Failure")
   void testBlastReporterFailure() throws JsonProcessingException {
-    
-    // should return 400 when the search is not BLAST 
-    AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
-    DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
-    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("blastSummaryView", formatConfig);
-    DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
-    _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_BAD_REQUEST)
-        .when()
-        .post(BASE_PATH);
+
+    // should return 400 when the search is not BLAST
+    var request = new DefaultAnswerReportRequest(
+      AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory),
+      AnswerUtil.getDefaultFormatConfigOneRecord());
+
+    _guestRequestFactory.jsonPayloadRequest(request, HttpStatus.SC_BAD_REQUEST)
+      .when()
+      .post(BY_NAME_PATH, "transcript", "GenesByExonCount", "blastSummaryView");
   }
-  
+
   @Test
   @Tag(Category.PLASMO_TEST)
   @DisplayName("Test isolates summary view reporter")
-  void testIsolatesSummaryView() throws JsonProcessingException, IOException  {
-    AnswerSpec answerSpec = AnswerUtil.createPopsetByCountryAnswerSpec(_guestRequestFactory);
-    DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
-    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("geoIsolateSummaryView", formatConfig);
-    DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
-    Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
-        ContentType.TEXT).when().post(BASE_PATH);
-    
-    // parsing into IsolateRecordInstance validates the response contents
-    new ObjectMapper().readValue(response.body().asString(), IsolateViewInstance.class);
+  void testIsolatesSummaryView() throws IOException  {
 
+    var requestBody = new DefaultAnswerReportRequest(
+      AnswerUtil.createPopsetByCountryAnswerSpec(_guestRequestFactory),
+      AnswerUtil.getDefaultFormatConfigOneRecord());
+
+    var response = _guestRequestFactory
+      .jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.TEXT)
+      .when()
+      .post(BY_NAME_PATH, "popsetSequence", "PopsetByCountry", "geoIsolateSummaryView");
+
+    // parsing into IsolateRecordInstance validates the response contents
+    getMapper().readValue(response.body().asString(), IsolateViewInstance.class);
   }
 
   @Test
   @Tag(Category.PLASMO_TEST)
-  @DisplayName("Test Gene Genome summary view reporter") 
-  void testGeneGenomeSummaryView() throws JsonProcessingException, IOException {
-    AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
-    DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
-    DefaultJsonAnswerFormatting formatting = new DefaultJsonAnswerFormatting("geneGenomeSummaryView", formatConfig);
-    DefaultAnswerReportRequest  requestBody = new DefaultAnswerReportRequest(answerSpec, formatting);
-    Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
-        ContentType.TEXT).when().post(BASE_PATH);
-    
+  @DisplayName("Test Gene Genome summary view reporter")
+  void testGeneGenomeSummaryView() throws IOException {
+
+    var requestBody = new DefaultAnswerReportRequest(
+      AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory),
+      AnswerUtil.getDefaultFormatConfigOneRecord());
+
+    var response = _guestRequestFactory
+      .jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.TEXT)
+      .when()
+      .post(BY_NAME_PATH, "transcript", "GenesByExonCount", "geneGenomeSummaryView");
+
     // parsing into IsolateRecordInstance validates the response contents
-    new ObjectMapper().readValue(response.body().asString(), GenomeViewInstance.class);
+    getMapper().readValue(response.body().asString(), GenomeViewInstance.class);
   }
-
-
 }

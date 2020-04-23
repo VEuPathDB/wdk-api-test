@@ -1,14 +1,11 @@
 package test.wdk.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.gusdb.wdk.model.api.StrategyListItem;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import test.support.Category;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
@@ -31,20 +28,20 @@ public class PublicStrategiesTest extends UsersTest {
 
   @SuppressWarnings("unused")
   private static StrategyListItem[] getPublicStrategies() {
-    StrategyListItem[] strategyList = 
+    StrategyListItem[] strategyList =
         GuestRequestFactory.getInstance().jsonSuccessRequest()
         .when().get(StrategyListTest.PUBLIC_STRATS_PATH)
         .as(StrategyListItem[].class);
     return strategyList;
   }
-  
+
   @ParameterizedTest
   @DisplayName("Run public strategies")
   @MethodSource("getPublicStrategies")
   @Tag (Category.PUBLIC_STRATEGIES_TEST)
   void runPublicStrategy(StrategyListItem strategyListItem) throws JsonProcessingException {
-    
+
     StrategyUtil.runStrategyFromSignature(strategyListItem.getSignature(), _guestRequestFactory);
   }
-  
+
 }

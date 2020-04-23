@@ -1,18 +1,16 @@
 package test.wdk.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.AnswerFormatting;
 import org.gusdb.wdk.model.api.Strategy;
 import org.gusdb.wdk.model.api.StrategyListItem;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import test.support.Category;
 import test.support.util.AnswerUtil;
 import test.support.util.AuthUtil;
@@ -46,19 +44,19 @@ import test.wdk.UsersTest;
       signature = "3975e694d0bf0f69"; // TODO: fix this
       Strategy strategy = new Strategy();
       strategy.setSourceSignature(signature);
-      
+
       // use its signature in request for strategy, which creates a copy of it
       Response response = _guestRequestFactory.jsonPayloadRequest(strategy, HttpStatus.SC_OK, ContentType.JSON)
           .when()
-          .post(BASE_PATH, "current");    
-      
+          .post(BASE_PATH, "current");
+
       long rootStepId = response.body().jsonPath().getLong("latestStepId");
- 
+
       AnswerFormatting formatting = AnswerUtil.getDefaultFormattingOneRecord();
 
       _guestRequestFactory.jsonPayloadRequest(formatting, HttpStatus.SC_OK, ContentType.JSON)
         .when()
-        .post(StepsTest.BY_ID_PATH + "/answer", "current", rootStepId);    
+        .post(StepsTest.BY_ID_PATH + "/answer", "current", rootStepId);
     }
 
 }

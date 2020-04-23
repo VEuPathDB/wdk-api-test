@@ -1,20 +1,15 @@
 package test.wdk.users;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.Step;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import test.support.Category;
-import test.support.util.AnswerUtil;
-import test.support.util.AuthUtil;
-import test.support.util.AuthenticatedRequestFactory;
-import test.support.util.GuestRequestFactory;
-import test.support.util.RequestFactory;
+import test.support.util.*;
 import test.wdk.UsersTest;
 
 @DisplayName("Steps")
@@ -30,12 +25,12 @@ public class StepsTest extends UsersTest {
     this._authUtil = auth;
     _guestRequestFactory = guestReqFactory;
   }
-  
+
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create and delete a guest step")
   void createAndDeleteGuestStep() throws JsonProcessingException {
-    
+
     Response stepResponse = createExonCountStepResponse(_guestRequestFactory);
     long stepId = stepResponse
         .body()
@@ -49,16 +44,17 @@ public class StepsTest extends UsersTest {
     // deleting again should get a not found
     deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
-  
+
   public static Response createExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
 
     Step step = new Step(AnswerUtil.createExonCountAnswerSpec(requestFactory));
-    
+    step.setSearchName("GenesByExonCount");
+
     return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
       .when()
-      .post(BASE_PATH, "current");    
+      .post(BASE_PATH, "current");
   }
-  
+
   private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
 
     requestFactory.emptyRequest()
@@ -66,7 +62,7 @@ public class StepsTest extends UsersTest {
     .expect()
     .statusCode(expectedStatus)
     .when()
-      .delete(BY_ID_PATH, "current", stepId); 
+      .delete(BY_ID_PATH, "current", stepId);
   }
 }
 
