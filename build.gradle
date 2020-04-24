@@ -1,4 +1,5 @@
 apply plugin : 'java'
+apply from: file('test-summary.gradle')
 
 repositories {
   mavenCentral()
