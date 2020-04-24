@@ -56,6 +56,7 @@ gradle.buildFinished {
 }
 
 private static void printResults(allResults) {
+  println()
   println allResults.collect {
     it.readLines().collect {
       it
