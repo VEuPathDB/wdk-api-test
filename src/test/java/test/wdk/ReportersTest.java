@@ -84,7 +84,7 @@ public class ReportersTest extends TestBase {
       AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory),
       AnswerUtil.getDefaultFormatConfigOneRecord());
 
-    _guestRequestFactory.jsonPayloadRequest(request, HttpStatus.SC_BAD_REQUEST)
+    _guestRequestFactory.jsonPayloadRequest(request, HttpStatus.SC_UNPROCESSABLE_ENTITY)
       .when()
       .post(BY_NAME_PATH, "transcript", "GenesByExonCount", "blastSummaryView");
   }

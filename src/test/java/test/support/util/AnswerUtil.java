@@ -43,6 +43,7 @@ public class AnswerUtil {
     paramsMap.put("scope", "Gene");
     paramsMap.put("BlastDatabaseOrganism", "Plasmodium falciparum 3D7");
     paramsMap.put("BlastDatabaseType", "Transcripts");
+    paramsMap.put("BlastRecordClass", "TranscriptRecordClasses.TranscriptRecordClass");
     paramsMap.put("-e", "10");
     paramsMap.put("-b", "50");
     paramsMap.put("-filter", "no");
