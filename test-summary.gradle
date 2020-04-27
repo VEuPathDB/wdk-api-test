@@ -11,7 +11,8 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
         events TestLogEvent.FAILED,
           TestLogEvent.SKIPPED,
           TestLogEvent.STANDARD_OUT,
-          TestLogEvent.STANDARD_ERROR
+          TestLogEvent.STANDARD_ERROR,
+          TestLogEvent.PASSED
 
         exceptionFormat TestExceptionFormat.FULL
         showExceptions true
