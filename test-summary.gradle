@@ -48,12 +48,6 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
     }
   }
 
-test {
-  beforeTest { descriptor ->
-    logger.lifecycle("Running test: ${descriptor}")
-  }
-}
-
 
 gradle.buildFinished {
   def allResults = rootProject.ext.testsResults
