@@ -12,7 +12,8 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
           TestLogEvent.SKIPPED,
           TestLogEvent.STANDARD_OUT,
           TestLogEvent.STANDARD_ERROR,
-          TestLogEvent.PASSED
+          TestLogEvent.PASSED,
+          TestLogEvent.STARTED
 
         exceptionFormat TestExceptionFormat.FULL
         showExceptions true
@@ -46,6 +47,12 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
       }
     }
   }
+
+test {
+  beforeTest { descriptor ->
+    logger.lifecycle("Running test: ${descriptor}")
+  }
+}
 
 
 gradle.buildFinished {
