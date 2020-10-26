@@ -5,3 +5,8 @@ build/
 .bin/
 
 .envrc
+.classpath
+.project
+.settings
+bin
+*~
