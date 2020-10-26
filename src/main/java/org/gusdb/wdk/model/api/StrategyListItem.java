@@ -23,6 +23,7 @@ public class StrategyListItem {
   private String recordClassName;
   private Date createdTime;
   private Boolean isPublic;
+  private Boolean isExample;
   private long strategyId;
   private Date lastModified;
   private String nameOfFirstStep;
@@ -85,6 +86,13 @@ public class StrategyListItem {
   }
   public void setIsPublic(Boolean isPublic) {
     this.isPublic = isPublic;
+  }
+
+  public Boolean getIsExample() {
+    return isExample;
+  }
+  public void setIsExample(Boolean isExample) {
+    this.isExample = isExample;
   }
 
   public Boolean getIsSaved() {
