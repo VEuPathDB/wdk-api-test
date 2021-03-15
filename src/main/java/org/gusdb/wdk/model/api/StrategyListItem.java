@@ -4,29 +4,28 @@ import java.util.Date;
 
 
 public class StrategyListItem {
-  private long latestStepId;
 
-  // Guaranteed present as of b47
-  private Date lastViewed;
-  private long rootStepId;
-  private String signature;
-  private String author;
-  private String releaseVersion;
-  private Boolean isValid;
-  private String description;
-  private int leafAndTransformStepCount;
-  private Boolean isDeleted;
-  private Integer estimatedSize;
-  private Boolean isSaved;
-  private String organization;
-  private String name;
-  private String recordClassName;
-  private Date createdTime;
-  private Boolean isPublic;
-  private Boolean isExample;
+  // Guaranteed present as of b51
   private long strategyId;
+  private String description;
+  private String name;
+  private String author;
+  private long rootStepId;
+  private String recordClassName;
+  private String signature;
+  private Date createdTime;
+  private Date lastViewed;
   private Date lastModified;
+  private String releaseVersion;
+  private Boolean isPublic;
+  private Boolean isSaved;
+  private Boolean isValid;
+  private Boolean isDeleted;
+  private Boolean isExample;
+  private String organization;
+  private Integer estimatedSize;
   private String nameOfFirstStep;
+  private int leafAndTransformStepCount;
 
   public long getStrategyId() {
     return strategyId;
@@ -53,11 +52,6 @@ public class StrategyListItem {
   public void setAuthor(String author) {
     this.author = author;
   }
-
-  public long getLatestStepId() {
-    return latestStepId;
-  }
-  public void setLatestStepId(long stepId) { this.latestStepId = stepId; }
 
   public String getRecordClassName() {
     return recordClassName;
@@ -125,6 +119,7 @@ public class StrategyListItem {
   public void setLastViewed(Date lastViewed) { this.lastViewed = lastViewed; }
 
   // a simple toString method for use in reporting info about failed strats
+  @Override
   public String toString() {
     return "Strategy: " + getName() + " (signature " + getSignature() +")";
   }

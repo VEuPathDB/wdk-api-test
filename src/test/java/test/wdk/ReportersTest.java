@@ -62,7 +62,7 @@ public class ReportersTest extends TestBase {
 
     var request = new DefaultAnswerReportRequest(
       AnswerUtil.createBlastAnswerSpec(_guestRequestFactory),
-      AnswerUtil.getDefaultFormatConfigOneRecord());
+      AnswerUtil.getBlastReporterFormatting());
 
     var response = _guestRequestFactory
       .jsonPayloadRequest(request, HttpStatus.SC_OK, ContentType.JSON)

@@ -6,6 +6,7 @@ import org.gusdb.wdk.model.api.AnswerPagination;
 import org.gusdb.wdk.model.api.AnswerSpec;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatConfig;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class AnswerUtil {
@@ -59,6 +60,12 @@ public class AnswerUtil {
     paramsMap.put("country", "GAZ_00002560");
     answerSpec.setParameters(paramsMap);
     return answerSpec;
+  }
+
+  public static DefaultJsonAnswerFormatConfig getBlastReporterFormatting() {
+    DefaultJsonAnswerFormatConfig config = getDefaultFormatConfigOneRecord();
+    config.setAttributes(Arrays.asList(new String[] { "summary", "alignment" }));
+    return config;
   }
 
 }
