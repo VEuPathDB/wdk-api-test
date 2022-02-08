@@ -54,6 +54,31 @@ public class AnswerUtil {
     return answerSpec;
   }
 
+  public static AnswerSpec createMultiBlastAnswerSpec(RequestFactory requestFactory) throws JsonProcessingException {
+    AnswerSpec answerSpec = new AnswerSpec(/*"GeneQuestions.GenesByMultiBlast"*/);
+    var paramsMap = new HashMap<String, String>();
+    paramsMap.put("organism", "Plasmodium adleri G01");
+    paramsMap.put("scope", "Gene");
+    paramsMap.put("BlastDatabaseOrganism", "[\"Plasmodium falciparum 3D7\"]");
+    paramsMap.put("MultiBlastDatabaseType", "AnnotatedTranscripts");
+    paramsMap.put("BlastJobDescription", "testrun");
+    paramsMap.put("ExpectationValue", "10");
+    paramsMap.put("NumQueryResults", "100");
+    paramsMap.put("MaxMatchesQueryRange", "0");
+    paramsMap.put("WordSize", "11");
+    paramsMap.put("ScoringMatrix", "none");
+    paramsMap.put("MatchMismatchScore", "2,-3");
+    paramsMap.put("GapCosts", "5,2");
+    paramsMap.put("CompAdjust", "none");
+    paramsMap.put("FilterLowComplex", "dust");
+    paramsMap.put("SoftMask", "true");
+    paramsMap.put("LowerCaseMask", "false");  
+    paramsMap.put("BlastAlgorithm", "blastn");
+    paramsMap.put("BlastQuerySequence", "GCAGGAAATATGATTCCAGATAATGATAAAAATTCAAATTATAAATATCCAGCTGTTTATGATGACAAAGATAAAAAGTGTCATATATTATATATTGCAGCTCAAGAAAATAATGGTCCT");
+    answerSpec.setParameters(paramsMap);
+    return answerSpec;
+  }
+
   public static AnswerSpec createPopsetByCountryAnswerSpec(RequestFactory requestFactory) throws JsonProcessingException {
     AnswerSpec answerSpec = new AnswerSpec(/*"PopsetQuestions.PopsetByCountry"*/);
     var paramsMap = new HashMap<String, String>();

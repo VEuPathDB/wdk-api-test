@@ -57,7 +57,7 @@ public class ReportersTest extends TestBase {
 
   @Test
   @Tag (Category.PLASMO_TEST)
-  @DisplayName("Test Blast Reporter Success")
+  @DisplayName("Test Old Blast Reporter Success")
   void testBlastReporterSuccess() throws JsonProcessingException {
 
     var request = new DefaultAnswerReportRequest(
@@ -73,6 +73,26 @@ public class ReportersTest extends TestBase {
       response.body().jsonPath().get("blastMeta"),
       "Missing 'blastMeta' object in request body");
   }
+
+ @Test
+  @Tag (Category.PLASMO_TEST)
+  @DisplayName("Test MultiBlast Reporter Success")
+  void testMultiBlastReporterSuccess() throws JsonProcessingException {
+
+    var request = new DefaultAnswerReportRequest(
+      AnswerUtil.createMultiBlastAnswerSpec(_guestRequestFactory),
+      AnswerUtil.getBlastReporterFormatting());
+
+    var response = _guestRequestFactory
+      .jsonPayloadRequest(request, HttpStatus.SC_OK, ContentType.JSON)
+      .when()
+      .post(BY_NAME_PATH, "transcript", "GenesByMultiBlast", "blastSummaryView");
+
+    assertNotNull(
+      response.body().jsonPath().get("blastMeta"),
+      "Missing 'blastMeta' object in request body");
+  }
+
 
   @Test
   @Tag (Category.PLASMO_TEST)
