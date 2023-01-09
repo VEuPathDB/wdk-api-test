@@ -42,7 +42,7 @@ test {
 }
 
 tasks.withType(Test) { Test task ->
-  task.useJUnitPlatform { org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions options ->
+  task.useJUnitPlatform { JUnitPlatformOptions options ->
     if (project.hasProperty("includeTags"))
       options.includeTags project.getProperty("includeTags").split(',')
 

@@ -22,6 +22,17 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 
       ignoreFailures = true // Always try to run all tests for all modules
 
+      afterTest { descriptor, result ->
+        println "\n$descriptor.className [$descriptor.classDisplayName] > $descriptor.name [$descriptor.displayName]: $result.resultType"
+      }
+      /*
+      afterTest { descriptor, result ->
+        TestDescriptorInternal test = (TestDescriptorInternal)descriptor //.toString() //as
+        String classDisplayName = test.getClassName() == test.getClassDisplayName() ? test.getClassDisplayName() : "${test.getClassName()} [${test.getClassDisplayName()}]"
+        String testDisplayName = test.getName() == test.getDisplayName() ? test.getDisplayName() : "${test.getName()} [${test.getDisplayName()}]"
+        System.out.println("\n$classDisplayName > $testDisplayName: ${result.resultType}")
+      }*/
+
       afterSuite { desc, result ->
 
         if (desc.parent) return // Only summarize results for whole modules
