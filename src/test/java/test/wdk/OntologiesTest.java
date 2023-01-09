@@ -28,8 +28,8 @@ public class OntologiesTest extends TestBase {
     getOntologyList();
   }
 
-  @ParameterizedTest(name = "GET " + BASE_PATH + "/{arguments}")
-  @DisplayName("GET " + BY_NAME_PATH)
+  @ParameterizedTest(name = "GET " + BASE_PATH + "/{0}")
+  @DisplayName("GET blah " + BY_NAME_PATH)
   @MethodSource("getOntologyList")
   void getOntology(String name) {
     req.jsonSuccessRequest().when().get(BY_NAME_PATH, name);
