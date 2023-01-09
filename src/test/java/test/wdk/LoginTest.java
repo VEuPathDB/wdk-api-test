@@ -18,6 +18,7 @@ import test.support.util.GuestRequestFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsNot.not;
@@ -65,7 +66,7 @@ public class LoginTest extends TestBase {
         .post(LOGIN_PATH);
   }
 
-  private void testOAuth2() throws UnsupportedEncodingException {
+  private void testOAuth2() {
     final String oauthState, redirectPath;
     final Response oauthCheckRes, loginRes, oauthStateRes;
     final Credentials creds = Conf.CREDENTIALS[0];
@@ -79,7 +80,7 @@ public class LoginTest extends TestBase {
     oauthState = oauthStateRes.as(OAuthStateTokenResponse.class)
         .getOauthStateToken();
 
-    redirectPath = URLEncoder.encode(Conf.SITE_PATH, "utf-8");
+    redirectPath = URLEncoder.encode(Conf.SITE_PATH, StandardCharsets.UTF_8);
 
     // Get EuPathDB login cookie
     oauthCheckRes = req.emptyRequest()
@@ -95,7 +96,7 @@ public class LoginTest extends TestBase {
         .expect()
         .statusCode(HttpStatus.SC_SEE_OTHER)
         .cookie(EUPATH_AUTH_COOKIE)
-        .header(Header.LOCATION, not(new IsEmptyString()))
+        .header(Header.LOCATION, not(IsEmptyString.emptyOrNullString()))
         .when()
         .get(OAUTH_AUTHORIZE);
 
@@ -108,7 +109,7 @@ public class LoginTest extends TestBase {
         .header(Header.REFERER, oauthCheckRes.header(Header.LOCATION))
         .expect()
         .statusCode(HttpStatus.SC_MOVED_TEMPORARILY)
-        .header(Header.LOCATION, not(new IsEmptyString()))
+        .header(Header.LOCATION, not(IsEmptyString.emptyOrNullString()))
         .when()
         .post(OAUTH_LOGIN);
 
@@ -122,8 +123,8 @@ public class LoginTest extends TestBase {
         .header(
           Header.LOCATION,
           allOf(
-            not(new IsEmptyString()),
-            not(new StringContains("login-error"))
+            not(IsEmptyString.emptyOrNullString()),
+            not(new StringContains(true,"login-error"))
           )
         )
         .cookie(WDK_AUTH_COOKIE)
