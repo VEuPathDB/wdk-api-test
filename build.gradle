@@ -8,8 +8,8 @@ repositories {
 sourceCompatibility = 11
 targetCompatibility = 11
 
-def JUNIT_VERSION = '5.2.0'
-def JACKSON_VERSION = '2.9.6'
+def JUNIT_VERSION = '5.9.1'
+def JACKSON_VERSION = '2.14.1'
 
 dependencies {
   implementation(
@@ -21,7 +21,7 @@ dependencies {
       version: JACKSON_VERSION ],
     [ group: 'org.json',
       name: 'json',
-      version: '20180813' ]
+      version: '20220924' ]
   )
 
   testImplementation(
@@ -33,7 +33,7 @@ dependencies {
       version: JUNIT_VERSION ],
     [ group: 'io.rest-assured',
       name: 'rest-assured',
-      version: '3.1.1' ],
+      version: '5.3.0' ],
   )
 }
 
@@ -42,7 +42,7 @@ test {
 }
 
 tasks.withType(Test) { Test task ->
-  task.useJUnitPlatform { org.gradle.api.tasks.testing.junitplatform.JUnitPlatformOptions options ->
+  task.useJUnitPlatform { JUnitPlatformOptions options ->
     if (project.hasProperty("includeTags"))
       options.includeTags project.getProperty("includeTags").split(',')
 
