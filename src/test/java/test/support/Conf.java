@@ -35,7 +35,7 @@ public class Conf {
   /**
    * Name of the WDK Auth token cookie
    */
-  public static final String WDK_AUTH_COOKIE = "wdk_check_auth";
+  public static final String WDK_AUTH_COOKIE = "Authorization";
 
   /**
    * Name of the JAX-RS session token cookie
