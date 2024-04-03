@@ -1,19 +1,24 @@
 package test.wdk.users;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.Step;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import test.support.Category;
-import test.support.util.*;
+import test.support.util.AnswerUtil;
+import test.support.util.AuthUtil;
+import test.support.util.AuthenticatedRequestFactory;
+import test.support.util.GuestRequestFactory;
+import test.support.util.RequestFactory;
 import test.wdk.UsersTest;
 
 @DisplayName("Steps")
 public class StepsTest extends UsersTest {
+
   public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/steps";
   public static final String BY_ID_PATH = BASE_PATH + "/{stepId}";
 
@@ -29,7 +34,7 @@ public class StepsTest extends UsersTest {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Create and delete a guest step")
-  void createAndDeleteGuestStep() throws JsonProcessingException {
+  void createAndDeleteGuestStep() {
 
     Response stepResponse = createExonCountStepResponse(_guestRequestFactory);
     long stepId = stepResponse
@@ -45,7 +50,7 @@ public class StepsTest extends UsersTest {
     deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
   }
 
-  public static Response createExonCountStepResponse(RequestFactory requestFactory) throws JsonProcessingException {
+  public static Response createExonCountStepResponse(RequestFactory requestFactory) {
 
     Step step = new Step(AnswerUtil.createExonCountAnswerSpec(requestFactory));
     step.setSearchName("GenesByExonCount");
@@ -55,7 +60,7 @@ public class StepsTest extends UsersTest {
       .post(BASE_PATH, "current");
   }
 
-  private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) throws JsonProcessingException {
+  private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) {
 
     requestFactory.emptyRequest()
     .cookie("JSESSIONID", cookieId)

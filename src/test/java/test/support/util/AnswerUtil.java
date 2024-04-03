@@ -1,13 +1,12 @@
 package test.support.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.Arrays;
+import java.util.HashMap;
+
 import org.gusdb.wdk.model.api.AnswerFormatting;
 import org.gusdb.wdk.model.api.AnswerPagination;
 import org.gusdb.wdk.model.api.AnswerSpec;
 import org.gusdb.wdk.model.api.DefaultJsonAnswerFormatConfig;
-
-import java.util.Arrays;
-import java.util.HashMap;
 
 public class AnswerUtil {
 
@@ -25,7 +24,7 @@ public class AnswerUtil {
     return formatConfig;
   }
 
-  public static AnswerSpec createExonCountAnswerSpec(RequestFactory requestFactory) throws JsonProcessingException {
+  public static AnswerSpec createExonCountAnswerSpec(RequestFactory requestFactory) {
     AnswerSpec answerSpec = new AnswerSpec();
     var paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
@@ -37,7 +36,7 @@ public class AnswerUtil {
     return answerSpec;
   }
 
-  public static AnswerSpec createBlastAnswerSpec(RequestFactory requestFactory) throws JsonProcessingException {
+  public static AnswerSpec createBlastAnswerSpec(RequestFactory requestFactory) {
     AnswerSpec answerSpec = new AnswerSpec(/*"GeneQuestions.GenesBySimilarity"*/);
     var paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
@@ -54,7 +53,7 @@ public class AnswerUtil {
     return answerSpec;
   }
 
-  public static AnswerSpec createMultiBlastAnswerSpec(RequestFactory requestFactory) throws JsonProcessingException {
+  public static AnswerSpec createMultiBlastAnswerSpec(RequestFactory requestFactory) {
     AnswerSpec answerSpec = new AnswerSpec(/*"GeneQuestions.GenesByMultiBlast"*/);
     var paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
@@ -79,7 +78,7 @@ public class AnswerUtil {
     return answerSpec;
   }
 
-  public static AnswerSpec createPopsetByCountryAnswerSpec(RequestFactory requestFactory) throws JsonProcessingException {
+  public static AnswerSpec createPopsetByCountryAnswerSpec(RequestFactory requestFactory) {
     AnswerSpec answerSpec = new AnswerSpec(/*"PopsetQuestions.PopsetByCountry"*/);
     var paramsMap = new HashMap<String, String>();
     paramsMap.put("country", "GAZ_00002560");

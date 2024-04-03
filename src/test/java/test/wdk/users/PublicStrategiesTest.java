@@ -1,11 +1,11 @@
 package test.wdk.users;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.gusdb.wdk.model.api.StrategyListItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+
 import test.support.Category;
 import test.support.util.AuthUtil;
 import test.support.util.AuthenticatedRequestFactory;
@@ -14,6 +14,7 @@ import test.wdk.StrategyListTest;
 import test.wdk.UsersTest;
 
 public class PublicStrategiesTest extends UsersTest {
+
   public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
   public static final String BY_ID_PATH = BASE_PATH + "/{strategyId}";
 
@@ -39,7 +40,7 @@ public class PublicStrategiesTest extends UsersTest {
   @DisplayName("Run public strategies")
   @MethodSource("getPublicStrategies")
   @Tag (Category.PUBLIC_STRATEGIES_TEST)
-  void runPublicStrategy(StrategyListItem strategyListItem) throws JsonProcessingException {
+  void runPublicStrategy(StrategyListItem strategyListItem) {
 
     StrategyUtil.runStrategyFromSignature(strategyListItem.getSignature(), _guestRequestFactory);
   }

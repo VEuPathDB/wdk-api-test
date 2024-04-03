@@ -1,8 +1,5 @@
 package test.wdk.users;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.AnswerFormatting;
 import org.gusdb.wdk.model.api.Strategy;
@@ -11,6 +8,9 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import test.support.Category;
 import test.support.util.AnswerUtil;
 import test.support.util.AuthUtil;
@@ -21,6 +21,7 @@ import test.wdk.UsersTest;
 
   @DisplayName("Strategies")
   public class StrategiesTest extends UsersTest {
+
     public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
     public static final String BY_ID_PATH = BASE_PATH + "/{strategyId}";
 
@@ -37,7 +38,7 @@ import test.wdk.UsersTest;
     @DisplayName("Run public strategy")
     @Disabled("Strategy service is not ready for this test")
     @Tag (Category.PLASMO_TEST)
-    void runPublicStrategy() throws JsonProcessingException {
+    void runPublicStrategy() {
       // find a random strategy:  first one in list of public strats
       StrategyListItem[] strategyList =  _guestRequestFactory.jsonSuccessRequest().when().get(StrategyListTest.PUBLIC_STRATS_PATH).as(StrategyListItem[].class);
       String signature = strategyList[0].getSignature();

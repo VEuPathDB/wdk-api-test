@@ -104,7 +104,7 @@ public class StepAnalysisPluginResponse<T> extends StepAnalysisPlugin<T> {
       return false;
     }
 
-    final StepAnalysisPluginResponse tst = (StepAnalysisPluginResponse) obj;
+    final StepAnalysisPluginResponse<?> tst = (StepAnalysisPluginResponse<?>) obj;
 
     return Objects.equals(answerValueHash, tst.answerValueHash)
         && stepId == tst.stepId

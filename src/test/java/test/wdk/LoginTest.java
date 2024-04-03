@@ -1,6 +1,16 @@
 package test.wdk;
 
-import io.restassured.response.Response;
+import static org.hamcrest.core.AllOf.allOf;
+import static org.hamcrest.core.IsNot.not;
+import static test.support.Conf.EUPATH_AUTH_COOKIE;
+import static test.support.Conf.JSESS_AUTH_COOKIE;
+import static test.support.Conf.OAUTH_SERVICE;
+import static test.support.Conf.WDK_AUTH_COOKIE;
+import static test.support.util.AuthUtil.LOGIN_PATH;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.LoginRequest;
 import org.gusdb.wdk.model.api.OAuthStateTokenResponse;
@@ -10,20 +20,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.JUnitException;
+
+import io.restassured.response.Response;
 import test.support.Category;
 import test.support.Conf;
 import test.support.Credentials;
 import test.support.Header;
 import test.support.util.GuestRequestFactory;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-
-import static org.hamcrest.core.AllOf.allOf;
-import static org.hamcrest.core.IsNot.not;
-import static test.support.Conf.*;
-import static test.support.util.AuthUtil.LOGIN_PATH;
 
 @DisplayName("Login")
 public class LoginTest extends TestBase {
@@ -39,7 +42,7 @@ public class LoginTest extends TestBase {
   @Test
   @Tag(Category.AUTH_TEST)
   @DisplayName("User Login")
-  void testLogin() throws UnsupportedEncodingException {
+  void testLogin() {
     switch (Conf.AUTH_TYPE) {
       case LEGACY:
         testLegacy();

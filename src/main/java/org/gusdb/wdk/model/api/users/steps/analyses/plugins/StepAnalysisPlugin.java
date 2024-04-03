@@ -34,7 +34,7 @@ public abstract class StepAnalysisPlugin<T> {
       return false;
     }
 
-    final StepAnalysisPlugin tst = (StepAnalysisPlugin) obj;
+    final StepAnalysisPlugin<?> tst = (StepAnalysisPlugin<?>) obj;
 
     return Objects.equals(displayName, tst.displayName)
         && Objects.equals(formParams, tst.formParams);

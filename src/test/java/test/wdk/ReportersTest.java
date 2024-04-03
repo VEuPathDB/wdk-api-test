@@ -1,7 +1,12 @@
 package test.wdk;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import io.restassured.http.ContentType;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static test.support.Conf.SERVICE_PATH;
+
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.http.HttpStatus;
 import org.gusdb.wdk.model.api.DefaultAnswerReportRequest;
 import org.gusdb.wdk.model.api.GenomeViewInstance;
@@ -10,16 +15,11 @@ import org.gusdb.wdk.model.api.RecordInstance;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+
+import io.restassured.http.ContentType;
 import test.support.Category;
 import test.support.util.AnswerUtil;
 import test.support.util.GuestRequestFactory;
-
-import java.io.IOException;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static test.support.Conf.SERVICE_PATH;
 
 public class ReportersTest extends TestBase {
   public static final String
@@ -35,7 +35,7 @@ public class ReportersTest extends TestBase {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Default Answer Reporter")
-  void testDefaultJsonReporterSuccess() throws JsonProcessingException {
+  void testDefaultJsonReporterSuccess() {
 
     // should return ? when the search is not BLAST
     var request = new DefaultAnswerReportRequest(
@@ -58,7 +58,7 @@ public class ReportersTest extends TestBase {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Old Blast Reporter Success")
-  void testBlastReporterSuccess() throws JsonProcessingException {
+  void testBlastReporterSuccess() {
 
     var request = new DefaultAnswerReportRequest(
       AnswerUtil.createBlastAnswerSpec(_guestRequestFactory),
@@ -74,10 +74,10 @@ public class ReportersTest extends TestBase {
       "Missing 'blastMeta' object in request body");
   }
 
- @Test
+  @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test MultiBlast Reporter Success")
-  void testMultiBlastReporterSuccess() throws JsonProcessingException {
+  void testMultiBlastReporterSuccess() {
 
     var request = new DefaultAnswerReportRequest(
       AnswerUtil.createMultiBlastAnswerSpec(_guestRequestFactory),
@@ -97,7 +97,7 @@ public class ReportersTest extends TestBase {
   @Test
   @Tag (Category.PLASMO_TEST)
   @DisplayName("Test Blast Reporter Failure")
-  void testBlastReporterFailure() throws JsonProcessingException {
+  void testBlastReporterFailure() {
 
     // should return 400 when the search is not BLAST
     var request = new DefaultAnswerReportRequest(

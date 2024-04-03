@@ -15,6 +15,7 @@ public class AuthenticatedRequestFactory implements RequestFactory {
     this.auth = auth;
   }
 
+  @Override
   public RequestSpecification emptyRequest() {
     RequestSpecification req = auth.prepRequest();
 

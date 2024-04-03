@@ -33,7 +33,7 @@ public class ParamResolver implements ParameterResolver {
   @Override
   public Object resolveParameter(ParameterContext paramCtx,
       ExtensionContext extCtx) throws ParameterResolutionException {
-    final Class cls = paramCtx.getParameter().getType();
+    final Class<?> cls = paramCtx.getParameter().getType();
 
     if (!INJECTABLES.containsKey(cls))
       throw new ParameterResolutionException(String.format(ERR_NOT_REGISTERED,

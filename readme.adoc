@@ -161,28 +161,31 @@ affected by the site specific testing and will be included in the test run
 
 The sites/tags known to the test runner are:
 
-* `amoeba`
-* `clinepi`
-* `crypto`
-* `eupath`
-* `fungi`
-* `giardia`
-* `microbiome`
-* `microsporidia`
+* `amoebadb`
+* `clinepidb`
+* `cryptodb`
+* `eupathdb`
+* `fungidb`
+* `giardiadb`
+* `hostdb`
+* `microbiomedb`
+* `microsporidiadb`
 * `orthomcl`
-* `piroplasma`
-* `plasmo`
-* `toxo`
-* `trich`
-* `tritryp`
+* `piroplasmadb`
+* `plasmodb`
+* `toxodb`
+* `trichdb`
+* `tritrypdb`
+* `vectorbase`
 
 To mark a test as being data-specific to one particular site, mark the test with
-the `@Tag` annotation including the name of the site from the list above.
+the `@Tag` annotation including the name of the site from the list above.  Please
+use the constants in Category.java as below.
 
 .Example
 [source, java]
 ----
-@Tag("orthomcl")
+@Tag(Category.ORTHOMCL_TEST)
 void someTestMethod() {
   ...
 }
