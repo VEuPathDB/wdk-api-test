@@ -34,11 +34,14 @@ public class AuthUtil {
 
   public static final String LOGIN_PATH = SERVICE_PATH + "/login";
 
+  public static final String CURRENT_USER_PATH = SERVICE_PATH + "/users/current";
+
   private Map < Credentials, String > sessionTokens;
 
   public enum Type {
     OAUTH,
-    LEGACY
+    LEGACY, // username/password
+    GUEST
   }
 
   private AuthUtil() {
@@ -64,6 +67,9 @@ public class AuthUtil {
         sessionTokens.put(creds, oAuthLogin(creds, Conf.SITE_PATH)
             .getCookie(Conf.WDK_AUTH_COOKIE));
         break;
+      case GUEST:
+        sessionTokens.put(creds, newGuestLogin()
+            .getCookie(Conf.WDK_AUTH_COOKIE));
       default:
         throw new RuntimeException(String.format(ERR_UNSUPPORTED_AUTH,
             Conf.AUTH_TYPE.name()));
@@ -199,6 +205,10 @@ public class AuthUtil {
         .body(new LoginRequest(creds.getEmail(), creds.getPassword(), redirect))
       .when()
         .post(LOGIN_PATH);
+  }
+
+  public Response newGuestLogin() {
+    return RestAssured.given().when().get(CURRENT_USER_PATH);
   }
 
   /**

@@ -84,6 +84,7 @@ public class Conf {
 
     AUTH_TYPE = AuthUtil.Type.valueOf(env.getOrDefault("AUTH_TYPE", AuthUtil.Type.OAUTH.name()));
     QA_AUTH = env.get("QA_AUTH");
+    System.out.println("AUTH_TYPE = " + AUTH_TYPE + ", QA_AUTH = " + QA_AUTH + ", CREDS = " + env.getOrDefault("CREDENTIALS","none"));
 
     // External service used for OAuth authentication
     OAUTH_SERVICE = env.getOrDefault("OAUTH_SERVICE",
