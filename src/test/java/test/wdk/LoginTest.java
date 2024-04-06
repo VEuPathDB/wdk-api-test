@@ -30,6 +30,7 @@ import test.support.util.GuestRequestFactory;
 
 @DisplayName("Login")
 public class LoginTest extends TestBase {
+
   public static final String OAUTH_AUTHORIZE = OAUTH_SERVICE + "/authorize";
   public static final String OAUTH_LOGIN     = OAUTH_SERVICE + "/login";
 

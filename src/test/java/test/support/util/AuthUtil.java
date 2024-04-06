@@ -1,33 +1,35 @@
 package test.support.util;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
-import org.apache.http.HttpStatus;
-import org.gusdb.wdk.model.api.LoginRequest;
-import org.gusdb.wdk.model.api.OAuthStateTokenResponse;
-import test.support.Conf;
-import test.support.Credentials;
-import test.support.Header;
-import test.wdk.OAuthTest;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.given;
 import static test.support.Conf.SERVICE_PATH;
 import static test.wdk.LoginTest.OAUTH_AUTHORIZE;
 import static test.wdk.LoginTest.OAUTH_LOGIN;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.http.HttpStatus;
+import org.gusdb.wdk.model.api.LoginRequest;
+import org.gusdb.wdk.model.api.OAuthStateTokenResponse;
+
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import test.support.Conf;
+import test.support.Credentials;
+import test.support.Header;
+import test.wdk.OAuthTest;
+
 /**
  * Utility for performing common site session tasks.
  */
 public class AuthUtil {
+
   private static AuthUtil instance;
 
   private static final String ERR_UNSUPPORTED_AUTH = "Auth type %s is not supported.";
@@ -37,16 +39,24 @@ public class AuthUtil {
   public static final String CURRENT_USER_PATH = SERVICE_PATH + "/users/current";
 
   private Map < Credentials, String > sessionTokens;
+  private String guestToken;
 
   public enum Type {
     OAUTH,
-    LEGACY, // username/password
-    GUEST
+    LEGACY; // direct username/password
   }
 
   private AuthUtil() {
-    // Synchronized because tests can be run in parallel.
+    // Synchronized because tests can be run in parallel
     sessionTokens = Collections.synchronizedMap(new HashMap<>());
+    // Pre-load a guest token to be used for guest requests
+    guestToken = createGuestToken();
+  }
+
+  public static String createGuestToken() {
+    return RequestFactory.prepRequest(RestAssured.given().when())
+        .get(Conf.SITE_PATH + CURRENT_USER_PATH)
+        .getCookie(Conf.WDK_AUTH_COOKIE);
   }
 
   /**
@@ -67,9 +77,6 @@ public class AuthUtil {
         sessionTokens.put(creds, oAuthLogin(creds, Conf.SITE_PATH)
             .getCookie(Conf.WDK_AUTH_COOKIE));
         break;
-      case GUEST:
-        sessionTokens.put(creds, newGuestLogin()
-            .getCookie(Conf.WDK_AUTH_COOKIE));
       default:
         throw new RuntimeException(String.format(ERR_UNSUPPORTED_AUTH,
             Conf.AUTH_TYPE.name()));
@@ -101,20 +108,31 @@ public class AuthUtil {
    *         an authenticated request.
    */
   public RequestSpecification prepRequest(final Credentials creds) {
-    return RestAssured.given().cookie(Conf.WDK_AUTH_COOKIE,
-        getSession(creds));
+    return RestAssured.given()
+        .cookie(Conf.WDK_AUTH_COOKIE, getSession(creds));
   }
 
   /**
-   * Prepare an authenticated request for the first known set of  user
+   * Prepare an authenticated request for the first known set of user
    * credentials.
    *
    * @return A RestAssured request which includes the necessary setup to perform
    *         an authenticated request.
    */
   public RequestSpecification prepRequest() {
-    return RestAssured.given().cookie(Conf.WDK_AUTH_COOKIE,
-        getSession(Conf.CREDENTIALS[0]));
+    return RestAssured.given()
+        .cookie(Conf.WDK_AUTH_COOKIE, getSession(Conf.CREDENTIALS[0]));
+  }
+
+  /**
+   * Prepare a request for our guest user.
+   *
+   * @return a RestAssured request which includes a bearer token representing
+   *         our pre-loaded guest user
+   */
+  public RequestSpecification prepGuestRequest() {
+    return RestAssured.given()
+        .cookie(Conf.WDK_AUTH_COOKIE, guestToken);
   }
 
   /**
@@ -126,7 +144,7 @@ public class AuthUtil {
    *
    * @return Response containing the WDK auth token.
    */
-  public Response oAuthLogin(
+  private Response oAuthLogin(
       final Credentials creds,
       final String redirect
   ) {
@@ -144,12 +162,7 @@ public class AuthUtil {
     oauthState = oauthStateRes.as(OAuthStateTokenResponse.class)
         .getOauthStateToken();
 
-    try {
-      redirectPath = URLEncoder.encode(redirect, "utf-8");
-    }
-    catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
+    redirectPath = URLEncoder.encode(redirect, StandardCharsets.UTF_8);
 
     // Get EuPathDB login cookie
     oauthCheckRes = given()
@@ -199,16 +212,12 @@ public class AuthUtil {
    *
    * @return Response containing the WDK auth token.
    */
-  public Response legacyLogin(final Credentials creds, final String redirect) {
+  private Response legacyLogin(final Credentials creds, final String redirect) {
     return RestAssured.given()
         .contentType(ContentType.JSON)
         .body(new LoginRequest(creds.getEmail(), creds.getPassword(), redirect))
       .when()
         .post(LOGIN_PATH);
-  }
-
-  public Response newGuestLogin() {
-    return RestAssured.given().when().get(CURRENT_USER_PATH);
   }
 
   /**
@@ -222,5 +231,9 @@ public class AuthUtil {
     }
 
     return instance;
+  }
+
+  public String getGuestAuthToken() {
+    return guestToken;
   }
 }

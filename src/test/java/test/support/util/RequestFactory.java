@@ -1,8 +1,12 @@
 package test.support.util;
 
+import io.restassured.filter.log.RequestLoggingFilter;
+import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
+import test.support.Conf;
+
 import org.apache.http.HttpStatus;
 
 public interface RequestFactory {
@@ -13,6 +17,26 @@ public interface RequestFactory {
    * @return prepared RestAssured object
    */
   RequestSpecification emptyRequest();
+
+  /**
+   * Adds further prep to request, including:
+   *   - Add logging filter
+   *   - Add QA auth cookie for QA sites
+   *
+   * @param req prepared RestAssured object
+   * @return request passed in with additional prep
+   */
+  public static RequestSpecification prepRequest(RequestSpecification req) {
+    if(Conf.PRINT_REQUESTS)
+      req.filter(new RequestLoggingFilter())
+        .filter(new ResponseLoggingFilter());
+
+    if(Conf.QA_AUTH != null && !Conf.QA_AUTH.isEmpty()) {
+      req.cookie(Conf.QA_AUTH_COOKIE, Conf.QA_AUTH);
+    }
+
+    return req;
+  }
 
   /**
    * Builds a request with nothing on it but the expectation of a 200 response

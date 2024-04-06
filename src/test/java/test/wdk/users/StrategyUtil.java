@@ -11,7 +11,7 @@ import test.wdk.UsersTest;
 
 public class StrategyUtil {
 
-  public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
+  public static final String BASE_PATH = UsersTest.USERS_BY_ID_PATH + "/strategies";
   public static final String STRATEGY_ID_PATH = BASE_PATH + "/{id}";
 
   public static void runStrategyFromSignature(String signature, RequestFactory reqFactory) {

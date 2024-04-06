@@ -22,7 +22,7 @@ import test.wdk.UsersTest;
   @DisplayName("Strategies")
   public class StrategiesTest extends UsersTest {
 
-    public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
+    public static final String BASE_PATH = UsersTest.USERS_BY_ID_PATH + "/strategies";
     public static final String BY_ID_PATH = BASE_PATH + "/{strategyId}";
 
     protected final AuthUtil _authUtil;

@@ -15,7 +15,7 @@ import test.wdk.UsersTest;
 
 public class PublicStrategiesTest extends UsersTest {
 
-  public static final String BASE_PATH = UsersTest.BY_ID_PATH + "/strategies";
+  public static final String BASE_PATH = UsersTest.USERS_BY_ID_PATH + "/strategies";
   public static final String BY_ID_PATH = BASE_PATH + "/{strategyId}";
 
   protected final AuthUtil _authUtil;
@@ -28,9 +28,9 @@ public class PublicStrategiesTest extends UsersTest {
   }
 
   @SuppressWarnings("unused")
-  private static StrategyListItem[] getPublicStrategies() {
+  private StrategyListItem[] getPublicStrategies() {
     StrategyListItem[] strategyList =
-        GuestRequestFactory.getInstance().jsonSuccessRequest()
+        GuestRequestFactory.getInstance(_authUtil).jsonSuccessRequest()
         .when().get(StrategyListTest.PUBLIC_STRATS_PATH)
         .as(StrategyListItem[].class);
     return strategyList;

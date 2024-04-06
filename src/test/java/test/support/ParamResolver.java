@@ -47,6 +47,9 @@ public class ParamResolver implements ParameterResolver {
     if (type.equals(AuthenticatedRequestFactory.class))
       return AuthenticatedRequestFactory
           .getInstance((AuthUtil) getOrCreate(AuthUtil.class));
+    if (type.equals(GuestRequestFactory.class))
+      return GuestRequestFactory
+          .getInstance((AuthUtil) getOrCreate(AuthUtil.class));
 
     try {
       return type.getMethod("getInstance").invoke(null);
