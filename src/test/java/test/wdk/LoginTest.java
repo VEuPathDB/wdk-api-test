@@ -6,7 +6,7 @@ import static test.support.Conf.EUPATH_AUTH_COOKIE;
 import static test.support.Conf.JSESS_AUTH_COOKIE;
 import static test.support.Conf.OAUTH_SERVICE;
 import static test.support.Conf.WDK_AUTH_COOKIE;
-import static test.support.util.AuthUtil.LOGIN_PATH;
+import static test.support.util.SessionFactory.LOGIN_PATH;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +26,8 @@ import test.support.Category;
 import test.support.Conf;
 import test.support.Credentials;
 import test.support.Header;
-import test.support.util.GuestRequestFactory;
+import test.support.util.Session;
+import test.support.util.SessionFactory;
 
 @DisplayName("Login")
 public class LoginTest extends TestBase {
@@ -34,10 +35,10 @@ public class LoginTest extends TestBase {
   public static final String OAUTH_AUTHORIZE = OAUTH_SERVICE + "/authorize";
   public static final String OAUTH_LOGIN     = OAUTH_SERVICE + "/login";
 
-  private final GuestRequestFactory req;
+  private final Session _session;
 
-  LoginTest(GuestRequestFactory req) {
-    this.req = req;
+  LoginTest(SessionFactory sessionFactory) {
+    _session = sessionFactory.getCachedGuestSession();
   }
 
   @Test
@@ -63,7 +64,7 @@ public class LoginTest extends TestBase {
    */
   private void testLegacy() {
     final Credentials creds = Conf.CREDENTIALS[0];
-    req.jsonIoSuccessRequest(
+    _session.jsonIoSuccessRequest(
         new LoginRequest(creds.getEmail(), creds.getPassword(), Conf.SITE_PATH))
         .cookie(WDK_AUTH_COOKIE)
         .when()
@@ -76,7 +77,7 @@ public class LoginTest extends TestBase {
     final Credentials creds = Conf.CREDENTIALS[0];
 
     // Get State Token
-    oauthStateRes = req.jsonSuccessRequest()
+    oauthStateRes = _session.jsonSuccessRequest()
         .cookie(JSESS_AUTH_COOKIE)
         .when()
         .get(OAuthTest.TOKEN_PATH);
@@ -87,7 +88,7 @@ public class LoginTest extends TestBase {
     redirectPath = URLEncoder.encode(Conf.SITE_PATH, StandardCharsets.UTF_8);
 
     // Get EuPathDB login cookie
-    oauthCheckRes = req.emptyRequest()
+    oauthCheckRes = _session.emptyRequest()
         .queryParams(
           "response_type", "code",
           "scope", "openid email",
@@ -105,7 +106,7 @@ public class LoginTest extends TestBase {
         .get(OAUTH_AUTHORIZE);
 
     // Submit login
-    loginRes = req.emptyRequest()
+    loginRes = _session.emptyRequest()
         .redirects()
         .follow(true)
         .formParams("username", creds.getEmail(), "password", creds.getPassword())
@@ -118,7 +119,7 @@ public class LoginTest extends TestBase {
         .post(OAUTH_LOGIN);
 
     // Return to site to confirm oauth code and get WDK auth token
-    req.emptyRequest()
+    _session.emptyRequest()
         .redirects()
         .follow(false)
         .cookie(JSESS_AUTH_COOKIE, oauthStateRes.cookie(JSESS_AUTH_COOKIE))

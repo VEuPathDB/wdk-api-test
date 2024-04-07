@@ -1,33 +1,35 @@
 package test.wdk;
 
+import static test.support.Conf.SERVICE_PATH;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import test.support.util.GuestRequestFactory;
-import test.support.util.RequestFactory;
 
-import static test.support.Conf.SERVICE_PATH;
+import test.support.util.RequestFactory;
+import test.support.util.Session;
+import test.support.util.SessionFactory;
 
 @DisplayName("Records")
 public class RecordsTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/record-types";
   public static final String EXP_PATH = BASE_PATH + "?format=expanded";
 
-  private final GuestRequestFactory req;
+  public final Session _session;
 
-  RecordsTest(GuestRequestFactory req) {
-    this.req = req;
+  RecordsTest(SessionFactory sessionFactory) {
+    _session = sessionFactory.getCachedGuestSession();
   }
 
   @Test
   @DisplayName("GET " + BASE_PATH)
   void getRecordNames() {
-    getAllRecordNames(req);
+    getAllRecordNames(_session);
   }
 
   @Test
   @DisplayName("GET " + EXP_PATH)
   void getRecordDetails() {
-    req.jsonSuccessRequest().when().get(EXP_PATH);
+    _session.jsonSuccessRequest().when().get(EXP_PATH);
   }
 
   public static String[] getAllRecordNames(RequestFactory req) {

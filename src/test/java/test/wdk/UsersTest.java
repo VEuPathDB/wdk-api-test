@@ -1,9 +1,11 @@
 package test.wdk;
 
-import org.junit.jupiter.api.DisplayName;
-import test.support.util.AuthenticatedRequestFactory;
-
 import static test.support.Conf.SERVICE_PATH;
+
+import org.junit.jupiter.api.DisplayName;
+
+import test.support.util.Session;
+import test.support.util.SessionFactory;
 
 @DisplayName("Users")
 public class UsersTest extends TestBase {
@@ -14,13 +16,9 @@ public class UsersTest extends TestBase {
   protected static final String DEFAULT_USER = "current";
   protected static final String INVALID_USER = "-1";
 
-  private final AuthenticatedRequestFactory _authenticatedRequestFactory;
+  protected final Session _guestSession;
 
-  public UsersTest(AuthenticatedRequestFactory req) {
-    _authenticatedRequestFactory = req;
-  }
-  
-  protected AuthenticatedRequestFactory getAuthenticatedRequestFactory() {
-    return _authenticatedRequestFactory;
+  public UsersTest(SessionFactory sessionFactory) {
+    _guestSession = sessionFactory.getCachedGuestSession();
   }
 }

@@ -19,17 +19,18 @@ import org.junit.jupiter.api.Test;
 import io.restassured.http.ContentType;
 import test.support.Category;
 import test.support.util.AnswerUtil;
-import test.support.util.GuestRequestFactory;
+import test.support.util.Session;
+import test.support.util.SessionFactory;
 
 public class ReportersTest extends TestBase {
   public static final String
     BASE_PATH = SERVICE_PATH + "/record-types/{recordType}/searches/{search}/reports",
     BY_NAME_PATH = BASE_PATH + "/{reporter}";
 
-  public final GuestRequestFactory _guestRequestFactory;
+  public final Session _session;
 
-  public ReportersTest(GuestRequestFactory req) {
-    _guestRequestFactory = req;
+  public ReportersTest(SessionFactory sessionFactory) {
+    _session = sessionFactory.getCachedGuestSession();
   }
 
   @Test
@@ -39,10 +40,10 @@ public class ReportersTest extends TestBase {
 
     // should return ? when the search is not BLAST
     var request = new DefaultAnswerReportRequest(
-      AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory),
+      AnswerUtil.createExonCountAnswerSpec(),
       AnswerUtil.getDefaultFormatConfigOneRecord());
 
-    var response = _guestRequestFactory
+    var response = _session
       .jsonPayloadRequest(request, HttpStatus.SC_OK, ContentType.JSON)
       .when()
       .post(BY_NAME_PATH, "transcript", "GenesByExonCount", "standard");
@@ -61,10 +62,10 @@ public class ReportersTest extends TestBase {
   void testBlastReporterSuccess() {
 
     var request = new DefaultAnswerReportRequest(
-      AnswerUtil.createBlastAnswerSpec(_guestRequestFactory),
+      AnswerUtil.createBlastAnswerSpec(),
       AnswerUtil.getBlastReporterFormatting());
 
-    var response = _guestRequestFactory
+    var response = _session
       .jsonPayloadRequest(request, HttpStatus.SC_OK, ContentType.JSON)
       .when()
       .post(BY_NAME_PATH, "transcript", "GenesBySimilarity", "blastSummaryView");
@@ -80,10 +81,10 @@ public class ReportersTest extends TestBase {
   void testMultiBlastReporterSuccess() {
 
     var request = new DefaultAnswerReportRequest(
-      AnswerUtil.createMultiBlastAnswerSpec(_guestRequestFactory),
+      AnswerUtil.createMultiBlastAnswerSpec(),
       AnswerUtil.getBlastReporterFormatting());
 
-    var response = _guestRequestFactory
+    var response = _session
       .jsonPayloadRequest(request, HttpStatus.SC_OK, ContentType.JSON)
       .when()
       .post(BY_NAME_PATH, "transcript", "GenesByMultiBlast", "blastSummaryView");
@@ -101,10 +102,10 @@ public class ReportersTest extends TestBase {
 
     // should return 400 when the search is not BLAST
     var request = new DefaultAnswerReportRequest(
-      AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory),
+      AnswerUtil.createExonCountAnswerSpec(),
       AnswerUtil.getDefaultFormatConfigOneRecord());
 
-    _guestRequestFactory.jsonPayloadRequest(request, HttpStatus.SC_UNPROCESSABLE_ENTITY)
+    _session.jsonPayloadRequest(request, HttpStatus.SC_UNPROCESSABLE_ENTITY)
       .when()
       .post(BY_NAME_PATH, "transcript", "GenesByExonCount", "blastSummaryView");
   }
@@ -115,10 +116,10 @@ public class ReportersTest extends TestBase {
   void testIsolatesSummaryView() throws IOException  {
 
     var requestBody = new DefaultAnswerReportRequest(
-      AnswerUtil.createPopsetByCountryAnswerSpec(_guestRequestFactory),
+      AnswerUtil.createPopsetByCountryAnswerSpec(),
       AnswerUtil.getDefaultFormatConfigOneRecord());
 
-    var response = _guestRequestFactory
+    var response = _session
       .jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.TEXT)
       .when()
       .post(BY_NAME_PATH, "popsetSequence", "PopsetByCountry", "geoIsolateSummaryView");
@@ -133,10 +134,10 @@ public class ReportersTest extends TestBase {
   void testGeneGenomeSummaryView() throws IOException {
 
     var requestBody = new DefaultAnswerReportRequest(
-      AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory),
+      AnswerUtil.createExonCountAnswerSpec(),
       AnswerUtil.getDefaultFormatConfigOneRecord());
 
-    var response = _guestRequestFactory
+    var response = _session
       .jsonPayloadRequest(requestBody, HttpStatus.SC_OK, ContentType.TEXT)
       .when()
       .post(BY_NAME_PATH, "transcript", "GenesByExonCount", "geneGenomeSummaryView");

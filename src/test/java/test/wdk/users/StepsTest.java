@@ -10,10 +10,9 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.support.Category;
 import test.support.util.AnswerUtil;
-import test.support.util.AuthUtil;
-import test.support.util.AuthenticatedRequestFactory;
-import test.support.util.GuestRequestFactory;
 import test.support.util.RequestFactory;
+import test.support.util.Session;
+import test.support.util.SessionFactory;
 import test.wdk.UsersTest;
 
 @DisplayName("Steps")
@@ -22,13 +21,8 @@ public class StepsTest extends UsersTest {
   public static final String BASE_PATH = UsersTest.USERS_BY_ID_PATH + "/steps";
   public static final String BY_ID_PATH = BASE_PATH + "/{stepId}";
 
-  protected final AuthUtil _authUtil;
-  private GuestRequestFactory _guestRequestFactory;
-
-  public StepsTest(AuthUtil auth, AuthenticatedRequestFactory authReqFactory, GuestRequestFactory guestReqFactory ) {
-    super(authReqFactory);
-    this._authUtil = auth;
-    _guestRequestFactory = guestReqFactory;
+  public StepsTest(SessionFactory sessionFactory) {
+    super(sessionFactory);
   }
 
   @Test
@@ -36,34 +30,32 @@ public class StepsTest extends UsersTest {
   @DisplayName("Create and delete a guest step")
   void createAndDeleteGuestStep() {
 
-    Response stepResponse = createExonCountStepResponse(_guestRequestFactory);
+    Response stepResponse = createExonCountStepResponse(_guestSession);
     long stepId = stepResponse
         .body()
         .jsonPath()
         .getLong("id"); // TODO: use JsonKeys
-    String cookieId = stepResponse.getCookie("JSESSIONID");
 
     // delete the step
-    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NO_CONTENT);
+    deleteStep(stepId, _guestSession, HttpStatus.SC_NO_CONTENT);
 
     // deleting again should get a not found
-    deleteStep(stepId, _guestRequestFactory, cookieId, HttpStatus.SC_NOT_FOUND);
+    deleteStep(stepId, _guestSession, HttpStatus.SC_NOT_FOUND);
   }
 
-  public static Response createExonCountStepResponse(RequestFactory requestFactory) {
+  public static Response createExonCountStepResponse(Session session) {
 
-    Step step = new Step(AnswerUtil.createExonCountAnswerSpec(requestFactory));
+    Step step = new Step(AnswerUtil.createExonCountAnswerSpec());
     step.setSearchName("GenesByExonCount");
 
-    return requestFactory.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
+    return session.jsonPayloadRequest(step, HttpStatus.SC_OK, ContentType.JSON)
       .when()
       .post(BASE_PATH, "current");
   }
 
-  private void deleteStep(long stepId, RequestFactory requestFactory, String cookieId, int expectedStatus) {
+  private void deleteStep(long stepId, RequestFactory requestFactory, int expectedStatus) {
 
     requestFactory.emptyRequest()
-    .cookie("JSESSIONID", cookieId)
     .expect()
     .statusCode(expectedStatus)
     .when()

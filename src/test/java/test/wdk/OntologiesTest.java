@@ -1,14 +1,16 @@
 package test.wdk;
 
+import static test.support.Conf.SERVICE_PATH;
+
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.support.util.GuestRequestFactory;
 
-import static test.support.Conf.SERVICE_PATH;
+import test.support.util.Session;
+import test.support.util.SessionFactory;
 
 @DisplayName("Ontologies")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -16,10 +18,10 @@ public class OntologiesTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/ontologies";
   public static final String BY_NAME_PATH = BASE_PATH + "/{ontologyName}";
 
-  public final GuestRequestFactory req;
+  public final Session _session;
 
-  public OntologiesTest(GuestRequestFactory req) {
-    this.req = req;
+  public OntologiesTest(SessionFactory sessionFactory) {
+    _session = sessionFactory.getCachedGuestSession();
   }
 
   @Test
@@ -32,7 +34,7 @@ public class OntologiesTest extends TestBase {
   @DisplayName("GET " + BY_NAME_PATH)
   @MethodSource("getOntologyList")
   void getOntology(String name) {
-    req.jsonSuccessRequest().when().get(BY_NAME_PATH, name);
+    _session.jsonSuccessRequest().when().get(BY_NAME_PATH, name);
   }
 
   @ParameterizedTest
@@ -44,6 +46,6 @@ public class OntologiesTest extends TestBase {
   }
 
   String[] getOntologyList() {
-    return req.jsonSuccessRequest().when().get(BASE_PATH).as(String[].class);
+    return _session.jsonSuccessRequest().when().get(BASE_PATH).as(String[].class);
   }
 }

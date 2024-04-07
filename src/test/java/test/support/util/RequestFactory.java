@@ -1,5 +1,8 @@
 package test.support.util;
 
+import org.apache.http.HttpStatus;
+
+import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
 import io.restassured.http.ContentType;
@@ -7,35 +10,43 @@ import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 import test.support.Conf;
 
-import org.apache.http.HttpStatus;
+/**
+ * Provides basic RestAssured request creation methods with QA bypass cookie
+ * and request/response logging if configured.
+ */
+public class RequestFactory {
 
-public interface RequestFactory {
+  /**
+   * Preps request for WDK test purposes, including:
+   *   - Add logging filter
+   *   - Add QA auth cookie for QA sites
+   *
+   * @param request prepared RestAssured object
+   * @return request passed in with additional prep
+   */
+  private RequestSpecification prepRequest(RequestSpecification request) {
+    if (Conf.PRINT_REQUESTS) {
+      request.filter(new RequestLoggingFilter())
+             .filter(new ResponseLoggingFilter());
+    }
+    if (Conf.QA_AUTH != null && !Conf.QA_AUTH.isEmpty()) {
+      request.cookie(Conf.QA_AUTH_COOKIE, Conf.QA_AUTH);
+    }
+    addAuthorization(request);
+    return request;
+  }
+
+  protected void addAuthorization(RequestSpecification request) {
+    // default implementation adds no authorization tokens
+  }
 
   /**
    * Builds a basic RestAssured request spec with no expectations.
    *
    * @return prepared RestAssured object
    */
-  RequestSpecification emptyRequest();
-
-  /**
-   * Adds further prep to request, including:
-   *   - Add logging filter
-   *   - Add QA auth cookie for QA sites
-   *
-   * @param req prepared RestAssured object
-   * @return request passed in with additional prep
-   */
-  public static RequestSpecification prepRequest(RequestSpecification req) {
-    if(Conf.PRINT_REQUESTS)
-      req.filter(new RequestLoggingFilter())
-        .filter(new ResponseLoggingFilter());
-
-    if(Conf.QA_AUTH != null && !Conf.QA_AUTH.isEmpty()) {
-      req.cookie(Conf.QA_AUTH_COOKIE, Conf.QA_AUTH);
-    }
-
-    return req;
+  public RequestSpecification emptyRequest() {
+    return prepRequest(RestAssured.given());
   }
 
   /**
@@ -46,7 +57,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  default ResponseSpecification successRequest() {
+  public ResponseSpecification successRequest() {
     return request(HttpStatus.SC_OK);
   }
 
@@ -61,7 +72,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  default ResponseSpecification successRequest(ContentType contentType) {
+  public ResponseSpecification successRequest(ContentType contentType) {
     return request(HttpStatus.SC_OK, contentType);
   }
 
@@ -74,7 +85,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  default ResponseSpecification request(int statusCode) {
+  public ResponseSpecification request(int statusCode) {
     return emptyRequest().expect().statusCode(statusCode);
   }
 
@@ -89,7 +100,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  default ResponseSpecification request(int statusCode, ContentType contentType) {
+  public ResponseSpecification request(int statusCode, ContentType contentType) {
     return request(statusCode).contentType(contentType);
   }
 
@@ -103,7 +114,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  default ResponseSpecification jsonRequest(int statusCode) {
+  public ResponseSpecification jsonRequest(int statusCode) {
     return request(statusCode, ContentType.JSON);
   }
 
@@ -115,7 +126,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  default ResponseSpecification jsonSuccessRequest()  {
+  public ResponseSpecification jsonSuccessRequest()  {
     return jsonRequest(HttpStatus.SC_OK);
   }
 
@@ -129,7 +140,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  default ResponseSpecification jsonPayloadRequest(Object body, int statusCode) {
+  public ResponseSpecification jsonPayloadRequest(Object body, int statusCode) {
     return emptyRequest()
         .contentType(ContentType.JSON)
         .body(body)
@@ -148,7 +159,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object.
    */
-  default ResponseSpecification jsonPayloadRequest(
+  public ResponseSpecification jsonPayloadRequest(
       Object body,
       int statusCode,
       ContentType contentType
@@ -167,7 +178,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  default ResponseSpecification jsonIoRequest(Object body, int statusCode) {
+  public ResponseSpecification jsonIoRequest(Object body, int statusCode) {
     return jsonPayloadRequest(body, statusCode).contentType(ContentType.JSON);
   }
 
@@ -181,7 +192,7 @@ public interface RequestFactory {
    *
    * @return prepared RestAssured object
    */
-  default ResponseSpecification jsonIoSuccessRequest(Object body) {
+  public ResponseSpecification jsonIoSuccessRequest(Object body) {
     return jsonIoRequest(body, HttpStatus.SC_OK);
   }
 }

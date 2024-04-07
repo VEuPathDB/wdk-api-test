@@ -1,25 +1,27 @@
 package test.wdk;
 
-import io.restassured.http.ContentType;
+import static test.support.Conf.SERVICE_PATH;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import test.support.util.GuestRequestFactory;
 
-import static test.support.Conf.SERVICE_PATH;
+import io.restassured.http.ContentType;
+import test.support.util.Session;
+import test.support.util.SessionFactory;
 
 @DisplayName("API")
 public class ApiTest extends TestBase {
   public static final String BASE_PATH = SERVICE_PATH + "/api";
 
-  private final GuestRequestFactory req;
+  public final Session _session;
 
-  public ApiTest(GuestRequestFactory req) {
-    this.req = req;
+  public ApiTest(SessionFactory sessionFactory) {
+    _session = sessionFactory.getCachedGuestSession();
   }
 
   @Test
   @DisplayName("GET " + BASE_PATH)
   void getApi() {
-    req.successRequest(ContentType.HTML).when().get(BASE_PATH);
+    _session.successRequest(ContentType.HTML).when().get(BASE_PATH);
   }
 }

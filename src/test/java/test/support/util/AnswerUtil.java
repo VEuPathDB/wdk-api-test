@@ -24,7 +24,7 @@ public class AnswerUtil {
     return formatConfig;
   }
 
-  public static AnswerSpec createExonCountAnswerSpec(RequestFactory requestFactory) {
+  public static AnswerSpec createExonCountAnswerSpec() {
     AnswerSpec answerSpec = new AnswerSpec();
     var paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
@@ -36,7 +36,7 @@ public class AnswerUtil {
     return answerSpec;
   }
 
-  public static AnswerSpec createBlastAnswerSpec(RequestFactory requestFactory) {
+  public static AnswerSpec createBlastAnswerSpec() {
     AnswerSpec answerSpec = new AnswerSpec(/*"GeneQuestions.GenesBySimilarity"*/);
     var paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
@@ -53,7 +53,7 @@ public class AnswerUtil {
     return answerSpec;
   }
 
-  public static AnswerSpec createMultiBlastAnswerSpec(RequestFactory requestFactory) {
+  public static AnswerSpec createMultiBlastAnswerSpec() {
     AnswerSpec answerSpec = new AnswerSpec(/*"GeneQuestions.GenesByMultiBlast"*/);
     var paramsMap = new HashMap<String, String>();
     paramsMap.put("organism", "Plasmodium adleri G01");
@@ -78,7 +78,7 @@ public class AnswerUtil {
     return answerSpec;
   }
 
-  public static AnswerSpec createPopsetByCountryAnswerSpec(RequestFactory requestFactory) {
+  public static AnswerSpec createPopsetByCountryAnswerSpec() {
     AnswerSpec answerSpec = new AnswerSpec(/*"PopsetQuestions.PopsetByCountry"*/);
     var paramsMap = new HashMap<String, String>();
     paramsMap.put("country", "GAZ_00002560");

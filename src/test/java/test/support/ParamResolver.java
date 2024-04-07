@@ -16,10 +16,8 @@ public class ParamResolver implements ParameterResolver {
       "Class %s not registered in param resolver";
 
   private static final Map<Class<?>, Object> INJECTABLES = new HashMap<Class<?>, Object>(){{
-    put(AuthenticatedRequestFactory.class, null);
-    put(AuthUtil.class, null);
+    put(SessionFactory.class, null);
     put(QuestionUtil.class, null);
-    put(GuestRequestFactory.class, null);
     put(StepUtil.class, null);
     put(UserUtil.class, null);
   }};
@@ -44,16 +42,10 @@ public class ParamResolver implements ParameterResolver {
   }
 
   private Object getOrCreate(Class<?> type) {
-    if (type.equals(AuthenticatedRequestFactory.class))
-      return AuthenticatedRequestFactory
-          .getInstance((AuthUtil) getOrCreate(AuthUtil.class));
-    if (type.equals(GuestRequestFactory.class))
-      return GuestRequestFactory
-          .getInstance((AuthUtil) getOrCreate(AuthUtil.class));
-
     try {
       return type.getMethod("getInstance").invoke(null);
-    } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+    }
+    catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
       throw new RuntimeException(e);
     }
   }

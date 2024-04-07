@@ -18,27 +18,28 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import test.support.Category;
 import test.support.util.AnswerUtil;
-import test.support.util.GuestRequestFactory;
+import test.support.util.Session;
+import test.support.util.SessionFactory;
 
 public class AnswersTest extends TestBase {
 
   public static final String BASE_PATH = SERVICE_PATH + "/record-types/{recordType}/searches/{search}/reports/standard";
 
-  public final GuestRequestFactory _guestRequestFactory;
+  public final Session _session;
 
-  public AnswersTest(GuestRequestFactory req) {
-    this._guestRequestFactory = req;
+  public AnswersTest(SessionFactory sessionFactory) {
+    _session = sessionFactory.getCachedGuestSession();
   }
 
   @Test
   @Tag(Category.PLASMO_TEST)
   @DisplayName("Test answer GET (by POST)")
   void testSingleRecordAnswer() {
-    AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec(_guestRequestFactory);
+    AnswerSpec answerSpec = AnswerUtil.createExonCountAnswerSpec();
     DefaultJsonAnswerFormatConfig formatConfig = AnswerUtil.getDefaultFormatConfigOneRecord();
     DefaultAnswerRequestBody requestBody = new DefaultAnswerRequestBody(answerSpec);
     requestBody.setFormatConfig(formatConfig);
-    Response response = _guestRequestFactory.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
+    Response response = _session.jsonPayloadRequest(requestBody, HttpStatus.SC_OK,
         ContentType.JSON).when().post(BASE_PATH, "transcript", "GenesByExonCount");
 
     // minimally, confirm we got exactly one record

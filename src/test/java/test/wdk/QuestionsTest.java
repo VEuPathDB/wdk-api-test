@@ -1,16 +1,19 @@
 package test.wdk;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.LinkedList;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import test.support.util.GuestRequestFactory;
 
-import java.util.LinkedList;
-import java.util.stream.Stream;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import test.support.util.Session;
+import test.support.util.SessionFactory;
 
 @DisplayName("Questions")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -22,10 +25,10 @@ public class QuestionsTest extends TestBase {
     BY_NAME_PATH = BASE_PATH + "/{question}",
     PT_BY_NAME_PATH = PT_BASE_PATH + "/{1}";
 
-  private final GuestRequestFactory req;
+  public final Session _session;
 
-  public QuestionsTest(GuestRequestFactory req) {
-    this.req = req;
+  public QuestionsTest(SessionFactory sessionFactory) {
+    _session = sessionFactory.getCachedGuestSession();
   }
 
   @Test
@@ -38,16 +41,16 @@ public class QuestionsTest extends TestBase {
   @DisplayName("GET " + BY_NAME_PATH)
   @MethodSource("getQuestionList")
   void getQuestionDetails(String record, String name) {
-    req.jsonSuccessRequest().when().get(BY_NAME_PATH, record, name);
+    _session.jsonSuccessRequest().when().get(BY_NAME_PATH, record, name);
   }
 
   public Stream<Arguments> getQuestionList() {
     var out = new LinkedList<String[]>();
 
-    var recs = RecordsTest.getAllRecordNames(req);
+    var recs = RecordsTest.getAllRecordNames(_session);
 
     for (var rec: recs) {
-      var searches = req.jsonSuccessRequest().when().
+      var searches = _session.jsonSuccessRequest().when().
         get(BASE_PATH, rec).
         as(SimpleQuestion[].class);
 

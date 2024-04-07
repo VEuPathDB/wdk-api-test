@@ -1,7 +1,7 @@
 package test.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import test.support.util.AuthUtil;
+import test.support.util.SessionFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -13,7 +13,7 @@ public class Conf {
   /**
    * Site login authentication type
    */
-  public static final AuthUtil.Type AUTH_TYPE;
+  public static final SessionFactory.Type AUTH_TYPE;
 
   /**
    * Site login credential sets
@@ -82,7 +82,7 @@ public class Conf {
 
     PRINT_REQUESTS="true".equals(env.get("PRINT_HTTP"));
 
-    AUTH_TYPE = AuthUtil.Type.valueOf(env.getOrDefault("AUTH_TYPE", AuthUtil.Type.OAUTH.name()));
+    AUTH_TYPE = SessionFactory.Type.valueOf(env.getOrDefault("AUTH_TYPE", SessionFactory.Type.OAUTH.name()));
     QA_AUTH = env.get("QA_AUTH");
 
     // External service used for OAuth authentication

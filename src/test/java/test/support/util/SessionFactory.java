@@ -19,7 +19,6 @@ import org.gusdb.wdk.model.api.OAuthStateTokenResponse;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 import test.support.Conf;
 import test.support.Credentials;
 import test.support.Header;
@@ -28,9 +27,9 @@ import test.wdk.OAuthTest;
 /**
  * Utility for performing common site session tasks.
  */
-public class AuthUtil {
+public class SessionFactory {
 
-  private static AuthUtil instance;
+  private static SessionFactory instance;
 
   private static final String ERR_UNSUPPORTED_AUTH = "Auth type %s is not supported.";
 
@@ -38,25 +37,40 @@ public class AuthUtil {
 
   public static final String CURRENT_USER_PATH = SERVICE_PATH + "/users/current";
 
-  private Map < Credentials, String > sessionTokens;
-  private String guestToken;
+  private final Map<Credentials, Session> cachedAuthenticatedSessions;
+  private final Session cachedGuestSession;
 
   public enum Type {
     OAUTH,
     LEGACY; // direct username/password
   }
 
-  private AuthUtil() {
+  private SessionFactory() {
+
     // Synchronized because tests can be run in parallel
-    sessionTokens = Collections.synchronizedMap(new HashMap<>());
+    cachedAuthenticatedSessions = Collections.synchronizedMap(new HashMap<>());
+
     // Pre-load a guest token to be used for guest requests
-    guestToken = createGuestToken();
+    cachedGuestSession = getNewGuestSession();
   }
 
-  public static String createGuestToken() {
-    return RequestFactory.prepRequest(RestAssured.given().when())
+  public Session getCachedGuestSession() {
+    return cachedGuestSession;
+  }
+
+  public Session getNewGuestSession() {
+    return new Session(
+      new RequestFactory().emptyRequest()
         .get(Conf.SITE_PATH + CURRENT_USER_PATH)
-        .getCookie(Conf.WDK_AUTH_COOKIE);
+        .getCookie(Conf.WDK_AUTH_COOKIE));
+  }
+
+  public Session getAuthenticatedSession() {
+    Credentials[] creds = Conf.CREDENTIALS;
+    if (creds.length == 0) {
+      throw new RuntimeException("No credentials submitted; cannot create authenticated session.");
+    }
+    return getAuthenticatedSession(creds[0]);
   }
 
   /**
@@ -65,74 +79,19 @@ public class AuthUtil {
    * If a session already exists for the given user it will be overwritten with
    * the new session.
    *
-   * @param creds Site login credentials
+   * @param credentials Site login credentials
    */
-  public void newSession(final Credentials creds) {
-    switch (Conf.AUTH_TYPE) {
-      case LEGACY:
-        sessionTokens.put(creds, legacyLogin(creds, Conf.SITE_PATH)
-            .getCookie(Conf.WDK_AUTH_COOKIE));
-        break;
-      case OAUTH:
-        sessionTokens.put(creds, oAuthLogin(creds, Conf.SITE_PATH)
-            .getCookie(Conf.WDK_AUTH_COOKIE));
-        break;
-      default:
-        throw new RuntimeException(String.format(ERR_UNSUPPORTED_AUTH,
-            Conf.AUTH_TYPE.name()));
-    }
-  }
-
-  /**
-   * Get the session token for the given set of credentials.
-   *
-   * If no current session exists for the given credentials, one will be
-   * created.
-   *
-   * @param creds Site login credentials
-   *
-   * @return session token for the given credentials.
-   */
-  public String getSession(final Credentials creds) {
-    if(!sessionTokens.containsKey(creds))
-      newSession(creds);
-    return sessionTokens.get(creds);
-  }
-
-  /**
-   * Prepare an authenticated request for the given user credentials.
-   *
-   * @param creds Site login credentials
-   *
-   * @return A RestAssured request which includes the necessary setup to perform
-   *         an authenticated request.
-   */
-  public RequestSpecification prepRequest(final Credentials creds) {
-    return RestAssured.given()
-        .cookie(Conf.WDK_AUTH_COOKIE, getSession(creds));
-  }
-
-  /**
-   * Prepare an authenticated request for the first known set of user
-   * credentials.
-   *
-   * @return A RestAssured request which includes the necessary setup to perform
-   *         an authenticated request.
-   */
-  public RequestSpecification prepRequest() {
-    return RestAssured.given()
-        .cookie(Conf.WDK_AUTH_COOKIE, getSession(Conf.CREDENTIALS[0]));
-  }
-
-  /**
-   * Prepare a request for our guest user.
-   *
-   * @return a RestAssured request which includes a bearer token representing
-   *         our pre-loaded guest user
-   */
-  public RequestSpecification prepGuestRequest() {
-    return RestAssured.given()
-        .cookie(Conf.WDK_AUTH_COOKIE, guestToken);
+  public Session getAuthenticatedSession(final Credentials credentials) {
+    return cachedAuthenticatedSessions.computeIfAbsent(credentials, creds -> {
+      switch (Conf.AUTH_TYPE) {
+        case LEGACY:
+          return new Session(legacyLogin(creds, Conf.SITE_PATH).getCookie(Conf.WDK_AUTH_COOKIE));
+        case OAUTH:
+          return new Session(oAuthLogin(creds, Conf.SITE_PATH).getCookie(Conf.WDK_AUTH_COOKIE));
+        default:
+          throw new RuntimeException(String.format(ERR_UNSUPPORTED_AUTH, Conf.AUTH_TYPE.name()));
+      }
+    });
   }
 
   /**
@@ -225,15 +184,11 @@ public class AuthUtil {
    *
    * @return AuthUtil singleton instance.
    */
-  public static AuthUtil getInstance() {
+  public static SessionFactory getInstance() {
     if(instance == null) {
-      instance = new AuthUtil();
+      instance = new SessionFactory();
     }
 
     return instance;
-  }
-
-  public String getGuestAuthToken() {
-    return guestToken;
   }
 }
